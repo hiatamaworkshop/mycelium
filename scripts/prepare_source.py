@@ -1,14 +1,20 @@
 """
 prepare_source.py — HuggingFace dataset → Source Qdrant
 Embeds text with all-MiniLM-L6-v2 (384d) and assigns tags via keyword matching.
+Long texts are split into overlapping chunks (--chunk-size / --chunk-overlap).
 
 Usage:
   python scripts/prepare_source.py [--dataset DATASET] [--split SPLIT] [--limit N]
                                    [--collection NAME] [--qdrant-url URL]
                                    [--text-field FIELD] [--id-field FIELD]
+                                   [--chunk-size N] [--chunk-overlap N]
 
-Example:
+Example (short texts, no chunking):
   python scripts/prepare_source.py --dataset "ag_news" --split "train[:500]" --text-field "text"
+
+Example (long texts, with chunking):
+  python scripts/prepare_source.py --dataset "ccdv/arxiv-summarization" --split "train[:5]" \
+    --text-field "article" --chunk-size 500 --chunk-overlap 50
 """
 
 import argparse
@@ -67,6 +73,20 @@ _COMPILED_RULES: list[tuple[str, list[re.Pattern]]] = [
 ]
 
 
+def chunk_text(text: str, chunk_size: int, overlap: int) -> list[str]:
+    """Split text into word-boundary chunks with overlap."""
+    words = text.split()
+    if len(words) <= chunk_size:
+        return [text]
+    chunks: list[str] = []
+    start = 0
+    while start < len(words):
+        end = start + chunk_size
+        chunks.append(" ".join(words[start:end]))
+        start += chunk_size - overlap
+    return chunks
+
+
 def assign_tags(text: str, max_tags: int = 3) -> list[str]:
     """Assign tags by keyword matching. Returns up to max_tags unique tags."""
     matched: list[str] = []
@@ -94,6 +114,13 @@ def main():
     parser.add_argument("--text-field", default="text", help="Text column name in dataset")
     parser.add_argument("--id-field", default="", help="ID column name (empty=auto-generate)")
     parser.add_argument("--batch-size", type=int, default=64, help="Embedding batch size")
+    parser.add_argument("--chunk-size", type=int, default=0,
+                        help="Chunk size in words (0=no chunking). Recommended: 80-120 for MiniLM")
+    parser.add_argument("--chunk-overlap", type=int, default=15,
+                        help="Overlap words between chunks (default: 15)")
+    parser.add_argument("--force", action="store_true",
+                        help="Delete existing collection before creating. Without this flag, "
+                             "existing collections are protected (upsert/append only)")
     args = parser.parse_args()
 
     # ---- Load dataset ----
@@ -103,9 +130,28 @@ def main():
         ds = ds.select(range(min(args.limit, len(ds))))
     print(f"  → {len(ds)} rows loaded")
 
-    texts = ds[args.text_field]
+    raw_texts = ds[args.text_field]
     has_id = args.id_field and args.id_field in ds.column_names
-    ids = ds[args.id_field] if has_id else list(range(len(ds)))
+    raw_ids = ds[args.id_field] if has_id else list(range(len(ds)))
+
+    # ---- Chunk (if needed) ----
+    texts: list[str] = []
+    source_ids: list[str] = []
+    chunk_seq_nos: list[int] = []
+
+    if args.chunk_size > 0:
+        print(f"Chunking {len(raw_texts)} documents (chunk_size={args.chunk_size}, overlap={args.chunk_overlap}) ...")
+        for i, raw in enumerate(raw_texts):
+            chunks = chunk_text(raw, args.chunk_size, args.chunk_overlap)
+            for seq, chunk in enumerate(chunks):
+                texts.append(chunk)
+                source_ids.append(str(raw_ids[i]))
+                chunk_seq_nos.append(seq)
+        print(f"  → {len(raw_texts)} docs → {len(texts)} chunks (avg {len(texts)/len(raw_texts):.1f} chunks/doc)")
+    else:
+        texts = list(raw_texts)
+        source_ids = [str(rid) for rid in raw_ids]
+        chunk_seq_nos = [0] * len(texts)
 
     # ---- Embed ----
     print("Loading model: all-MiniLM-L6-v2")
@@ -138,8 +184,8 @@ def main():
             vector=vec.tolist(),
             payload={
                 "text": texts[i],
-                "sourceId": str(ids[i]),
-                "chunkSeqNo": 0,
+                "sourceId": source_ids[i],
+                "chunkSeqNo": chunk_seq_nos[i],
                 "tags": all_tags[i],
                 "timestamp": now_ms,
             },
@@ -150,17 +196,21 @@ def main():
     # ---- Upsert to Qdrant ----
     client = QdrantClient(url=args.qdrant_url)
 
-    # Recreate collection
     collections = [c.name for c in client.get_collections().collections]
     if args.collection in collections:
-        client.delete_collection(args.collection)
-        print(f"  → Deleted existing collection '{args.collection}'")
+        if args.force:
+            client.delete_collection(args.collection)
+            print(f"  → Deleted existing collection '{args.collection}' (--force)")
+        else:
+            existing = client.count(args.collection).count
+            print(f"  → Collection '{args.collection}' exists ({existing} points). Appending. Use --force to recreate.")
 
-    client.create_collection(
-        collection_name=args.collection,
-        vectors_config=VectorParams(size=384, distance=Distance.COSINE),
-    )
-    print(f"  → Created collection '{args.collection}' (384d, cosine)")
+    if args.collection not in [c.name for c in client.get_collections().collections]:
+        client.create_collection(
+            collection_name=args.collection,
+            vectors_config=VectorParams(size=384, distance=Distance.COSINE),
+        )
+        print(f"  → Created collection '{args.collection}' (384d, cosine)")
 
     # Batch upsert
     UPSERT_BATCH = 100

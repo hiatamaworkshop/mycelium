@@ -1,0 +1,29 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: mycelium-universal-qdrant
+    ports:
+      - "6334:6333"
+    volumes:
+      - qdrant-data:/qdrant/storage
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/6333'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+networks:
+  default:
+    name: mycelium-universal-network
+
+volumes:
+  qdrant-data:
+    name: mycelium-universal-qdrant-data
