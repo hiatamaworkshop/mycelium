@@ -25,7 +25,7 @@ import type { MyceliumConfig } from "../types.js";
 import type { SlotAssignment } from "./slot-allocator.js";
 import { FeedInstance } from "./feed-instance.js";
 import type { SurvivorReport } from "./feed-instance.js";
-import { runTick } from "../core/tick.js";
+import { runTick, getAndClearDeathLog } from "../core/tick.js";
 import type { TickResult } from "../core/tick.js";
 import { ensureCollection } from "../qdrant.js";
 import { loadSpeciesMemory } from "../core/digestor.js";
@@ -199,9 +199,10 @@ export class Dispatcher {
       const tickResult = await runTick(this.config, this.globalTick);
       this.lastTickResult = tickResult;
 
-      // Notify all running instances
+      // Collect death log from this tick and route to instances
+      const tickDeaths = getAndClearDeathLog();
       for (const instance of this.instances) {
-        instance.onTick();
+        instance.onTick(tickDeaths);
       }
 
       // Check absorption: is the ecosystem ready for next inject?

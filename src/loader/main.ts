@@ -89,7 +89,18 @@ async function main(): Promise<void> {
 
   // 2. Allocate into slots (chunks stay together, capacity bounded)
   const slots = allocateSlots(allSourcePoints, slotCapacity);
-  console.error(`[loader] ${slots.length} slot(s) allocated\n`);
+
+  // Reorder: sandwich pattern (large-small-large) for smoother absorption
+  // Sort descending, then interleave front/back
+  slots.sort((a, b) => b.points.length - a.points.length);
+  const sorted = [...slots];
+  slots.length = 0;
+  let lo = 0, hi = sorted.length - 1;
+  for (let toggle = true; lo <= hi; toggle = !toggle) {
+    slots.push(toggle ? sorted[lo++] : sorted[hi--]);
+  }
+
+  console.error(`[loader] ${slots.length} slot(s) allocated (inject order: ${slots.map(s => s.points.length).join(" → ")})\n`);
 
   // 3. Dispatch (cascade pipeline)
   const dispatcher = new Dispatcher(myceliumConfig, dispatchConfig);
@@ -117,8 +128,18 @@ function printReports(reports: SurvivorReport[]): void {
     const survivingChunks = slotReports.reduce((s, r) => s + r.survivingChunks, 0);
     const slotRate = totalChunks > 0 ? (survivingChunks / totalChunks * 100).toFixed(1) : "0.0";
 
+    // Pushback classification breakdown
+    const classCounts: Record<string, number> = {};
+    for (const r of slotReports) {
+      classCounts[r.classification] = (classCounts[r.classification] ?? 0) + 1;
+    }
+    const classLine = Object.entries(classCounts)
+      .map(([k, v]) => `${k}:${v}`)
+      .join(" ");
+
     console.error(`--- Slot [${token}] ---`);
     console.error(`  sources: ${slotReports.length}, survival: ${survivingChunks}/${totalChunks} (${slotRate}%)`);
+    console.error(`  classification: ${classLine}`);
 
     // Highlight chunked sources (multi-part articles)
     const chunked = slotReports.filter(r => r.totalChunks > 1);
@@ -127,7 +148,7 @@ function printReports(reports: SurvivorReport[]): void {
       for (const r of chunked) {
         console.error(
           `    ${r.sourceId}: ${r.survivingChunks}/${r.totalChunks} chunks survived ` +
-          `(${(r.survivalRate * 100).toFixed(1)}%) parts=${r.partsComplete ? "OK" : "INCOMPLETE"}`,
+          `(${(r.survivalRate * 100).toFixed(1)}%) [${r.classification}]`,
         );
       }
     }
