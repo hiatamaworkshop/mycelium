@@ -1,0 +1,250 @@
+{
+  "summarizer": {
+    "perception": [
+      [0.3, 0.1, 0.0, 0.1, 0.2, 0.1, 0.0, 0.3, 0.2],
+      [0.0, -0.2, 0.6, -0.3, 0.0, 0.0, 0.3, 0.0, 0.0],
+      [0.1, 0.1, 0.0, 0.1, 0.1, 0.1, 0.0, 0.5, 0.4],
+      [0.0, -0.5, 0.1, -0.2, 0.0, -0.3, 0.0, -0.1, -0.1]
+    ],
+    "personality": [
+      [0.5, 0.2, 0.5, 0.3],
+      [0.1, 0.2, 0.1, 0.3],
+      [0.3, 0.0, 0.7, 0.1],
+      [0.1, 0.5, 0.1, 0.3],
+      [0.3, 0.5, 0.4, 0.5],
+      [0.1, 0.1, 0.1, 0.1],
+      [0.0, 0.2, 0.0, 0.1],
+      [0.2, 0.1, 0.2, 0.1],
+      [0.0, 0.3, 0.0, 0.1]
+    ],
+    "resonanceSensitivity": {
+      "summarizer": 0.5,
+      "sentinel": 0.1,
+      "herald": 0.2,
+      "anchor": 0.1,
+      "spore": 0.2
+    },
+    "selectionBias": {
+      "summarizer": 1.0,
+      "sentinel": 1.0,
+      "herald": 1.1,
+      "anchor": 0.3,
+      "spore": 1.0
+    },
+    "receptivity": 0.4,
+    "resonanceReceiveScale": 1.0,
+    "signalAcceptWBoost": 0.06,
+    "mergeTargetBias": 1.0,
+    "initialDecay": 0.06,
+    "initialTtl": 100,
+    "_doc": {
+      "perception_rows": ["vigor", "dread", "kinship", "hunger"],
+      "perception_cols": ["selfH", "selfW", "selfD", "ttlRatio", "envH", "envW", "envD", "kinCount", "resonanceSum"],
+      "personality_rows": ["signal", "merge", "bequeath", "survive", "accept", "reject", "retaliate", "ignore", "flee"],
+      "personality_cols": ["vigor", "dread", "kinship", "hunger"],
+      "receptivity": "How much incoming signal feelings influence reaction. 0=deaf, 1=fully empathetic. Additive: blended = self + α×signal",
+      "resonanceReceiveScale": "Multiplier on all incoming resonance. 1.0=full, 0.3=dampened (e.g. anchor)",
+      "selectionBias": "Multiplier on cosine score when this species selects a target. >1=prefer, <1=avoid, 0=never. Applied as: effectiveScore = cosine × selectionBias[target.species]",
+      "mergeTargetBias": "How likely this species is to be selected as a merge target. 1.0=normal, 0=never. Target-side (vs selectionBias which is initiator-side)",
+      "behavior": "signal-primary consolidator. signals actively to build resonance, accepts incoming merges passively. bequeath shares TTL with kin. decay reduced for w runway"
+    }
+  },
+  "sentinel": {
+    "perception": [
+      [0.2, 0.0, 0.0, 0.0, 0.3, 0.0, 0.0, 0.1, 0.1],
+      [0.0, -0.1, 0.8, -0.4, 0.0, 0.0, 0.5, 0.0, 0.0],
+      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.7, 0.3],
+      [0.0, -0.4, 0.2, -0.3, 0.0, -0.2, 0.0, 0.0, 0.0]
+    ],
+    "personality": [
+      [0.2, 0.1, 0.7, 0.1],
+      [0.0, 0.3, 0.1, 0.3],
+      [0.2, 0.0, 0.4, 0.0],
+      [0.5, 0.8, 0.3, 0.6],
+      [0.4, 0.2, 0.5, 0.1],
+      [0.1, 0.2, 0.1, 0.3],
+      [0.1, 0.2, 0.0, 0.1],
+      [0.3, 0.1, 0.2, 0.2],
+      [0.0, 0.5, 0.0, 0.2]
+    ],
+    "resonanceSensitivity": {
+      "summarizer": 0.1,
+      "sentinel": 0.4,
+      "herald": -0.1,
+      "anchor": 0.2,
+      "spore": 0.1
+    },
+    "selectionBias": {
+      "summarizer": 0.9,
+      "sentinel": 1.0,
+      "herald": 0.8,
+      "anchor": 1.2,
+      "spore": 0.7
+    },
+    "receptivity": 0.5,
+    "resonanceReceiveScale": 1.0,
+    "signalAcceptWBoost": 0.03,
+    "mergeTargetBias": 1.0,
+    "initialDecay": 0.04,
+    "initialTtl": 200,
+    "_doc": {
+      "perception_rows": ["vigor", "dread", "kinship", "hunger"],
+      "perception_cols": ["selfH", "selfW", "selfD", "ttlRatio", "envH", "envW", "envD", "kinCount", "resonanceSum"],
+      "personality_rows": ["signal", "merge", "bequeath", "survive", "accept", "reject", "retaliate", "ignore", "flee"],
+      "personality_cols": ["vigor", "dread", "kinship", "hunger"],
+      "receptivity": "Moderate — senses sender health via blended feelings. Healthy sender (high vigor) → accept bias",
+      "resonanceReceiveScale": "Multiplier on all incoming resonance. 1.0=full, 0.3=dampened (e.g. anchor)",
+      "selectionBias": "Multiplier on cosine score when this species selects a target. sentinel monitors anchor (1.2), avoids spore (0.7)",
+      "mergeTargetBias": "How likely this species is to be selected as a merge target. 1.0=normal, 0=never",
+      "behavior": "survive-oriented watchdog. reduced hostility (reject/retaliate softened). accepts signals from healthy senders via receptivity=0.5"
+    }
+  },
+  "herald": {
+    "perception": [
+      [0.4, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.1, 0.3],
+      [0.0, -0.1, 0.4, -0.2, 0.0, 0.0, 0.2, 0.0, 0.0],
+      [0.1, 0.0, 0.0, 0.0, 0.2, 0.0, 0.0, 0.4, 0.5],
+      [-0.3, -0.3, 0.2, 0.0, 0.0, -0.1, 0.0, 0.2, 0.0]
+    ],
+    "personality": [
+      [0.7, 0.2, 0.5, 0.4],
+      [0.0, 0.3, 0.0, 0.3],
+      [0.2, 0.0, 0.3, 0.0],
+      [0.4, 0.7, 0.2, 0.5],
+      [0.5, 0.1, 0.5, 0.1],
+      [0.0, 0.2, 0.0, 0.3],
+      [0.0, 0.3, 0.0, 0.2],
+      [0.2, 0.1, 0.2, 0.1],
+      [0.1, 0.4, 0.0, 0.3]
+    ],
+    "resonanceSensitivity": {
+      "summarizer": 0.2,
+      "sentinel": 0.0,
+      "herald": 0.3,
+      "anchor": -0.1,
+      "spore": 0.1
+    },
+    "selectionBias": {
+      "summarizer": 1.1,
+      "sentinel": 0.8,
+      "herald": 1.0,
+      "anchor": 0.3,
+      "spore": 1.2
+    },
+    "receptivity": 0.5,
+    "resonanceReceiveScale": 1.0,
+    "signalAcceptWBoost": 0.05,
+    "mergeTargetBias": 1.0,
+    "initialDecay": 0.06,
+    "initialTtl": 100,
+    "_doc": {
+      "perception_rows": ["vigor", "dread", "kinship", "hunger"],
+      "perception_cols": ["selfH", "selfW", "selfD", "ttlRatio", "envH", "envW", "envD", "kinCount", "resonanceSum"],
+      "personality_rows": ["signal", "merge", "bequeath", "survive", "accept", "reject", "retaliate", "ignore", "flee"],
+      "personality_cols": ["vigor", "dread", "kinship", "hunger"],
+      "receptivity": "High — social species, highly influenced by incoming emotional signals",
+      "resonanceReceiveScale": "Multiplier on all incoming resonance. 1.0=full, 0.3=dampened (e.g. anchor)",
+      "selectionBias": "herald broadcasts widely, prefers spore (1.2, nurture ideas) and summarizer (1.1), avoids anchor (0.3)",
+      "mergeTargetBias": "How likely this species is to be selected as a merge target. 1.0=normal, 0=never",
+      "behavior": "signal-oriented. sustains through social nourishment. vigor drives signaling. survives when depleted"
+    }
+  },
+  "anchor": {
+    "perception": [
+      [0.15, 0.15, 0.0, 0.15, 0.15, 0.15, 0.0, 0.15, 0.15],
+      [0.0, -0.1, 0.3, -0.1, 0.0, 0.0, 0.1, 0.0, 0.0],
+      [0.0, 0.15, 0.0, 0.15, 0.0, 0.15, 0.0, 0.4, 0.3],
+      [0.0, -0.2, 0.1, -0.1, 0.0, -0.1, 0.0, 0.0, 0.0]
+    ],
+    "resonanceSensitivity": {
+      "summarizer": 0.1,
+      "sentinel": 0.2,
+      "herald": 0.0,
+      "anchor": 0.3,
+      "spore": 0.0
+    },
+    "selectionBias": {
+      "summarizer": 0.5,
+      "sentinel": 1.0,
+      "herald": 0.3,
+      "anchor": 0.8,
+      "spore": 0.2
+    },
+    "personality": [
+      [-0.9, -0.9, -0.9, -0.9],
+      [-0.9, -0.9, -0.9, -0.9],
+      [-0.9, -0.9, -0.9, -0.9],
+      [0.8, 0.9, 0.5, 0.7],
+      [0.8, 0.5, 0.8, 0.6],
+      [-0.9, -0.9, -0.9, -0.9],
+      [-0.9, -0.9, -0.9, -0.9],
+      [0.1, 0.1, 0.1, 0.1],
+      [-0.9, -0.9, -0.9, -0.9]
+    ],
+    "receptivity": 0.2,
+    "resonanceReceiveScale": 0.3,
+    "mergeTargetBias": 0,
+    "initialDecay": 0.02,
+    "initialTtl": 500,
+    "_doc": {
+      "perception_rows": ["vigor", "dread", "kinship", "hunger"],
+      "perception_cols": ["selfH", "selfW", "selfD", "ttlRatio", "envH", "envW", "envD", "kinCount", "resonanceSum"],
+      "personality_rows": ["signal", "merge", "bequeath", "survive", "accept", "reject", "retaliate", "ignore", "flee"],
+      "personality_cols": ["vigor", "dread", "kinship", "hunger"],
+      "receptivity": "Minimal — almost deaf to incoming signals, reacts from own state only",
+      "resonanceReceiveScale": "0.3 — dampened to prevent passive resonance accumulation. Anchor accepts all interactions but shouldn't dominate resonance rankings",
+      "selectionBias": "anchor rarely initiates social actions. sentinel (1.0) is the only strong target — rule enforcement. all others low. replaces mergeImmune: other species set anchor bias low instead",
+      "mergeTargetBias": "0 — anchor is immovable, never absorbs other nodes' contents. Keeps pure status for pushback filtering. signal+accept still works (resonance/wBoost)",
+      "behavior": "immovable system core (.env, paths, conventions). survive-only initiator — signal/merge/bequeath suppressed by negative weights. near-guaranteed acceptor when targeted — reject/retaliate/flee suppressed. passive knowledge source: quiet but always receptive. merge-immune as target (mergeTargetBias=0)"
+    }
+  },
+  "spore": {
+    "perception": [
+      [0.5, 0.0, 0.0, 0.0, 0.3, 0.0, 0.0, 0.2, 0.4],
+      [0.0, -0.1, 0.5, -0.3, 0.0, 0.0, 0.3, 0.0, 0.0],
+      [0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.6, 0.5],
+      [-0.4, -0.3, 0.1, -0.2, 0.0, -0.2, 0.0, 0.1, 0.0]
+    ],
+    "personality": [
+      [0.6, 0.3, 0.4, 0.3],
+      [0.0, 0.5, 0.1, 0.6],
+      [0.1, 0.0, 0.5, 0.0],
+      [0.2, 0.4, 0.1, 0.3],
+      [0.5, 0.3, 0.5, 0.4],
+      [0.0, 0.0, 0.0, 0.1],
+      [0.0, 0.0, 0.0, 0.0],
+      [0.0, 0.1, 0.0, 0.1],
+      [0.1, 0.5, 0.0, 0.3]
+    ],
+    "resonanceSensitivity": {
+      "summarizer": 0.4,
+      "sentinel": 0.1,
+      "herald": 0.3,
+      "anchor": -0.1,
+      "spore": 0.2
+    },
+    "selectionBias": {
+      "summarizer": 1.4,
+      "sentinel": 0.5,
+      "herald": 1.4,
+      "anchor": 0.2,
+      "spore": 0.6
+    },
+    "receptivity": 0.6,
+    "resonanceReceiveScale": 1.0,
+    "signalAcceptWBoost": 0.06,
+    "mergeTargetBias": 1.0,
+    "initialDecay": 0.07,
+    "initialTtl": 100,
+    "_doc": {
+      "perception_rows": ["vigor", "dread", "kinship", "hunger"],
+      "perception_cols": ["selfH", "selfW", "selfD", "ttlRatio", "envH", "envW", "envD", "kinCount", "resonanceSum"],
+      "personality_rows": ["signal", "merge", "bequeath", "survive", "accept", "reject", "retaliate", "ignore", "flee"],
+      "personality_cols": ["vigor", "dread", "kinship", "hunger"],
+      "receptivity": "Highest — fragile, hyper-sensitive to incoming emotional signals",
+      "selectionBias": "spore seeks validation: summarizer (1.4, consolidates into knowledge) and herald (1.4, broadcasts). anchor (0.2, deaf wall). sentinel avoided (0.5, reject risk). same-spore avoided (0.6, fragile×fragile = collapse)",
+      "mergeTargetBias": "How likely this species is to be selected as a merge target. 1.0=normal, 0=never",
+      "behavior": "fragile hypothesis. born from manual push. signals to seek validation. merges under crisis (absorbed into verified knowledge). dies fast without social confirmation. high resonance sensitivity to summarizer+herald (validation paths)"
+    }
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "pressure": {
+    "hCooling": 0.97,
+    "ttlStep": 1,
+    "deathMinTtl": 0,
+    "deathMinW": 0.05,
+    "_tuning": {
+      "hCooling": "Heat dissipation per tick. Lower → colder world. Range: 0.8(harsh)–1.0(no cooling)",
+      "ttlStep": "TTL consumed per tick. Higher → shorter lifespans. Default 1",
+      "deathMinTtl": "Node dies when ttl <= this. Raise to kill nodes earlier (0 = natural)",
+      "deathMinW": "Node dies when w <= this. Raise to cull weak nodes faster (0 = natural)"
+    }
+  },
+  "relief": {
+    "surviveTtlRecovery": 3,
+    "surviveDecayReduction": 0.95,
+    "surviveHRecovery": 0.1,
+    "surviveWRecovery": 0,
+    "surviveWCost": 0,
+    "_tuning": {
+      "surviveTtlRecovery": "TTL gained when survive action chosen. Higher → survival is more rewarding",
+      "surviveDecayReduction": "Decay multiplier on survive. Lower → survive slows decay more. Range: 0.9(strong)–1.0(none)",
+      "surviveHRecovery": "Heat recovered when survive chosen. Only h recovery source. Higher → faster recharge cycles",
+      "surviveWRecovery": "Weight recovered when survive chosen. 0 = no w recovery (default). Nonzero → survive also feeds",
+      "surviveWCost": "Weight cost of choosing survive (isolation tax). Nodes that only survive slowly starve. Social w gain offsets this"
+    }
+  },
+  "energy": {
+    "baseCost": {
+      "signal": 0.08,
+      "merge": 0.15,
+      "bequeath": 0.12
+    },
+    "reactionCost": {
+      "accept": 0.05,
+      "reject": 0.06,
+      "retaliate": 0.1,
+      "flee": 0.08,
+      "ignore": 0
+    },
+    "_tuning": {
+      "baseCost": "h cost per action = intensity(=h) × baseCost. Higher → actions drain faster. survive has no cost (it recovers h instead)",
+      "reactionCost": "h cost for target reacting = target.h × reactionCost. ignore=0 (free). retaliate most expensive"
+    }
+  },
+  "social": {
+    "neighborLimit": 5,
+    "signalExtraReach": 3,
+    "resonanceDecay": 0.98,
+    "targetAffinity": {
+      "signal": 0.5,
+      "merge": -0.3,
+      "bequeath": -0.2
+    },
+    "_tuning": {
+      "neighborLimit": "Top-K cosine neighbors for Environment computation. Lower → more isolated. Higher → more social",
+      "signalExtraReach": "Extra candidates for signal action, scaled by intensity. Effective reach = neighborLimit + floor(h × signalExtraReach). 3 → max 8 at full h",
+      "resonanceDecay": "Resonance decay per tick. Carries over across ticks. 0.8 = 20% fade per tick. Lower → faster forget. Higher → longer memory",
+      "targetAffinity": "Action-based target.w bias. score × (1 + affinity × target.w). Positive → prefer healthy targets (signal: accept-likely). Negative → prefer weak targets (merge: absorb, bequeath: aid)"
+    }
+  },
+  "birth": {
+    "initialH": 0.6,
+    "initialW": 1,
+    "_tuning": {
+      "initialH": "Starting heat. Higher → newborns are vigorous. Lower → born cold, survive-biased",
+      "initialW": "Starting weight. Higher → more buffer before starvation. Lower → fragile newborns"
+    }
+  },
+  "scoring": {
+    "halfLifeHours": 72,
+    "dimensions": {
+      "wWeight": 0.33,
+      "hWeight": 0.34,
+      "ttlWeight": 0.33
+    },
+    "hungerThresholds": {
+      "low": 50,
+      "mid": 200
+    },
+    "hungerFloor": 0.2,
+    "hungerCeil": 0.8,
+    "speciesProtection": 10,
+    "blendRatio": {
+      "self": 0.7,
+      "global": 0.3
+    },
+    "digestIntervalTicks": 100,
+    "_tuning": {
+      "halfLifeHours": "Time decay half-life. Higher → older nodes retain more fitness",
+      "dimensions": "Fitness dimension weights. Sum should be ~1.0",
+      "hungerThresholds": "Population size ranges for pruning ramp",
+      "speciesProtection": "Minimum member count before pruning applies",
+      "blendRatio": "Species profile blend: self vs global average",
+      "digestIntervalTicks": "How often digest cycle runs"
+    }
+  },
+  "decision": {
+    "temperature": 0.5,
+    "_tuning": {
+      "temperature": "Softmax temperature for action/reaction selection. Lower → more decisive (greedy). Higher → more exploratory. 1.0=standard, 0.5=sharp, 2.0=random"
+    }
+  },
+  "frustration": {
+    "enabled": true,
+    "decay": 0.7,
+    "accum": 0.1,
+    "blend": 0.15,
+    "_tuning": {
+      "enabled": "Master switch. false = no frustration (memoryless Markov as before)",
+      "decay": "Per-tick exponential decay of frustration. 0.7 = 30% loss per tick. Lower → faster forget. Higher → longer memory",
+      "accum": "Accumulation rate for new frustration from unfulfilled actions. 0.1 = thin layer. Higher → stronger carryover",
+      "blend": "How much frustration modifies feelings before action selection. 0.15 = 15% influence. Higher → frustration dominates"
+    }
+  },
+  "selfReflection": {
+    "enabled": true,
+    "blend": 0.3,
+    "decay": 0.8,
+    "_tuning": {
+      "enabled": "Master switch. false = no self-reflection (action outcomes don't feed back into feelings)",
+      "blend": "How much selfReflection modifies feelings before next action selection. 0.3 = 30% influence. Stronger than frustration (0.15) — two worlds' experience deserves weight",
+      "decay": "Per-tick exponential decay. 0.8 = 20% loss per tick. Slower than frustration (0.7) — reflection lingers longer"
+    }
+  },
+  "learning": {
+    "rate": 0.05,
+    "deltaClamp": 0.5,
+    "blendAlpha": 0.7,
+    "deltaDecay": 0,
+    "resonanceLrScale": 0.5,
+    "_tuning": {
+      "rate": "Base learning rate for learnedDelta updates. Higher → faster adaptation. 0.05 = moderate",
+      "deltaClamp": "Max absolute value per cell in learnedDelta. 0.5 = effective personality range 0.5×–1.5× base. Safety net only",
+      "blendAlpha": "Species delta blend ratio. 0.7 = 70% self + 30% all-species mean. Lower → more homogeneous across species",
+      "deltaDecay": "Per-digest exponential decay rate for learnedDelta. 0 = disabled. 300b training is the sweet spot; longer runs cause anchor monoculture regardless of decay rate"
+    }
+  },
+  "spawn": {
+    "minContents": 4,
+    "minFitness": 0.4,
+    "minResonance": 0.3,
+    "minPartnerSimilarity": 0.5,
+    "childTtlRatio": 0.5,
+    "blendMode": "cross",
+    "resonanceInheritRatio": 0.2,
+    "_tuning": {
+      "minContents": "Minimum contents.length to be spawn-eligible. Knowledge gate — 4 = 1-2 merges required",
+      "minFitness": "Minimum fitness score to spawn. Health gate — 0.4 = moderately healthy required",
+      "minResonance": "Minimum total resonance sum. Maturity gate — 0.3 = at least 1 successful social exchange (signal+accept boost=0.3)",
+      "minPartnerSimilarity": "Minimum cosine similarity with partner. Compatibility gate — only breed with related content. 0.5 = moderate relatedness",
+      "childTtlRatio": "Fraction of species default TTL given to children. 0.5 = half lifespan start",
+      "blendMode": "Personality blend strategy. 'same' = both children get identical blend (ratioA). 'cross' = child A gets parentB-dominant personality, child B gets parentA-dominant (genetic crossover)"
+    }
+  },
+  "merge": {
+    "proximityThreshold": 0.75,
+    "minSimilarity": 0.5,
+    "_tuning": {
+      "proximityThreshold": "Cosine similarity above which proximity merge triggers unconditionally. 0.75 = semantically redundant neighbors. mergeTargetBias=0 species are immune",
+      "minSimilarity": "Minimum cosine similarity for intentional merge action. Below this, merge target is too distant — action falls back to survive. 0.5 = moderate semantic relatedness required"
+    }
+  },
+  "observatory": {
+    "enabled": true,
+    "intervalTicks": 10,
+    "bufferSize": 50,
+    "minPopulation": 5,
+    "_tuning": {
+      "intervalTicks": "Collect ecosystem snapshot every N ticks. 10 = moderate granularity",
+      "bufferSize": "Max snapshots in ring buffer. 50 × 10 ticks = 500 ticks of history",
+      "minPopulation": "Skip snapshot when population below this. Low-pop data is noise"
+    }
+  },
+  "pushback": {
+    "earlyPct": 0.4,
+    "minCosine": 0.75,
+    "posResThreshold": 0.05,
+    "redundantCosine": 0.75,
+    "wThreshold": 0.5,
+    "maxDepth1": 6,
+    "clusterPct": 0.6,
+    "clusterMinCos": 0.35,
+    "clusterMaxCos": 0.75,
+    "_tuning": {
+      "earlyPct": "Max tick% for 'early' death (both redundant and loner). 0.4 = first 40% of sim",
+      "minCosine": "Merge cosine threshold for redundancy flag. 0.75 = moderate similarity",
+      "posResThreshold": "Max positive resonance to be a loner. 0.05 = near-zero social interaction",
+      "redundantCosine": "Merge cosine above which death is redundant, not loner. Should match minCosine",
+      "wThreshold": "Deprecated — merger cluster no longer gates on w",
+      "maxDepth1": "Deprecated — merger cluster no longer caps depth-1 count",
+      "clusterPct": "Tick% at which to snapshot for cluster detection. 0.6 = after early-death phase",
+      "clusterMinCos": "Min merge cosine for valid cluster member. Below = noise (unrelated merge)",
+      "clusterMaxCos": "Max merge cosine for valid cluster member. Above = proximity merge (redundant duplicate)"
+    }
+  },
+  "receptor": {
+    "signalAcceptBoost": 0.3,
+    "signalHeatBoost": 0.05,
+    "signalAcceptWBoost": 0,
+    "_note_signalAcceptWBoost": "DEPRECATED: now per-species in species.json. This global value is ignored.",
+    "rejectHeatPenalty": 0.05,
+    "rejectResonancePenalty": 0.1,
+    "retaliateDecayIncrease": 0.01,
+    "retaliateResonancePenalty": 0.2,
+    "retaliateWeightPenalty": 0,
+    "mergeWeightTransfer": 0.5,
+    "mergeTtlTransfer": 0.3,
+    "mergeResonanceBoost": 0.5,
+    "mergeResonanceTransfer": 0.5,
+    "bequeathTtlRatio": 0.3,
+    "bequeathDecayReduction": 0.95,
+    "bequeathResonanceBoost": 0.3,
+    "ignoreResonanceFade": 0.05,
+    "similarityResonanceBonus": 0.5,
+    "_tuning": {
+      "signalAcceptBoost": "Resonance gained on signal+accept. Higher → signaling is more rewarding",
+      "signalAcceptWBoost": "Weight gained by both parties on signal+accept. Social nourishment — makes signaling species sustainable",
+      "signalHeatBoost": "Heat gained on signal+accept. Higher → social activity warms nodes",
+      "rejectHeatPenalty": "Heat lost on rejection. Higher → rejection is more costly",
+      "retaliateDecayIncrease": "Decay increase on retaliation. Higher → retaliation is dangerous",
+      "mergeWeightTransfer": "Fraction of initiator weight transferred to target on merge. Scaled by similarity — close merge is efficient, distant is lossy",
+      "mergeTtlTransfer": "Fraction of initiator TTL added to target on merge. Scaled by similarity — close merge is efficient, distant is lossy",
+      "mergeResonanceTransfer": "Fraction of initiator's positive resonance transferred to target on merge. Scaled by intensity × similarity. 0.5 = half of accumulated social history carries over",
+      "bequeathTtlRatio": "Fraction of initiator TTL gifted to target on bequeath+accept. Initiator loses TTL, target gains it",
+      "bequeathDecayReduction": "Target decay multiplier on bequeath+accept. Lower → stronger decay relief. 0.95 = 5% decay reduction",
+      "ignoreResonanceFade": "Resonance penalty for initiator when ignored. Mild — makes ignore not truly free for initiator's learning",
+      "similarityResonanceBonus": "Cosine similarity multiplier for resonance on signal+accept. sim=0.8 → resonance ×1.4. Rewards good vector matching (spore benefits most via high resonanceSensitivity)"
+    }
+  },
+  "nutrition": {
+    "bias": 0.3,
+    "weightSaturation": 3,
+    "hitCountCap": 5,
+    "fixedBonus": 0.15,
+    "_tuning": {
+      "bias": "Max ±bias on baseline w/h/d from engram metrics. 0.3 = ±30%",
+      "weightSaturation": "Denominator for tanh(weight/N) in w bias. 3 = saturates at ±3 engram weight",
+      "hitCountCap": "Denominator for min(hitCount/N, 1) in h/d bias. 5 = caps at 5 recall hits",
+      "fixedBonus": "Bonus for status=fixed engram nodes: +N% w, −N% d. 0.15 = ±15%"
+    }
+  }
+}

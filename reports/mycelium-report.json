@@ -1,0 +1,318 @@
+{
+  "timestamp": "2026-03-09T13:33:34.199Z",
+  "config": {
+    "ticks": 60,
+    "digest": 20,
+    "baselineRuns": 3,
+    "votePct": 0.4,
+    "nutritionBias": 0.3
+  },
+  "scenarios": [
+    "B1) Baseline",
+    "B2) Baseline",
+    "B3) Baseline",
+    "V-) Nutr 0.9",
+    "V+) Nutr 1.1",
+    "E) Early Cull",
+    "F) Oscillation",
+    "G) Famine",
+    "H) Boom->Bust",
+    "I) Gradient"
+  ],
+  "confirmed": {
+    "redundant": [
+      {
+        "engramId": "cd68e574-0ed3-40f5-8afc-a87410c68248",
+        "summary": "mycelium疎結合設計確定: マッピングロジックはmycelium外のorchestratorレイヤーに配置、myceliumはw/hを受け取るだけ",
+        "tags": [
+          "why",
+          "design",
+          "feeder"
+        ],
+        "votes": 5,
+        "total": 10
+      }
+    ],
+    "loner": [
+      {
+        "engramId": "eaac81a0-c6ae-4765-9909-d8391a3ec8d3",
+        "summary": "git commit: docs: add tool alias table and push priority to CLAUDE.md.template, add degraded detection to session hook",
+        "tags": [
+          "git-commit"
+        ],
+        "votes": 8,
+        "total": 10
+      },
+      {
+        "engramId": "8bc151c3-f4e1-4a0f-afd7-acd3894ab7c6",
+        "summary": "Smithery requires hosted HTTP URL, not GitHub repo — stdio servers cannot register directly",
+        "tags": [
+          "gotcha",
+          "gateway"
+        ],
+        "votes": 7,
+        "total": 10
+      },
+      {
+        "engramId": "4b6be07c-b393-49f7-9948-8e1634c44842",
+        "summary": "UpperLayer permanent disable fix: added exponential backoff retry to initUpperLayer()",
+        "tags": [
+          "gotcha",
+          "gateway",
+          "upper-layer"
+        ],
+        "votes": 6,
+        "total": 10
+      },
+      {
+        "engramId": "b8f92052-28b5-4454-afe7-adb35fa39bc2",
+        "summary": "Docker Alpine lacks glibc causing ONNX runtime crashes - use node:20-slim instead",
+        "tags": [
+          "docker",
+          "onnx",
+          "alpine"
+        ],
+        "votes": 5,
+        "total": 10
+      },
+      {
+        "engramId": "6b2176f8-8ddd-4983-a518-a5f8b547a121",
+        "summary": "Spawn child contents are full parent copy — no content splitting due to vector placement constraints",
+        "tags": [
+          "why",
+          "spawn",
+          "vector"
+        ],
+        "votes": 5,
+        "total": 10
+      },
+      {
+        "engramId": "cd9631be-edc3-49b1-9d99-27fbfbd7f804",
+        "summary": "Tag convention: 2-layer system — Layer 1 knowledge type (howto/where/why/gotcha) + Layer 2 domain",
+        "tags": [
+          "howto",
+          "tagging"
+        ],
+        "votes": 5,
+        "total": 10
+      },
+      {
+        "engramId": "d59cacf1-47e3-48bd-a61f-3355e39fb5b4",
+        "summary": "projectId resolution: match existing projects, never invent duplicates",
+        "tags": [
+          "engram-convention",
+          "project-management"
+        ],
+        "votes": 5,
+        "total": 10
+      },
+      {
+        "engramId": "5b9d63f0-59f3-476f-ab6e-c9015e2bcac6",
+        "summary": "active/passive receptor双方向感情伝播は既知の人工生命・エージェントモデルに類例なし",
+        "tags": [
+          "why",
+          "receptor",
+          "design-principle"
+        ],
+        "votes": 4,
+        "total": 10
+      },
+      {
+        "engramId": "d437da62-0b63-4fa2-ab27-7cc8ecdbb12f",
+        "summary": "When to flag: submit negative signals on outdated or wrong recall results",
+        "tags": [
+          "engram-convention",
+          "feedback",
+          "flag"
+        ],
+        "votes": 4,
+        "total": 10
+      },
+      {
+        "engramId": "18570d8b-70da-4727-87aa-fc447898956d",
+        "summary": "Receptor wiring gap: merge/bequeath+retaliate and flee had no penalties, causing inaccurate resonance tracking",
+        "tags": [
+          "gotcha",
+          "receptor",
+          "resonance"
+        ],
+        "votes": 4,
+        "total": 10
+      },
+      {
+        "engramId": "b252db64-4fb1-4803-9cf6-9d6b626e8f4d",
+        "summary": "engram コレクションに projectId フィルタ追加 — scrollAll に filter 引数、ENGRAM_PROJECT env で制御",
+        "tags": [
+          "gotcha",
+          "qdrant",
+          "feeder"
+        ],
+        "votes": 4,
+        "total": 10
+      },
+      {
+        "engramId": "9f94b34e-718a-4b79-95ca-3404cd75c84f",
+        "summary": "Fitness is NOT in action selection pipeline — h/w/ttl enter rawVec individually, fitness only used for spawn/merge gates",
+        "tags": [
+          "why",
+          "fitness",
+          "scoring"
+        ],
+        "votes": 4,
+        "total": 10
+      },
+      {
+        "engramId": "ce4a1173-509b-4b01-b1ad-e6d8420a2149",
+        "summary": "git commit: spawn: TTL inheritance from parent, balanced eligibility gates, test health gate sync",
+        "tags": [
+          "git-commit"
+        ],
+        "votes": 4,
+        "total": 10
+      },
+      {
+        "engramId": "d20e1249-1594-462a-a6c0-71dfdec5aa76",
+        "summary": "External Nutrition orchestrator implemented as feeder.ts front-layer, not separate service",
+        "tags": [
+          "why",
+          "feeder",
+          "orchestrator"
+        ],
+        "votes": 4,
+        "total": 10
+      },
+      {
+        "engramId": "655ebb2c-4749-4e07-9eac-6717c27436cd",
+        "summary": "resonanceSensitivity動的学習: digestorでresonance蓄積傾向をresonanceSensitivity自体にフィードバックし感受性を後天的に分化させる設計案",
+        "tags": [
+          "why",
+          "digestor",
+          "receptor",
+          "resonance"
+        ],
+        "votes": 4,
+        "total": 10
+      },
+      {
+        "engramId": "8d918731-dcbe-47d5-8f4e-0df395a2e909",
+        "summary": "git commit: docs: add changelog for 2026-03-07 changes",
+        "tags": [
+          "git-commit"
+        ],
+        "votes": 4,
+        "total": 10
+      }
+    ],
+    "pure": [
+      {
+        "engramId": "648de785-141b-466c-a02e-9c75485a3f94",
+        "summary": "Engram weight and lifecycle: how nodes survive or expire",
+        "tags": [
+          "engram-convention",
+          "digestor",
+          "lifecycle"
+        ],
+        "votes": 9,
+        "total": 10
+      },
+      {
+        "engramId": "a2586e25-8cea-4dd9-a795-ba2f165eef08",
+        "summary": "Engram v2 uses recent/fixed status model instead of fresh/amber/fossil",
+        "tags": [
+          "engram",
+          "architecture",
+          "v2"
+        ],
+        "votes": 8,
+        "total": 10
+      },
+      {
+        "engramId": "ccdc88e5-0d0e-4fec-b8d2-e811ce2a70e8",
+        "summary": "observatory.ts拡張: 分析ユーティリティ5関数追加でscenario-test-v2を-50行簡素化",
+        "tags": [
+          "milestone",
+          "observatory",
+          "refactor"
+        ],
+        "votes": 8,
+        "total": 10
+      },
+      {
+        "engramId": "8996638b-5b2e-427b-80de-8263ad64db8e",
+        "summary": "git commit: fix: rename npm package to engram-memory (engram-mcp was taken)",
+        "tags": [
+          "git-commit"
+        ],
+        "votes": 7,
+        "total": 10
+      },
+      {
+        "engramId": "768d71b7-2631-439c-99b7-12a8ec1e99a9",
+        "summary": "300バッチ×80ticks 訓練結果: anchor maxδ=0.231, herald signal×kinship=+0.055 出現, spore生存27に改善",
+        "tags": [
+          "milestone",
+          "training",
+          "species-weights"
+        ],
+        "votes": 7,
+        "total": 10
+      },
+      {
+        "engramId": "da794ea9-a3ce-429a-b629-59de8c3bf558",
+        "summary": "Engram project total: ~2400 lines TypeScript across gateway + mcp-server",
+        "tags": [
+          "engram",
+          "architecture",
+          "metrics"
+        ],
+        "votes": 7,
+        "total": 10
+      },
+      {
+        "engramId": "21551ca2-3fee-4447-a2af-b004722c6973",
+        "summary": "未修正: scenario-test-v2のloadSnapshotがresonanceDeltaを読み込んでいない（300バッチ訓練結果が無視される）",
+        "tags": [
+          "gotcha",
+          "scenario-test",
+          "digestor"
+        ],
+        "votes": 6,
+        "total": 10
+      },
+      {
+        "engramId": "11cf9862-b506-4150-8d48-1632006b01be",
+        "summary": "train-species.cjs 二層学習対応完了: learnedResonanceDelta の runningAccumulator + Pass4 学習 + snapshot出力",
+        "tags": [
+          "milestone",
+          "training",
+          "resonance-delta"
+        ],
+        "votes": 5,
+        "total": 10
+      },
+      {
+        "engramId": "b252db64-4fb1-4803-9cf6-9d6b626e8f4d",
+        "summary": "engram コレクションに projectId フィルタ追加 — scrollAll に filter 引数、ENGRAM_PROJECT env で制御",
+        "tags": [
+          "gotcha",
+          "qdrant",
+          "feeder"
+        ],
+        "votes": 5,
+        "total": 10
+      },
+      {
+        "engramId": "bdff227f-f308-42b3-958f-0b5e0bdf5f14",
+        "summary": "Mycelium integration into engram gateway — architecture and file layout",
+        "tags": [
+          "where",
+          "mycelium",
+          "gateway"
+        ],
+        "votes": 4,
+        "total": 10
+      }
+    ],
+    "merger": []
+  }
+}
