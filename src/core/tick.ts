@@ -6,8 +6,7 @@
 // All config values come from metabolism.json (M).
 //
 // Each tick:
-//   1. Poll engram for new seeds
-//   2. Scroll all nodes (with vectors)
+//   1. Scroll all nodes (with vectors)
 //   3. Compute Environment per node (cosine neighbors → neighborField, kinCount, neighborSpecies)
 //   4. computeFeelings → assessAction → select target
 //   5. Emit ActionSignal (active receptor)
@@ -22,7 +21,6 @@ import { scrollAll, setPayload, deletePoints, upsertPoints } from "../qdrant.js"
 import { payloadToNode, nodeToPayload, computeFeelings, assessAction, assessActionWithProbs, updateFrustration, getSpeciesConfig, clamp01, computeReflection } from "./node.js";
 import { emitSignal, react, resolveInteraction } from "./receptor.js";
 import { isSpawnEligible, isCompatiblePartner, executeSpawn } from "./spawn.js";
-import { pollEngram } from "./feeder.js";
 import { shouldDigest, digestSpeciesMemory, persistSpeciesMemory, recordAction } from "./digestor.js";
 import { shouldCollect, collect as observatoryCollect } from "./observatory.js";
 import { ACTIONS, REACTIONS, ALL_SPECIES } from "../types.js";
@@ -166,7 +164,6 @@ export interface TickResult {
   tick: number;
   processed: number;
   expired: number;
-  ingested: number;
   spawned: number;
   actions: Record<string, number>;
   interactions: number;
@@ -177,19 +174,11 @@ export interface TickResult {
 export async function runTick(config: MyceliumConfig, tickNumber: number): Promise<TickResult> {
   const { qdrantUrl, collection } = config;
 
-  // 0. Poll engram for new seeds
-  let ingested = 0;
-  try {
-    ingested = await pollEngram(config, config.engramCollection);
-  } catch (err) {
-    console.error(`[mycelium] feeder error:`, (err as Error).message);
-  }
-
   // 1. Scroll all nodes with vectors
   const points = await scrollAll(qdrantUrl, collection, true);
 
   if (points.length === 0) {
-    return { tick: tickNumber, processed: 0, expired: 0, ingested, spawned: 0, actions: {}, interactions: 0 };
+    return { tick: tickNumber, processed: 0, expired: 0, spawned: 0, actions: {}, interactions: 0 };
   }
 
   // Convert to NodeWithVector
@@ -486,7 +475,6 @@ export async function runTick(config: MyceliumConfig, tickNumber: number): Promi
     tick: tickNumber,
     processed: points.length,
     expired: deleteIds.length,
-    ingested,
     spawned: spawnCount,
     actions: actionCounts,
     interactions: interactionCount,
@@ -507,7 +495,7 @@ export function startTick(config: MyceliumConfig): void {
       tickCount++;
       lastTickResult = await runTick(config, tickCount);
       console.error(
-        `[mycelium] tick #${tickCount}: ingested=${lastTickResult.ingested} processed=${lastTickResult.processed} expired=${lastTickResult.expired} spawned=${lastTickResult.spawned} interactions=${lastTickResult.interactions} actions=${JSON.stringify(lastTickResult.actions)}`,
+        `[mycelium] tick #${tickCount}: processed=${lastTickResult.processed} expired=${lastTickResult.expired} spawned=${lastTickResult.spawned} interactions=${lastTickResult.interactions} actions=${JSON.stringify(lastTickResult.actions)}`,
       );
     } catch (err) {
       console.error(`[mycelium] tick #${tickCount} error:`, err);

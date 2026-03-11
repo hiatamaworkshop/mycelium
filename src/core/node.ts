@@ -403,9 +403,6 @@ export function nodeToPayload(node: MyceliumNode): MyceliumPointPayload {
   if (node.lineage) {
     payload.lineage = JSON.stringify(node.lineage);
   }
-  if (node.engramId) {
-    payload.engramId = node.engramId;
-  }
   if (node.frustration) {
     payload.frustration = JSON.stringify(node.frustration);
   }
@@ -433,9 +430,6 @@ export function payloadToNode(id: string, payload: MyceliumPointPayload): Myceli
   };
   if (payload.lineage) {
     node.lineage = JSON.parse(payload.lineage);
-  }
-  if (payload.engramId) {
-    node.engramId = payload.engramId;
   }
   if (payload.frustration) {
     node.frustration = JSON.parse(payload.frustration);

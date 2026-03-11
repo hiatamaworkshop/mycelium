@@ -276,7 +276,7 @@ export interface VoteResult {
 }
 
 /**
- * Cross-scenario voting: count how many scenarios flagged each engram ID.
+ * Cross-scenario voting: count how many scenarios flagged each node ID.
  * IDs appearing in >= threshold scenarios are "confirmed".
  */
 export function crossVote(
@@ -317,13 +317,12 @@ export interface PushbackSnapshot {
  * Wraps pushback module functions into a single call.
  */
 export function computePushbackSnapshot(
-  engramIdMap: Map<string, string>,
   deathLog: Map<string, DeathRecord>,
   totalTicks: number,
   livingNodes: MyceliumNode[],
 ): PushbackSnapshot {
-  const redundant = extractRedundantIds(engramIdMap, deathLog, totalTicks).length;
-  const loner = extractLonerIds(engramIdMap, deathLog, totalTicks).length;
+  const redundant = extractRedundantIds(deathLog, totalTicks).length;
+  const loner = extractLonerIds(deathLog, totalTicks).length;
   const pure = extractPureSurvivors(livingNodes).length;
   const merger = extractMergerClusters(livingNodes).length;
   return { redundant, loner, pure, merger, deaths: summarizeDeaths(deathLog) };

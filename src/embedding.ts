@@ -1,5 +1,5 @@
 // ============================================================
-// Mycelium — Embedding service (from engram upper-layer)
+// Mycelium — Embedding service
 // ============================================================
 //
 // Lazy singleton. Model: Xenova/all-MiniLM-L6-v2 (384 dims, ONNX quantized).

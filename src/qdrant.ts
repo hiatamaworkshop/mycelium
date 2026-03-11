@@ -1,5 +1,5 @@
 // ============================================================
-// Mycelium — Qdrant REST client (adapted from engram upper-layer)
+// Mycelium — Qdrant REST client
 // ============================================================
 
 import type { MyceliumPointPayload } from "./types.js";

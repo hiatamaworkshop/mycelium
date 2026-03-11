@@ -33,7 +33,6 @@ import {
 } from "./qdrant.js";
 import { createNode, nodeToPayload, resolveSpecies } from "./core/node.js";
 import { startTick, getTickStats, runTick } from "./core/tick.js";
-import { getFeederStats } from "./core/feeder.js";
 import { getSpeciesMemory, getDigestorStats, loadSpeciesMemory } from "./core/digestor.js";
 import { getSnapshots, getLatestSnapshot, getSnapshotCount } from "./core/observatory.js";
 
@@ -43,7 +42,6 @@ const config: MyceliumConfig = {
   ...DEFAULT_CONFIG,
   qdrantUrl: process.env.QDRANT_URL ?? DEFAULT_CONFIG.qdrantUrl,
   collection: process.env.MYCELIUM_COLLECTION ?? DEFAULT_CONFIG.collection,
-  engramCollection: process.env.ENGRAM_COLLECTION ?? DEFAULT_CONFIG.engramCollection,
 };
 
 let initialized = false;
@@ -78,10 +76,10 @@ server.tool(
 Each seed becomes a biological node with species assignment priority:
   1. species (direct override)
   2. tags (matched against species-mapping.json rules)
-  3. trigger (legacy engram mapping)
+  3. trigger (fallback mapping)
   4. default: summarizer
 
-Trigger mapping (engram compat):
+Trigger mapping:
   session-end → Summarizer, error-resolved → Anchor,
   milestone / git-commit → Herald, convention → Sentinel,
   manual → Spore, environment → Anchor
@@ -165,7 +163,6 @@ server.tool(
       );
 
       const tick = getTickStats();
-      const feeder = getFeederStats();
 
       const digestor = getDigestorStats();
 
@@ -182,13 +179,9 @@ server.tool(
         `  running: ${tick.running}`,
         `  count: ${tick.tickCount}`,
         ...(tick.lastResult ? [
-          `  last: ingested=${tick.lastResult.ingested} processed=${tick.lastResult.processed} expired=${tick.lastResult.expired}`,
+          `  last: processed=${tick.lastResult.processed} expired=${tick.lastResult.expired}`,
           `  actions: ${JSON.stringify(tick.lastResult.actions)}`,
         ] : []),
-        ``,
-        `Feeder:`,
-        `  source: ${config.engramCollection}`,
-        `  total ingested: ${feeder.totalIngested}`,
         ``,
         `Digestor:`,
         `  generation: ${digestor.generation}`,

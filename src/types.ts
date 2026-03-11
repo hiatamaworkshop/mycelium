@@ -146,9 +146,6 @@ export interface MyceliumNode {
   // lineage (spawn origin, undefined for seed nodes)
   lineage?: Lineage;
 
-  // engram origin tracking (undefined for spawned nodes)
-  engramId?: string;
-
   // frustration — unfulfilled action desires projected back into feelings space
   // Lorenz hydraulic model: chosen actions drain, unchosen accumulate
   frustration?: Feelings;
@@ -194,9 +191,6 @@ export interface MyceliumPointPayload {
 
   // lineage stored as JSON string (Lineage | undefined)
   lineage?: string;
-
-  // engram origin ID (undefined for spawned nodes)
-  engramId?: string;
 
   createdAt: number;
   lastActiveAt: number;
@@ -340,7 +334,6 @@ export interface MetabolismSchema {
 export interface MyceliumConfig {
   qdrantUrl: string;
   collection: string;
-  engramCollection: string;
   embeddingDimension: number;
   tickIntervalMs: number;
   /** Species memory mode: "latest" (newest snapshot), "none" (zero delta), or file path */
@@ -352,7 +345,6 @@ export interface MyceliumConfig {
 export const DEFAULT_CONFIG: MyceliumConfig = {
   qdrantUrl: "http://localhost:6333",
   collection: "mycelium",
-  engramCollection: "engram",
   embeddingDimension: 384,
   tickIntervalMs: 30_000,
   speciesMemory: "latest",

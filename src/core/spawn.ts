@@ -177,7 +177,7 @@ export function executeSpawn(
   const resDeltaChildA = blendResonanceDelta(blendMode === "cross" ? (1 - ratioA) : ratioA);
   const resDeltaChildB = blendMode === "cross" ? blendResonanceDelta(ratioA) : { ...resDeltaChildA };
 
-  // Child A: inherits parent A's contents + vector + engramId
+  // Child A: inherits parent A's contents + vector
   const childA: MyceliumNode = {
     id: randomUUID(),
     species: speciesChildA,
@@ -190,13 +190,12 @@ export function executeSpawn(
     personality: personalityForChildA,
     learnedDelta: zeroMatrix(BEHAVIOR_KEYS.length, FEELINGS_DIM),
     learnedResonanceDelta: resDeltaChildA,
-    engramId: parentA.engramId,
     lineage,
     createdAt: now,
     lastActiveAt: now,
   };
 
-  // Child B: inherits parent B's contents + vector + engramId
+  // Child B: inherits parent B's contents + vector
   const childB: MyceliumNode = {
     id: randomUUID(),
     species: speciesChildB,
@@ -209,7 +208,6 @@ export function executeSpawn(
     personality: personalityForChildB,
     learnedDelta: zeroMatrix(BEHAVIOR_KEYS.length, FEELINGS_DIM),
     learnedResonanceDelta: resDeltaChildB,
-    engramId: parentB.engramId,
     lineage,
     createdAt: now,
     lastActiveAt: now,

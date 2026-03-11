@@ -1,14 +1,11 @@
 // ============================================================
-// Mycelium — Pushback (engram feedback from ecosystem filtering)
+// Mycelium — Pushback (ecosystem feedback from filtering)
 // ============================================================
 //
 // 3-axis filter:
 //   1. Pure survivors (absorbedCount=0, not spawned) = unique knowledge
 //   2. Early deaths: redundant (merge + high cosine) OR loner (decay + posRes≈0)
 //   3. Mergers (high-w absorbers, depth-1 only) = cluster candidates
-//
-// This module calls engram gateway HTTP API directly.
-// No engram dependency at import time.
 
 import type { MyceliumNode, Species } from "../types.js";
 import type { MetabolismSchema } from "../types.js";
@@ -27,8 +24,7 @@ export interface DeathRecord {
 }
 
 export interface PushbackCandidate {
-  engramId: string;
-  myceliumId: string;
+  nodeId: string;
   species: Species;
   summary: string;
   w: number;
@@ -36,10 +32,10 @@ export interface PushbackCandidate {
 }
 
 export interface MergerCluster {
-  originEngramId: string;
+  originId: string;
   species: Species;
   w: number;
-  memberEngramIds: string[];   // absorbed nodes' engram IDs
+  memberIds: string[];
   clusterSize: number;         // total members including origin
   depth1Count: number;         // direct absorptions (» not »»)
   deepChainCount: number;      // chain absorptions (»»+)
@@ -48,9 +44,8 @@ export interface MergerCluster {
 export interface PushbackResult {
   pureSurvivors: PushbackCandidate[];
   mergerClusters: MergerCluster[];
-  flaggedAsRedundant: number;
-  flaggedAsLoner: number;
-  flagErrors: number;
+  redundantCount: number;
+  lonerCount: number;
 }
 
 // ---- Analysis ----
@@ -64,16 +59,15 @@ export function extractPureSurvivors(nodes: MyceliumNode[]): PushbackCandidate[]
   const results: PushbackCandidate[] = [];
 
   for (const n of nodes) {
-    // Skip spawned nodes (no engram origin)
-    if (n.lineage || !n.engramId) continue;
+    // Skip spawned nodes (no original source)
+    if (n.lineage) continue;
 
     // Check if pure: no absorbed contents (» prefix)
     const absorbedCount = n.contents.filter(c => c.startsWith("»")).length;
     if (absorbedCount > 0) continue;
 
     results.push({
-      engramId: n.engramId,
-      myceliumId: n.id,
+      nodeId: n.id,
       species: n.species,
       summary: n.contents[0]?.slice(0, 150) ?? "",
       w: n.w,
@@ -87,19 +81,14 @@ export function extractPureSurvivors(nodes: MyceliumNode[]): PushbackCandidate[]
 }
 
 /**
- * Find engram IDs of nodes that died from high-cosine merge in the early phase.
+ * Find IDs of nodes that died from high-cosine merge in the early phase.
  * These are semantically redundant — near-duplicate data absorbed quickly.
  *
  * Uses tick% (relative to total ticks) instead of absolute tick threshold.
  * Empirical finding: cos ≥ 0.75 + tick% ≤ 40% catches true duplicates
  * without false positives from late-game merges.
- *
- * totalTicks: total simulation length (needed for % calculation)
- * earlyPct: max tick% to be considered "early" (default: 0.4 = 40%)
- * minCosine: minimum merge cosine similarity (default: 0.75)
  */
 export function extractRedundantIds(
-  allEngramIds: Map<string, string>,  // mycelium ID → engram ID
   deathLog: Map<string, DeathRecord>,
   totalTicks: number,
   earlyPct: number = PB.earlyPct,
@@ -108,31 +97,20 @@ export function extractRedundantIds(
   const redundant = new Set<string>();
   const tickCutoff = Math.floor(totalTicks * earlyPct);
 
-  for (const [myceliumId, death] of deathLog.entries()) {
+  for (const [nodeId, death] of deathLog.entries()) {
     if (death.cause !== "merge" || death.tick > tickCutoff) continue;
     if ((death.cosine ?? 0) < minCosine) continue;
-    const engramId = allEngramIds.get(myceliumId);
-    if (engramId) redundant.add(engramId);
+    redundant.add(nodeId);
   }
 
   return [...redundant];
 }
 
 /**
- * Find engram IDs of loner nodes: early death + near-zero positive resonance.
+ * Find IDs of loner nodes: early death + near-zero positive resonance.
  * These are semantically isolated nodes — no meaningful social interactions.
- *
- * Detection is cause-agnostic: a node dying early with posRes≈0 is isolated
- * regardless of whether it died via decay or low-cosine merge (proximity merge
- * of an isolated node doesn't make it social). Only spawn deaths and
- * high-cosine merges (redundant data, handled by extractRedundantIds) are excluded.
- *
- * Uses tick% (relative to total ticks) — same as extractRedundantIds.
- * posResThreshold: max posRes to be considered a loner (default: 0.05)
- * redundantCosine: merge cosine above this is redundant, not loner (default: 0.75)
  */
 export function extractLonerIds(
-  allEngramIds: Map<string, string>,
   deathLog: Map<string, DeathRecord>,
   totalTicks: number,
   earlyPct: number = PB.earlyPct,
@@ -142,15 +120,12 @@ export function extractLonerIds(
   const loners = new Set<string>();
   const tickCutoff = Math.floor(totalTicks * earlyPct);
 
-  for (const [myceliumId, death] of deathLog.entries()) {
-    // Skip spawn (healthy reproduction, not isolation signal)
+  for (const [nodeId, death] of deathLog.entries()) {
     if (death.cause === "spawn") continue;
-    // Skip high-cosine merges (redundant data, not loner — handled by extractRedundantIds)
     if (death.cause === "merge" && (death.cosine ?? 0) >= redundantCosine) continue;
     if (death.tick > tickCutoff) continue;
     if ((death.posRes ?? 0) > posResThreshold) continue;
-    const engramId = allEngramIds.get(myceliumId);
-    if (engramId) loners.add(engramId);
+    loners.add(nodeId);
   }
 
   return [...loners];
@@ -161,14 +136,6 @@ export function extractLonerIds(
 /**
  * Extract absorber nodes as cluster candidates.
  * Called at ~clusterPct ticks (60%) — after early-death phase.
- *
- * Filters absorbed contents by merge cosine:
- *   - cos >= clusterMaxCos (0.75): proximity merge duplicate → exclude
- *   - cos < clusterMinCos (0.35): unrelated noise merge → exclude
- *   - valid range: [clusterMinCos, clusterMaxCos) = meaningful topical merge
- *
- * For deep chains (»»+), the LAST cos value is the merge into this node.
- * w is included for display but does NOT gate detection.
  */
 export function extractMergerClusters(
   nodes: MyceliumNode[],
@@ -178,12 +145,9 @@ export function extractMergerClusters(
   const clusters: MergerCluster[] = [];
 
   for (const n of nodes) {
-    if (!n.engramId) continue;
-
     const absorbed = n.contents.filter(c => c.startsWith("»"));
     if (absorbed.length === 0) continue;
 
-    // Filter by merge cosine: last pipe-separated float is the merge cos into this node
     let validD1 = 0;
     let validDeep = 0;
     for (const c of absorbed) {
@@ -191,7 +155,7 @@ export function extractMergerClusters(
       if (lastPipe < 0) continue;
       const cos = parseFloat(c.slice(lastPipe + 1));
       if (isNaN(cos)) continue;
-      if (cos < minCos || cos >= maxCos) continue; // noise or proximity merge
+      if (cos < minCos || cos >= maxCos) continue;
       if (!c.startsWith("»»")) validD1++;
       else validDeep++;
     }
@@ -199,10 +163,10 @@ export function extractMergerClusters(
     if (validD1 + validDeep === 0) continue;
 
     clusters.push({
-      originEngramId: n.engramId,
+      originId: n.id,
       species: n.species,
       w: n.w,
-      memberEngramIds: [],
+      memberIds: [],
       clusterSize: 1 + validD1 + validDeep,
       depth1Count: validD1,
       deepChainCount: validDeep,
@@ -213,86 +177,25 @@ export function extractMergerClusters(
   return clusters;
 }
 
-// ---- Engram Gateway calls ----
-
-const ENGRAM_GATEWAY = process.env.ENGRAM_GATEWAY_URL || "http://localhost:3100";
-
 /**
- * Flag a list of engram nodes with a negative signal.
- * Calls POST /feedback for each.
+ * Full pushback pipeline: analyze survivors, detect redundant + loners, return results.
  */
-export async function flagInEngram(
-  engramIds: string[],
-  signal: string,
-  reason: string,
-): Promise<{ flagged: number; errors: number }> {
-  let flagged = 0;
-  let errors = 0;
-
-  for (const entryId of engramIds) {
-    try {
-      const res = await fetch(`${ENGRAM_GATEWAY}/feedback`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entryId, signal, reason }),
-      });
-
-      if (res.ok) {
-        const data = await res.json() as { status: string };
-        if (data.status === "applied") flagged++;
-        else errors++;
-      } else {
-        errors++;
-      }
-    } catch {
-      errors++;
-    }
-  }
-
-  return { flagged, errors };
-}
-
-/**
- * Full pushback pipeline: analyze survivors, flag redundant + loners, return results.
- */
-export async function runPushback(
+export function runPushback(
   livingNodes: MyceliumNode[],
-  allEngramIds: Map<string, string>,
   deathLog: Map<string, DeathRecord>,
-  options: { totalTicks?: number; dryRun?: boolean } = {},
-): Promise<PushbackResult> {
-  const { totalTicks = 50, dryRun = false } = options;
+  options: { totalTicks?: number } = {},
+): PushbackResult {
+  const { totalTicks = 50 } = options;
 
-  // 1. Extract pure survivors
   const pureSurvivors = extractPureSurvivors(livingNodes);
-
-  // 2. Extract merger clusters
   const mergerClusters = extractMergerClusters(livingNodes);
+  const redundantIds = extractRedundantIds(deathLog, totalTicks);
+  const lonerIds = extractLonerIds(deathLog, totalTicks);
 
-  // 3. Extract redundant + loner engram IDs
-  const redundantIds = extractRedundantIds(allEngramIds, deathLog, totalTicks);
-  const lonerIds = extractLonerIds(allEngramIds, deathLog, totalTicks);
-
-  // 4. Flag in engram (unless dry run)
-  let flaggedAsRedundant = 0;
-  let flaggedAsLoner = 0;
-  let flagErrors = 0;
-
-  if (!dryRun) {
-    if (redundantIds.length > 0) {
-      const r = await flagInEngram(redundantIds, "merged", "mycelium: absorbed in early ticks (redundant data)");
-      flaggedAsRedundant = r.flagged;
-      flagErrors += r.errors;
-    }
-    if (lonerIds.length > 0) {
-      const r = await flagInEngram(lonerIds, "loner", "mycelium: early death with zero resonance (isolated, no semantic neighbors)");
-      flaggedAsLoner = r.flagged;
-      flagErrors += r.errors;
-    }
-  } else {
-    flaggedAsRedundant = redundantIds.length;
-    flaggedAsLoner = lonerIds.length;
-  }
-
-  return { pureSurvivors, mergerClusters, flaggedAsRedundant, flaggedAsLoner, flagErrors };
+  return {
+    pureSurvivors,
+    mergerClusters,
+    redundantCount: redundantIds.length,
+    lonerCount: lonerIds.length,
+  };
 }
