@@ -1,12 +1,13 @@
 {
   "rules": [
-    { "match": { "tags": ["error", "bug", "fix", "crash"] },        "species": "anchor" },
-    { "match": { "tags": ["gotcha"] },                              "species": "herald" },
-    { "match": { "tags": ["config", "env", "infra", "docker"] },    "species": "anchor" },
-    { "match": { "tags": ["rule", "convention", "lint", "policy"] }, "species": "sentinel" },
-    { "match": { "tags": ["release", "deploy", "commit", "ship"] }, "species": "herald" },
-    { "match": { "tags": ["summary", "digest", "report", "log"] },  "species": "summarizer" },
-    { "match": { "tags": ["idea", "draft", "hypothesis", "wip"] },  "species": "spore" }
+    { "match": { "tags": ["crash", "outage", "fatal"] },               "species": "anchor" },
+    { "match": { "tags": ["error", "bug", "fix"] },                    "species": "sentinel" },
+    { "match": { "tags": ["gotcha"] },                                 "species": "herald" },
+    { "match": { "tags": ["config", "env", "infra", "docker"] },       "species": "summarizer" },
+    { "match": { "tags": ["rule", "convention", "lint", "policy"] },   "species": "sentinel" },
+    { "match": { "tags": ["release", "deploy", "commit", "ship"] },    "species": "herald" },
+    { "match": { "tags": ["summary", "digest", "report", "log"] },     "species": "summarizer" },
+    { "match": { "tags": ["idea", "draft", "hypothesis", "wip"] },     "species": "spore" }
   ],
   "default": "summarizer"
 }

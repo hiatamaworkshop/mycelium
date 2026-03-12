@@ -28,6 +28,7 @@ const M_REF = require("../dist/config/metabolism.json");
 // CONFIG
 // ================================================================
 const QDRANT_URL       = process.env.QDRANT_URL       || "http://localhost:6333";
+const SOURCE_COLLECTION = process.env.SOURCE_COLLECTION || "engram";  // "engram" or source collection name
 const ENGRAM_PROJECT   = process.env.ENGRAM_PROJECT    || "all";
 const RUNS             = parseInt(process.env.RUNS             || "10",   10);
 const TICKS            = parseInt(process.env.TICKS            || "50",   10);
@@ -37,6 +38,7 @@ const MAJORITY         = parseInt(process.env.MAJORITY || String(Math.ceil(RUNS 
 const COLLECTION       = "mycelium_filter_test";
 const LEARNING_RATE    = M_REF.learning.rate;
 const DELTA_CLAMP      = M_REF.learning.deltaClamp;
+const IS_ENGRAM_MODE   = SOURCE_COLLECTION === "engram";
 
 // ================================================================
 // Helpers
@@ -45,11 +47,6 @@ const DELTA_CLAMP      = M_REF.learning.deltaClamp;
 function deepCopy(obj) { return JSON.parse(JSON.stringify(obj)); }
 function cosine(a, b) { let d = 0; for (let i = 0; i < a.length; i++) d += a[i] * b[i]; return d; }
 function zeroMatrix(rows, cols) { return Array.from({ length: rows }, () => new Array(cols).fill(0)); }
-
-function engramFilter() {
-  if (ENGRAM_PROJECT === "all") return undefined;
-  return { must: [{ key: "projectId", match: { value: ENGRAM_PROJECT } }] };
-}
 
 function loadBase() {
   delete require.cache[require.resolve("../dist/config/metabolism.json")];
@@ -422,14 +419,17 @@ function runTickLocal(allNodes, M, digestor) {
 }
 
 // ================================================================
-// Seed from engram
+// Seed from source
 // ================================================================
-let engramCache = null;
-async function getEngramVectors() {
-  if (engramCache) return engramCache;
-  engramCache = await scrollAll(QDRANT_URL, "engram", true, engramFilter());
-  if (ENGRAM_PROJECT !== "all") console.log(`Engram filter: projectId="${ENGRAM_PROJECT}" (${engramCache.length} nodes)`);
-  return engramCache;
+let sourceCache = null;
+async function getSourceVectors() {
+  if (sourceCache) return sourceCache;
+  const filter = IS_ENGRAM_MODE && ENGRAM_PROJECT !== "all"
+    ? { must: [{ key: "projectId", match: { value: ENGRAM_PROJECT } }] }
+    : undefined;
+  sourceCache = await scrollAll(QDRANT_URL, SOURCE_COLLECTION, true, filter);
+  console.log(`Source: ${SOURCE_COLLECTION} (${sourceCache.length} nodes)`);
+  return sourceCache;
 }
 
 async function seedNodes(M, digestor) {
@@ -437,32 +437,29 @@ async function seedNodes(M, digestor) {
   const existing = await scrollAll(QDRANT_URL, COLLECTION, false);
   if (existing.length > 0) await deletePoints(QDRANT_URL, COLLECTION, existing.map(p => p.id));
 
-  const engramPoints = await getEngramVectors();
-  if (engramPoints.length === 0) return { nodes: [], engramIdMap: new Map(), nodeInfoMap: new Map() };
+  const sourcePoints = await getSourceVectors();
+  if (sourcePoints.length === 0) return { nodes: [], sourceIdMap: new Map(), nodeInfoMap: new Map() };
 
-  const speciesConfig = require("../dist/config/species.json");
-
-  const engramIdMap = new Map();
+  const sourceIdMap = new Map();  // mycelium node ID → source point ID
   const nodeInfoMap = new Map();
   const speciesCounts = {};
   const nodesToUpsert = [];
-  for (let i = 0; i < engramPoints.length; i++) {
-    const ep = engramPoints[i];
+  for (let i = 0; i < sourcePoints.length; i++) {
+    const ep = sourcePoints[i];
     const p = ep.payload || {};
-    const summary = (p.contents && p.contents[0]) || p.summary || "engram node";
+    const summary = (p.contents && p.contents[0]) || p.summary || "source node";
     const trigger = p.trigger || "manual";
     const tags = p.tags || [];
-    const sp = resolveSpecies(trigger, tags);
+    const sp = IS_ENGRAM_MODE ? resolveSpecies(trigger, tags) : "spore";
     speciesCounts[sp] = (speciesCounts[sp] || 0) + 1;
     const inherited = digestor.getMemory(sp);
     const inheritedRes = digestor.getResonanceDelta(sp);
-    const nutrition = computeNutrition(p, sp, M);
+    const nutrition = IS_ENGRAM_MODE ? computeNutrition(p, sp, M) : undefined;
 
     const { node } = createNode(String(summary), undefined, trigger, inherited, inheritedRes, nutrition, tags);
-    node.engramId = String(ep.id);
 
-    engramIdMap.set(node.id, String(ep.id));
-    nodeInfoMap.set(node.id, { species: sp, summary: String(summary).slice(0, 80), engramId: String(ep.id) });
+    sourceIdMap.set(node.id, String(ep.id));
+    nodeInfoMap.set(node.id, { species: sp, summary: String(summary).slice(0, 80), sourceId: String(ep.id) });
     nodesToUpsert.push({ id: node.id, vector: ep.vector, payload: nodeToPayload(node) });
   }
   await upsertPoints(QDRANT_URL, COLLECTION, nodesToUpsert);
@@ -470,7 +467,7 @@ async function seedNodes(M, digestor) {
   const pts = await scrollAll(QDRANT_URL, COLLECTION, true);
   return {
     nodes: pts.map(p => ({ node: payloadToNode(p.id, p.payload), vector: p.vector || null })),
-    engramIdMap,
+    sourceIdMap,
     nodeInfoMap,
     speciesCounts,
   };
@@ -484,7 +481,7 @@ async function runOnce(runIdx) {
   const digestor = createDigestor();
   const seedResult = await seedNodes(M, digestor);
   let allNodes = seedResult.nodes;
-  const engramIdMap = seedResult.engramIdMap;
+  const sourceIdMap = seedResult.sourceIdMap;
   const nodeInfoMap = seedResult.nodeInfoMap;
   const initialPop = allNodes.length;
   if (runIdx === 0) {
@@ -559,9 +556,12 @@ async function runOnce(runIdx) {
     if (aboveCluster.length > 0 && aboveCluster.length <= 20) console.log(`  [debug] cos>=${clusterMaxCos} ticks: ${aboveCluster.map(m => 't'+m.tick+'='+m.cos.toFixed(3)).join(', ')}`);
   }
 
-  // Pushback analysis
-  const redundantIds = extractRedundantIds(engramIdMap, deathLog, TICKS);
-  const lonerIds = extractLonerIds(engramIdMap, deathLog, TICKS);
+  // Pushback analysis (universal: no engramIdMap, returns node IDs directly)
+  const redundantNodeIds = extractRedundantIds(deathLog, TICKS);
+  const lonerNodeIds = extractLonerIds(deathLog, TICKS);
+  // Map back to source IDs for consensus voting
+  const redundantIds = redundantNodeIds.map(id => sourceIdMap.get(id) || id).filter(Boolean);
+  const lonerIds = lonerNodeIds.map(id => sourceIdMap.get(id) || id).filter(Boolean);
   const pureSurvivors = allNodes.length > 0 ? extractPureSurvivors(allNodes.map(nv => nv.node)) : [];
   // Merger clusters from 60% tick snapshot (nodes still have meaningful w at this point)
   const mergerClusters = clusterSnapshot ? extractMergerClusters(clusterSnapshot) : [];
@@ -582,6 +582,10 @@ async function runOnce(runIdx) {
   const pts = await scrollAll(QDRANT_URL, COLLECTION, false);
   if (pts.length > 0) await deletePoints(QDRANT_URL, COLLECTION, pts.map(p => p.id));
 
+  // Map pure/merger to source IDs for consensus
+  const pureSourceIds = pureSurvivors.map(p => sourceIdMap.get(p.nodeId) || p.nodeId);
+  const mergerSourceIds = mergerClusters.map(c => sourceIdMap.get(c.originId) || c.originId);
+
   return {
     alive: allNodes.length,
     initialPop,
@@ -589,11 +593,12 @@ async function runOnce(runIdx) {
     mergerClusters,
     redundantIds,
     lonerIds,
-    pureEngramIds: pureSurvivors.map(p => p.engramId),
-    mergerEngramIds: mergerClusters.map(c => c.originEngramId),
+    pureSourceIds,
+    mergerSourceIds,
     deaths,
     spPop,
     nodeInfoMap,
+    sourceIdMap,
   };
 }
 
@@ -604,16 +609,17 @@ async function runOnce(runIdx) {
   console.log("╔══════════════════════════════════════════════╗");
   console.log("║  SEMANTIC FILTER TEST (Pushback 3-axis)     ║");
   console.log(`║  Runs: ${RUNS}  Ticks: ${TICKS}  Majority: ${MAJORITY}/${RUNS}`.padEnd(46) + " ║");
+  console.log(`║  Source: ${SOURCE_COLLECTION} @ ${QDRANT_URL}`.padEnd(46) + " ║");
   console.log(`║  proxCos: ${M_REF.merge.proximityThreshold}  clusterCos: [${M_REF.pushback.clusterMinCos},${M_REF.pushback.clusterMaxCos})`.padEnd(46) + " ║");
-  console.log(`║  DRY_RUN: ${DRY_RUN}`.padEnd(46) + " ║");
+  console.log(`║  DRY_RUN: ${DRY_RUN}  Mode: ${IS_ENGRAM_MODE ? "engram" : "source"}`.padEnd(46) + " ║");
   console.log(`║  Snapshot: ${SNAPSHOT_FILE ? require("path").basename(SNAPSHOT_FILE) : "none (plain)"}`.padEnd(46) + " ║");
   console.log("╚══════════════════════════════════════════════╝");
   console.log();
 
-  const engramPoints = await getEngramVectors();
-  console.log(`Engram vectors: ${engramPoints.length}`);
-  if (engramPoints.length === 0) {
-    console.log("No engram nodes found. Exiting.");
+  const sourcePoints = await getSourceVectors();
+  console.log(`Source vectors: ${sourcePoints.length}`);
+  if (sourcePoints.length === 0) {
+    console.log("No source nodes found. Exiting.");
     return;
   }
   console.log();
@@ -627,8 +633,8 @@ async function runOnce(runIdx) {
   // ---- Cross-run consensus voting ----
   const voteRedundant = crossVote(results.map(r => r.redundantIds), MAJORITY);
   const voteLoner = crossVote(results.map(r => r.lonerIds), MAJORITY);
-  const votePure = crossVote(results.map(r => r.pureEngramIds), MAJORITY);
-  const voteMerger = crossVote(results.map(r => r.mergerEngramIds), MAJORITY);
+  const votePure = crossVote(results.map(r => r.pureSourceIds), MAJORITY);
+  const voteMerger = crossVote(results.map(r => r.mergerSourceIds), MAJORITY);
 
   const pad = (s, n) => String(s).padStart(n);
 
@@ -636,11 +642,11 @@ async function runOnce(runIdx) {
   console.log(`=== CONSENSUS (majority >= ${MAJORITY}/${RUNS} = ${Math.round(MAJORITY / RUNS * 100)}%) ===`);
   console.log("=".repeat(60));
 
-  // Build engram lookup for enrichment
-  const engramLookup = new Map();
-  for (const ep of engramPoints) {
+  // Build source lookup for enrichment
+  const sourceLookup = new Map();
+  for (const ep of sourcePoints) {
     const p = ep.payload || {};
-    engramLookup.set(String(ep.id), {
+    sourceLookup.set(String(ep.id), {
       summary: p.summary || (p.contents && p.contents[0]) || "",
       tags: p.tags || [],
       status: p.status || "",
@@ -658,7 +664,7 @@ async function runOnce(runIdx) {
   if (votePure.confirmed.length > 0) {
     console.log("\n  === PURE SURVIVORS (unique knowledge, promotion candidates) ===");
     for (const c of votePure.confirmed) {
-      const meta = engramLookup.get(c.id) || {};
+      const meta = sourceLookup.get(c.id) || {};
       console.log(`    ${c.count}/${RUNS} | ${c.id.substring(0, 12)}... | ${(meta.summary || "").slice(0, 60)} [${(meta.tags || []).join(",")}]`);
     }
   }
@@ -667,7 +673,7 @@ async function runOnce(runIdx) {
   if (voteLoner.confirmed.length > 0) {
     console.log("\n  === LONERS (isolated garbage, redundant flag candidates) ===");
     for (const c of voteLoner.confirmed) {
-      const meta = engramLookup.get(c.id) || {};
+      const meta = sourceLookup.get(c.id) || {};
       console.log(`    ${c.count}/${RUNS} | ${c.id.substring(0, 12)}... | ${(meta.summary || "").slice(0, 60)} [${(meta.tags || []).join(",")}]`);
     }
   }
@@ -676,7 +682,7 @@ async function runOnce(runIdx) {
   if (voteMerger.confirmed.length > 0) {
     console.log("\n  === MERGER CLUSTERS (knowledge consolidation candidates) ===");
     for (const c of voteMerger.confirmed) {
-      const meta = engramLookup.get(c.id) || {};
+      const meta = sourceLookup.get(c.id) || {};
       console.log(`    ${c.count}/${RUNS} | ${c.id.substring(0, 12)}... | ${(meta.summary || "").slice(0, 60)} [${(meta.tags || []).join(",")}]`);
     }
   }
@@ -685,7 +691,7 @@ async function runOnce(runIdx) {
   if (voteRedundant.confirmed.length > 0) {
     console.log("\n  === REDUNDANT (early high-cosine merge, near-duplicates) ===");
     for (const c of voteRedundant.confirmed.slice(0, 20)) {
-      const meta = engramLookup.get(c.id) || {};
+      const meta = sourceLookup.get(c.id) || {};
       console.log(`    ${c.count}/${RUNS} | ${c.id.substring(0, 12)}... | ${(meta.summary || "").slice(0, 60)} [${(meta.tags || []).join(",")}]`);
     }
     if (voteRedundant.confirmed.length > 20) console.log(`    ... +${voteRedundant.confirmed.length - 20} more`);
@@ -697,9 +703,9 @@ async function runOnce(runIdx) {
   console.log("  filter      | engramId     | " + runLabels.map(l => pad(l, 3)).join(" ") + " | total");
   console.log("  ------------|--------------|" + runLabels.map(() => "----").join("") + "|------");
   const voteEntries = [
-    ["pure", votePure, r => r.pureEngramIds],
+    ["pure", votePure, r => r.pureSourceIds],
     ["loner", voteLoner, r => r.lonerIds],
-    ["merger", voteMerger, r => r.mergerEngramIds],
+    ["merger", voteMerger, r => r.mergerSourceIds],
     ["redundant", voteRedundant, r => r.redundantIds],
   ];
   for (const [name, vote, getIds] of voteEntries) {
@@ -711,17 +717,19 @@ async function runOnce(runIdx) {
     }
   }
 
-  // ---- Engram flagging (loner → redundant signal) ----
-  if (!DRY_RUN && voteLoner.confirmed.length > 0) {
+  // ---- Flagging (only in engram mode) ----
+  if (IS_ENGRAM_MODE && !DRY_RUN && voteLoner.confirmed.length > 0) {
     console.log("\n  === FLAGGING LONERS IN ENGRAM ===");
     const { flagInEngram } = require("../dist/core/pushback.js");
-    const lonerEngramIds = voteLoner.confirmed.map(c => c.id);
-    const result = await flagInEngram(lonerEngramIds, "loner", "mycelium: consensus loner (" + MAJORITY + "/" + RUNS + " runs)");
-    console.log(`  Flagged: ${result.flagged}/${lonerEngramIds.length}  Errors: ${result.errors}`);
+    const lonerSourceIds = voteLoner.confirmed.map(c => c.id);
+    const result = await flagInEngram(lonerSourceIds, "loner", "mycelium: consensus loner (" + MAJORITY + "/" + RUNS + " runs)");
+    console.log(`  Flagged: ${result.flagged}/${lonerSourceIds.length}  Errors: ${result.errors}`);
+  } else if (!IS_ENGRAM_MODE) {
+    console.log("\n  Non-engram mode — no flagging.");
   } else if (!DRY_RUN) {
     console.log("\n  No loners to flag.");
   } else {
-    console.log("\n  DRY_RUN=true — no engram modification. Set DRY_RUN=false to flag loners.");
+    console.log("\n  DRY_RUN=true — no modification. Set DRY_RUN=false to flag loners.");
   }
 
   console.log("\nDone.");
