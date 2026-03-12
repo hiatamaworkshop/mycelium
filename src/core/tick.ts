@@ -2,8 +2,12 @@
 // Mycelium — Tick engine (I/O wrapper)
 // ============================================================
 //
-// Thin wrapper around tick-core.ts that handles Qdrant I/O,
-// digestor persistence, and observatory collection.
+// Thin wrapper around tick-core.ts that reads/writes the
+// colony-store (in-memory). No per-tick Qdrant I/O.
+//
+// Qdrant is only touched for:
+//   - spawn children upsert (new vectors need persistence)
+//   - periodic flush (not yet, future enhancement)
 //
 // tick-core.ts contains the pure computation logic shared by
 // production (this file), semantic-filter-test, and the loader.
@@ -11,11 +15,12 @@
 import type { MyceliumConfig } from "../types.js";
 import type { MetabolismSchema } from "../types.js";
 import metabolismRaw from "../config/metabolism.json" with { type: "json" };
-import { scrollAll, setPayload, deletePoints, upsertPoints } from "../qdrant.js";
-import { payloadToNode, nodeToPayload } from "./node.js";
+import { upsertPoints } from "../qdrant.js";
+import { nodeToPayload } from "./node.js";
 import { shouldDigest, digestSpeciesMemory, persistSpeciesMemory, recordAction } from "./digestor.js";
 import { shouldCollect, collect as observatoryCollect } from "./observatory.js";
 import { tickCore } from "./tick-core.js";
+import * as store from "./colony-store.js";
 import type { DeathRecord } from "./pushback.js";
 
 const M = metabolismRaw as unknown as MetabolismSchema;
@@ -45,23 +50,15 @@ export interface TickResult {
   interactions: number;
 }
 
-// ---- Single tick execution (I/O wrapper) ----
+// ---- Single tick execution (colony-store based) ----
 
 export async function runTick(config: MyceliumConfig, tickNumber: number): Promise<TickResult> {
-  const { qdrantUrl, collection } = config;
+  // 1. Read all nodes from in-memory store (no Qdrant I/O)
+  const allNodes = store.getAll();
 
-  // 1. Scroll all nodes with vectors (I/O)
-  const points = await scrollAll(qdrantUrl, collection, true);
-
-  if (points.length === 0) {
+  if (allNodes.length === 0) {
     return { tick: tickNumber, processed: 0, expired: 0, spawned: 0, actions: {}, interactions: 0 };
   }
-
-  // Convert to NodeWithVector
-  const allNodes = points.map(p => ({
-    node: payloadToNode(p.id, p.payload),
-    vector: p.vector ?? null,
-  }));
 
   // 2. Run pure tick computation
   const result = tickCore(allNodes, M, tickNumber, {
@@ -73,10 +70,18 @@ export async function runTick(config: MyceliumConfig, tickNumber: number): Promi
     deathLog.set(id, record);
   }
 
-  // 4. Upsert spawn children (I/O)
+  // 4. Update colony-store: apply survivors + deaths
+  const deadIds = [...result.deaths.keys()];
+  store.applyTickResult(result.survivors, deadIds);
+
+  // 5. Handle spawn children: add to store + persist to Qdrant (new vectors)
   if (result.spawns.length > 0) {
     const children = result.spawns.flatMap(s => s.children);
-    await upsertPoints(qdrantUrl, collection, children.map(c => ({
+    for (const c of children) {
+      store.addNode(c);
+    }
+    // Persist new vectors to Qdrant for durability
+    await upsertPoints(config.qdrantUrl, config.collection, children.map(c => ({
       id: c.node.id,
       vector: c.vector,
       payload: nodeToPayload(c.node),
@@ -84,22 +89,7 @@ export async function runTick(config: MyceliumConfig, tickNumber: number): Promi
     console.error(`[mycelium:spawn] ${result.spawnCount} children born from ${result.spawns.length} pairs`);
   }
 
-  // 5. Batch update survivors (I/O)
-  if (result.survivors.length > 0) {
-    await Promise.all(
-      result.survivors.map(({ node }) =>
-        setPayload(qdrantUrl, collection, [node.id], nodeToPayload(node)),
-      ),
-    );
-  }
-
-  // 6. Delete expired/consumed nodes (I/O)
-  const deleteIds = [...result.deaths.keys()];
-  if (deleteIds.length > 0) {
-    await deletePoints(qdrantUrl, collection, deleteIds);
-  }
-
-  // 7. Observatory (side-effect)
+  // 6. Observatory (side-effect)
   if (shouldCollect(tickNumber)) {
     observatoryCollect(
       tickNumber,
@@ -110,7 +100,7 @@ export async function runTick(config: MyceliumConfig, tickNumber: number): Promi
     );
   }
 
-  // 8. Digestor (side-effect)
+  // 7. Digestor (side-effect)
   if (shouldDigest(tickNumber) && result.survivors.length > 0) {
     const digestResult = digestSpeciesMemory(
       result.survivors.map(nv => nv.node),
@@ -132,8 +122,8 @@ export async function runTick(config: MyceliumConfig, tickNumber: number): Promi
 
   return {
     tick: tickNumber,
-    processed: points.length,
-    expired: deleteIds.length,
+    processed: allNodes.length,
+    expired: deadIds.length,
     spawned: result.spawnCount,
     actions: result.actionCounts,
     interactions: result.interactionCount,

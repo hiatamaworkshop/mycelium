@@ -26,14 +26,12 @@ import type { MyceliumConfig } from "./types.js";
 import { embedText } from "./embedding.js";
 import {
   ensureCollection,
-  upsertPoints,
-  searchPoints,
-  countPoints,
   checkQdrantHealth,
 } from "./qdrant.js";
 import { createNode, nodeToPayload, resolveSpecies } from "./core/node.js";
 import { startTick, getTickStats, runTick } from "./core/tick.js";
 import { getSpeciesMemory, getDigestorStats, loadSpeciesMemory } from "./core/digestor.js";
+import * as store from "./core/colony-store.js";
 import { getSnapshots, getLatestSnapshot, getSnapshotCount } from "./core/observatory.js";
 
 // ---- Config ----
@@ -56,6 +54,12 @@ async function ensureInit(): Promise<void> {
 
   await ensureCollection(config.qdrantUrl, config.collection, config.embeddingDimension);
   loadSpeciesMemory(config);
+
+  // Bootstrap colony store from Qdrant (one-time load)
+  if (!store.isLoaded()) {
+    await store.loadFromQdrant(config.qdrantUrl, config.collection);
+  }
+
   initialized = true;
 }
 
@@ -106,11 +110,8 @@ Tag mapping (species-mapping.json):
       const { node, textForEmbedding } = createNode(summary, content, trigger, inherited, undefined, undefined, tags, speciesOverride);
       const vector = await embedText(textForEmbedding);
 
-      const payload = nodeToPayload(node);
-
-      await upsertPoints(config.qdrantUrl, config.collection, [
-        { id: node.id, vector, payload },
-      ]);
+      // Write-through: colony store + Qdrant
+      await store.ingestAndPersist(config.qdrantUrl, config.collection, node.id, vector, node);
 
       const lines = [
         `Node born: ${node.species} [${node.id.slice(0, 8)}]`,
@@ -151,16 +152,10 @@ server.tool(
 
       await ensureInit();
 
-      const total = await countPoints(config.qdrantUrl, config.collection);
-
-      const speciesCounts = await Promise.all(
-        ["summarizer", "sentinel", "herald", "anchor", "spore"].map(async (s) => {
-          const count = await countPoints(config.qdrantUrl, config.collection, {
-            must: [{ key: "species", match: { value: s } }],
-          });
-          return { species: s, count };
-        }),
-      );
+      const total = store.size();
+      const speciesMap = store.countBySpecies();
+      const speciesCounts = ["summarizer", "sentinel", "herald", "anchor", "spore"]
+        .map(s => ({ species: s, count: speciesMap[s] ?? 0 }));
 
       const tick = getTickStats();
 
@@ -220,7 +215,7 @@ server.tool(
       await ensureInit();
 
       const vector = await embedText(query);
-      const results = await searchPoints(config.qdrantUrl, config.collection, vector, undefined, limit);
+      const results = store.search(vector, limit);
 
       if (results.length === 0) {
         return {

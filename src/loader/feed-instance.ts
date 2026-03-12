@@ -22,7 +22,8 @@ import type { MetabolismSchema } from "../types.js";
 import { extractRedundantIds, extractLonerIds, extractPureSurvivors, extractMergerClusters } from "../core/pushback.js";
 import { createNode, nodeToPayload, payloadToNode, resolveSpecies } from "../core/node.js";
 import { getSpeciesMemory, getSpeciesResonanceDelta } from "../core/digestor.js";
-import { upsertPoints, scrollAll, deletePoints } from "../qdrant.js";
+import { upsertPoints, deletePoints } from "../qdrant.js";
+import * as store from "../core/colony-store.js";
 
 const M = metabolismRaw as unknown as MetabolismSchema;
 
@@ -148,7 +149,13 @@ export class FeedInstance {
       this.nodeSourceMap.set(node.id, qualifiedSid);
     }
 
-    // Batch upsert (IO control: other instances are paused during inject)
+    // Add to colony store (in-memory) + persist to Qdrant
+    for (const pt of myceliumPoints) {
+      store.addNode({
+        node: payloadToNode(pt.id, pt.payload),
+        vector: pt.vector,
+      });
+    }
     const BATCH = 100;
     for (let i = 0; i < myceliumPoints.length; i += BATCH) {
       await upsertPoints(config.qdrantUrl, config.collection, myceliumPoints.slice(i, i + BATCH));
@@ -179,9 +186,8 @@ export class FeedInstance {
 
       // Capture cluster snapshot once at ~60% ticks (for merger detection)
       if (this.clusterSnapshot === null && this.ticksElapsed === this.clusterSnapshotTick) {
-        const allPoints = await scrollAll(config.qdrantUrl, config.collection, false);
-        const myNodes = allPoints.filter(p => this.injectedNodeIds.has(p.id));
-        this.clusterSnapshot = myNodes.map(p => payloadToNode(p.id, p.payload));
+        const myNvs = store.getByIds(this.injectedNodeIds);
+        this.clusterSnapshot = myNvs.map(nv => nv.node);
         console.error(
           `[loader:${this.id}] cluster snapshot at tick ${this.ticksElapsed}/${this.targetTicks}: ` +
           `${this.clusterSnapshot.length} nodes`,
@@ -199,14 +205,17 @@ export class FeedInstance {
   async harvest(config: MyceliumConfig): Promise<SurvivorReport[]> {
     this.status = "harvesting";
 
-    // Scroll all surviving nodes (with vectors=false, we need payload for pushback)
-    const allPoints = await scrollAll(config.qdrantUrl, config.collection, false);
+    // Read surviving nodes from in-memory colony store
+    const myNvs = store.getByIds(this.injectedNodeIds);
 
-    // Filter to nodes that belong to this instance
-    const myNodes = allPoints.filter(p => this.injectedNodeIds.has(p.id));
+    // Build compatible point-like objects for downstream code
+    const myNodes = myNvs.map(nv => ({
+      id: nv.node.id,
+      payload: nodeToPayload(nv.node),
+    }));
 
     // Convert to MyceliumNode for pushback analysis
-    const myLivingNodes = myNodes.map(p => payloadToNode(p.id, p.payload));
+    const myLivingNodes = myNvs.map(nv => nv.node);
 
     // ---- Pushback 3-axis analysis ----
     const pureSurvivorCandidates = extractPureSurvivors(myLivingNodes);
@@ -273,9 +282,10 @@ export class FeedInstance {
       });
     }
 
-    // Clean up: delete this instance's surviving nodes from Mycelium Qdrant
+    // Clean up: delete this instance's surviving nodes from store + Qdrant
     const survivorIds = myNodes.map(p => p.id);
     if (survivorIds.length > 0) {
+      store.removeNodes(survivorIds);
       await deletePoints(config.qdrantUrl, config.collection, survivorIds);
     }
 
