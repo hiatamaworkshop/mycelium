@@ -29,6 +29,12 @@ const M = metabolismRaw as unknown as MetabolismSchema;
 
 // ---- Classification ----
 
+export type ChunkClassification = "pure" | "loner" | "redundant" | "merged" | "dead";
+
+/** Per-chunk classification distribution for a sourceId */
+export type ClassificationBreakdown = Record<ChunkClassification, number>;
+
+/** Dominant classification derived from breakdown */
 export type SourceClassification = "pure" | "loner" | "redundant" | "merged" | "dead" | "partial";
 
 // ---- Survivor report (per sourceId) ----
@@ -54,8 +60,10 @@ export interface SurvivorReport {
   survivingTexts: string[];
   /** Whether all parts were accounted for (survived + died = total) */
   partsComplete: boolean;
-  /** Pushback classification */
+  /** Dominant pushback classification (derived from breakdown) */
   classification: SourceClassification;
+  /** Per-chunk 3-axis classification distribution */
+  classificationBreakdown: ClassificationBreakdown;
 }
 
 // ---- Instance status ----
@@ -264,8 +272,8 @@ export class FeedInstance {
       // Parts complete check
       const partsComplete = survivingCount <= entry.totalChunks;
 
-      // ---- Classification: map nodeId-level pushback to sourceId ----
-      const classification = this.classifySource(
+      // ---- Classification: per-chunk breakdown + dominant label ----
+      const { breakdown, dominant } = this.classifyChunks(
         qualifiedSid, survivors, pureNodeIds, mergerNodeIds,
         redundantNodeIds, lonerNodeIds,
       );
@@ -280,7 +288,8 @@ export class FeedInstance {
         species: speciesCounts,
         survivingTexts,
         partsComplete,
-        classification,
+        classification: dominant,
+        classificationBreakdown: breakdown,
       });
     }
 
@@ -307,39 +316,60 @@ export class FeedInstance {
     return reports;
   }
 
-  // ---- Classify a sourceId based on its nodes' pushback results ----
+  // ---- Classify each chunk individually, then derive dominant label ----
 
-  private classifySource(
-    _qualifiedSid: string,
+  private classifyChunks(
+    qualifiedSid: string,
     survivors: Array<{ id: string; payload: { species: string; contents: string[] } }>,
     pureNodeIds: Set<string>,
     mergerNodeIds: Set<string>,
     redundantNodeIds: Set<string>,
     lonerNodeIds: Set<string>,
-  ): SourceClassification {
-    if (survivors.length === 0) {
-      // All chunks died — check death causes
-      // Get all nodeIds for this sourceId
-      const sourceNodeIds = [...this.nodeSourceMap.entries()]
-        .filter(([, sid]) => sid === _qualifiedSid)
-        .map(([nid]) => nid);
+  ): { breakdown: ClassificationBreakdown; dominant: SourceClassification } {
+    const breakdown: ClassificationBreakdown = {
+      pure: 0, merged: 0, loner: 0, redundant: 0, dead: 0,
+    };
 
-      const allLoner = sourceNodeIds.every(nid => lonerNodeIds.has(nid));
-      if (allLoner && sourceNodeIds.length > 0) return "loner";
+    const survivorIds = new Set(survivors.map(s => s.id));
 
-      const allRedundant = sourceNodeIds.every(nid => redundantNodeIds.has(nid));
-      if (allRedundant && sourceNodeIds.length > 0) return "redundant";
+    // Classify ALL nodeIds for this sourceId (both alive and dead)
+    const sourceNodeIds = [...this.nodeSourceMap.entries()]
+      .filter(([, sid]) => sid === qualifiedSid)
+      .map(([nid]) => nid);
 
-      return "dead";
+    for (const nid of sourceNodeIds) {
+      if (survivorIds.has(nid)) {
+        // Alive — check pure or merged
+        if (pureNodeIds.has(nid)) breakdown.pure++;
+        else if (mergerNodeIds.has(nid)) breakdown.merged++;
+        else breakdown.merged++;  // survived with absorptions = merged
+      } else {
+        // Dead — check loner, redundant, or generic death
+        if (lonerNodeIds.has(nid)) breakdown.loner++;
+        else if (redundantNodeIds.has(nid)) breakdown.redundant++;
+        else breakdown.dead++;
+      }
     }
 
-    // Some chunks survived
-    const hasPure = survivors.some(p => pureNodeIds.has(p.id));
-    const hasMerger = survivors.some(p => mergerNodeIds.has(p.id));
+    // Derive dominant classification from breakdown
+    const dominant = this.deriveDominant(breakdown, survivors.length);
 
-    if (hasMerger) return "merged";
-    if (hasPure) return "pure";
+    return { breakdown, dominant };
+  }
 
+  private deriveDominant(
+    bd: ClassificationBreakdown,
+    survivorCount: number,
+  ): SourceClassification {
+    if (survivorCount === 0) {
+      // All dead — dominant death cause
+      if (bd.loner > 0 && bd.loner >= bd.redundant) return "loner";
+      if (bd.redundant > 0) return "redundant";
+      return "dead";
+    }
+    // Some survived — dominant survival type
+    if (bd.pure > 0 && bd.pure >= bd.merged) return "pure";
+    if (bd.merged > 0) return "merged";
     return "partial";
   }
 

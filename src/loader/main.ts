@@ -209,29 +209,32 @@ function printReports(reports: SurvivorReport[]): void {
       const survivingChunks = slotReports.reduce((s, r) => s + r.survivingChunks, 0);
       const slotRate = totalChunks > 0 ? (survivingChunks / totalChunks * 100).toFixed(1) : "0.0";
 
-      // Pushback classification breakdown
-      const classCounts: Record<string, number> = {};
+      // Aggregate chunk-level classification breakdown across all sources in slot
+      const slotBreakdown: Record<string, number> = {};
       for (const r of slotReports) {
-        classCounts[r.classification] = (classCounts[r.classification] ?? 0) + 1;
+        for (const [cls, n] of Object.entries(r.classificationBreakdown)) {
+          if (n > 0) slotBreakdown[cls] = (slotBreakdown[cls] ?? 0) + n;
+        }
       }
-      const classLine = Object.entries(classCounts)
+      const breakdownLine = Object.entries(slotBreakdown)
         .map(([k, v]) => `${k}:${v}`)
         .join(" ");
 
       console.error(`  Slot [${token}]`);
       console.error(`    sources: ${slotReports.length}, survival: ${survivingChunks}/${totalChunks} (${slotRate}%)`);
-      console.error(`    classification: ${classLine}`);
+      console.error(`    3-axis: ${breakdownLine}`);
 
-      // Highlight chunked sources (multi-part articles)
-      const chunked = slotReports.filter(r => r.totalChunks > 1);
-      if (chunked.length > 0) {
-        console.error(`    chunked sources:`);
-        for (const r of chunked) {
-          console.error(
-            `      ${r.sourceId}: ${r.survivingChunks}/${r.totalChunks} chunks survived ` +
-            `(${(r.survivalRate * 100).toFixed(1)}%) [${r.classification}]`,
-          );
-        }
+      // Per-source detail with chunk-level breakdown
+      for (const r of slotReports) {
+        const bd = r.classificationBreakdown;
+        const bdParts = Object.entries(bd)
+          .filter(([, n]) => n > 0)
+          .map(([k, v]) => `${k}:${v}`)
+          .join(" ");
+        console.error(
+          `      ${r.sourceId}: ${r.survivingChunks}/${r.totalChunks} survived ` +
+          `(${(r.survivalRate * 100).toFixed(1)}%) [${bdParts}]`,
+        );
       }
 
       // Species aggregate for slot
