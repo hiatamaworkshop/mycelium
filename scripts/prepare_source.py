@@ -1,7 +1,7 @@
 """
 prepare_source.py — HuggingFace dataset → Source Qdrant
-Embeds text with all-MiniLM-L6-v2 (384d) and assigns tags via keyword matching.
-Long texts are split into overlapping chunks (--chunk-size / --chunk-overlap).
+Embeds text with all-MiniLM-L6-v2 (384d) and assigns tags via header detection + keyword matching.
+Long texts are split into section/paragraph-aware chunks (--chunk-size / --chunk-overlap).
 
 Usage:
   python scripts/prepare_source.py [--dataset DATASET] [--split SPLIT] [--limit N]
@@ -28,46 +28,91 @@ from qdrant_client.models import Distance, PointStruct, VectorParams
 from sentence_transformers import SentenceTransformer
 
 # ---------------------------------------------------------------------------
-# Tag keyword rules — mirrors species-mapping.json
-# Priority order: first match wins (same as resolveByTags in node.ts)
+# Section header detection
+# ---------------------------------------------------------------------------
+
+# Patterns that indicate a section header line
+_HEADER_PATTERNS: list[re.Pattern] = [
+    re.compile(r"^#{1,4}\s+.+"),                          # Markdown: ## Title
+    re.compile(r"^\d+\.(?:\d+\.)*\s+[A-Z]"),              # Numbered: 1. Introduction, 2.3 Methods
+    re.compile(r"^[A-Z][A-Z\s]{3,}$"),                    # ALL CAPS line (≥4 chars): ABSTRACT, METHODS
+    re.compile(r"^(?:Abstract|Introduction|Background|Methods?|Methodology|"
+               r"Results?|Discussion|Conclusions?|References|Acknowledgment|"
+               r"Appendix|Related\s+Work|Experiments?|Evaluation|"
+               r"Implementation|Overview|Summary|Analysis|Limitations?)\s*$",
+               re.IGNORECASE),                             # Known section names (standalone line)
+]
+
+# Header text → tag mapping (normalized lowercase match)
+_HEADER_TAG_MAP: list[tuple[re.Pattern, str]] = [
+    (re.compile(r"\babstract\b", re.I),                    "abstract"),
+    (re.compile(r"\bintroduction\b", re.I),                "summary"),
+    (re.compile(r"\bbackground\b", re.I),                  "summary"),
+    (re.compile(r"\brelated\s+work\b", re.I),              "report"),
+    (re.compile(r"\bmethodology\b|\bmethods?\b", re.I),    "methodology"),
+    (re.compile(r"\bexperiment", re.I),                    "hypothesis"),
+    (re.compile(r"\bevaluation\b", re.I),                  "results"),
+    (re.compile(r"\bresults?\b|\bfindings?\b", re.I),      "results"),
+    (re.compile(r"\bdiscussion\b", re.I),                  "report"),
+    (re.compile(r"\bconclusion", re.I),                    "conclusion"),
+    (re.compile(r"\blimitation", re.I),                    "report"),
+    (re.compile(r"\bsummary\b|\boverview\b", re.I),        "summary"),
+    (re.compile(r"\bappendix\b", re.I),                    "report"),
+    (re.compile(r"\breferences\b", re.I),                  "report"),
+    (re.compile(r"\bimplementation\b", re.I),              "methodology"),
+    (re.compile(r"\banalysis\b", re.I),                    "results"),
+]
+
+
+def is_header_line(line: str) -> bool:
+    """Check if a line looks like a section header."""
+    stripped = line.strip()
+    if not stripped or len(stripped) > 120:
+        return False
+    return any(p.match(stripped) for p in _HEADER_PATTERNS)
+
+
+def header_to_tag(header_text: str) -> str | None:
+    """Map a header line to a tag. Returns None if no match."""
+    stripped = header_text.strip().lstrip("#").strip().rstrip(":").strip()
+    # Strip leading numbers: "1.2 Methods" → "Methods"
+    stripped = re.sub(r"^\d+(?:\.\d+)*\s*", "", stripped)
+    for pat, tag in _HEADER_TAG_MAP:
+        if pat.search(stripped):
+            return tag
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Tag keyword rules — body-level fallback (mirrors species-mapping.json)
+# Only used when header-based tagging doesn't apply
 # ---------------------------------------------------------------------------
 
 TAG_RULES: list[tuple[str, list[str]]] = [
-    # anchor — paper backbone: abstract, conclusion, critical failures
-    ("abstract",   [r"\babstract\b"]),
-    ("conclusion", [r"\bconclusion(?:s)?\b", r"\bconcluding\b"]),
+    # anchor — critical failures
     ("error",      [r"\berror\b", r"\bexception\b", r"\bfail(?:ure|ed)?\b", r"\bcrash(?:ed|es)?\b"]),
     ("bug",        [r"\bbug\b", r"\bdefect\b", r"\bregress(?:ion)?\b"]),
     ("fix",        [r"\bfix(?:ed|es)?\b", r"\bpatch(?:ed)?\b", r"\bresolv(?:ed|es)?\b", r"\bhotfix\b"]),
 
     # sentinel — rules, policies, methodology
-    ("methodology",[r"\bmethodology\b", r"\bmethod(?:s)?\b"]),
     ("config",     [r"\bconfig(?:uration)?\b", r"\bsetting\b", r"\bsetup\b", r"\binstall(?:ation)?\b"]),
-    ("env",        [r"\benvironment\b", r"\benv\b", r"\binfra(?:structure)?\b", r"\bdocker\b",
-                    r"\bkubernetes\b", r"\bk8s\b", r"\bport\b", r"\bpath\b"]),
-    ("rule",       [r"\brule\b", r"\bconvention\b", r"\bstandard\b", r"\bguideline\b"]),
+    ("env",        [r"\benvironment\b", r"\binfra(?:structure)?\b", r"\bdocker\b",
+                    r"\bkubernetes\b", r"\bk8s\b"]),
+    ("rule",       [r"\brule\b", r"\bconvention\b", r"\bguideline\b"]),
     ("policy",     [r"\bpolicy\b", r"\bcompliance\b", r"\bsecurity\b", r"\bvalidat(?:ion|e)\b",
-                    r"\bconstraint\b", r"\brequire(?:ment|d)?\b", r"\blint\b", r"\baudit\b"]),
+                    r"\bconstraint\b", r"\blint\b", r"\baudit\b"]),
 
-    # herald — results, findings, releases, changes
-    ("results",    [r"\bresult(?:s)?\b", r"\bfinding(?:s)?\b", r"\boutcome(?:s)?\b"]),
+    # herald — releases, changes
     ("release",    [r"\brelease(?:d|s)?\b", r"\bdeploy(?:ed|ment)?\b", r"\bship(?:ped)?\b",
                     r"\blaunch(?:ed)?\b"]),
     ("commit",     [r"\bcommit\b", r"\bchangelog\b", r"\bmigrat(?:ion|e|ing)\b",
-                    r"\bbreaking\b", r"\bdeprecate[ds]?\b", r"\bannounce(?:ment)?\b",
-                    r"\bupdate[ds]?\b"]),
+                    r"\bbreaking\b", r"\bdeprecate[ds]?\b"]),
 
-    # spore — ideas, drafts, hypotheses, experiments
+    # spore — ideas, drafts, hypotheses
     ("idea",       [r"\bidea\b", r"\bconcept\b", r"\bbrainstorm\b"]),
     ("draft",      [r"\bdraft\b", r"\bwip\b", r"\bwork[- ]in[- ]progress\b"]),
-    ("hypothesis", [r"\bhypothesis\b", r"\bexperiment(?:al)?\b", r"\bprototyp(?:e|ing)\b",
-                    r"\bpropos(?:al|ed|e)\b", r"\btodo\b", r"\bquestion\b",
-                    r"\bexplor(?:e|ation|ing)\b", r"\bsuggest(?:ion|ed)?\b"]),
-
-    # summarizer — summaries, reports, analysis (catch-all flavor)
-    ("summary",    [r"\bsummar(?:y|ize|ies)\b", r"\bdigest\b", r"\boverview\b"]),
-    ("report",     [r"\breport\b", r"\blog\b", r"\breview\b", r"\banalys[ie]s\b",
-                    r"\bcompar(?:ison|e|ing)\b", r"\bbenchmark\b", r"\bsurvey\b"]),
+    ("hypothesis", [r"\bhypothesis\b", r"\bprototyp(?:e|ing)\b",
+                    r"\bpropos(?:al|ed|e)\b", r"\btodo\b"]),
 ]
 
 # Precompile
@@ -77,34 +122,121 @@ _COMPILED_RULES: list[tuple[str, list[re.Pattern]]] = [
 ]
 
 
-def chunk_text(text: str, chunk_size: int, overlap: int) -> list[str]:
-    """Split text into word-boundary chunks with overlap."""
-    words = text.split()
-    if len(words) <= chunk_size:
-        return [text]
-    chunks: list[str] = []
-    start = 0
-    while start < len(words):
-        end = start + chunk_size
-        chunks.append(" ".join(words[start:end]))
-        start += chunk_size - overlap
-    return chunks
+# ---------------------------------------------------------------------------
+# Section-aware chunking
+# ---------------------------------------------------------------------------
 
+def _split_paragraphs(text: str) -> list[str]:
+    """Split text into paragraphs on blank lines. Preserves non-empty paragraphs."""
+    paragraphs = re.split(r"\n\s*\n", text)
+    return [p.strip() for p in paragraphs if p.strip()]
+
+
+def chunk_text(text: str, chunk_size: int, overlap: int) -> list[str]:
+    """Split text into section/paragraph-aware chunks.
+
+    Strategy:
+    1. Split on paragraph boundaries (\\n\\n)
+    2. If a paragraph starts with a section header, force a chunk break
+    3. Accumulate paragraphs up to chunk_size words
+    4. Overlap is applied at the paragraph level (carry last N words from previous chunk)
+    """
+    paragraphs = _split_paragraphs(text)
+    if not paragraphs:
+        return [text] if text.strip() else []
+
+    # Check total word count — skip chunking for short texts
+    total_words = sum(len(p.split()) for p in paragraphs)
+    if total_words <= chunk_size:
+        return [text.strip()]
+
+    chunks: list[str] = []
+    current_paras: list[str] = []
+    current_words = 0
+    overlap_text = ""
+
+    for para in paragraphs:
+        para_words = len(para.split())
+
+        # Force chunk break on section header (if we have accumulated content)
+        if current_paras and is_header_line(para.split("\n")[0]):
+            chunk = "\n\n".join(current_paras)
+            if chunk.strip():
+                chunks.append(chunk.strip())
+            # Carry overlap from end of previous chunk
+            all_words = chunk.split()
+            overlap_text = " ".join(all_words[-overlap:]) if overlap > 0 and len(all_words) > overlap else ""
+            current_paras = []
+            current_words = 0
+
+        # Would adding this paragraph exceed chunk_size?
+        if current_words + para_words > chunk_size and current_paras:
+            chunk = "\n\n".join(current_paras)
+            if chunk.strip():
+                chunks.append(chunk.strip())
+            all_words = chunk.split()
+            overlap_text = " ".join(all_words[-overlap:]) if overlap > 0 and len(all_words) > overlap else ""
+            current_paras = []
+            current_words = 0
+
+        # Start new chunk with overlap prefix if available
+        if not current_paras and overlap_text:
+            current_paras.append(overlap_text)
+            current_words += len(overlap_text.split())
+            overlap_text = ""
+
+        current_paras.append(para)
+        current_words += para_words
+
+    # Flush remaining
+    if current_paras:
+        chunk = "\n\n".join(current_paras)
+        if chunk.strip():
+            chunks.append(chunk.strip())
+
+    return chunks if chunks else [text.strip()]
+
+
+# ---------------------------------------------------------------------------
+# Tag assignment — header-first, keyword-fallback
+# ---------------------------------------------------------------------------
 
 def assign_tags(text: str, max_tags: int = 3) -> list[str]:
-    """Assign tags by keyword matching. Returns up to max_tags unique tags."""
+    """Assign tags using header detection first, keyword matching as fallback.
+
+    Priority:
+    1. Section header in first 3 lines → header-based tag
+    2. Keyword matching on body text (excludes structural terms like abstract/conclusion
+       which are handled by headers)
+    3. Position-based fallback (added externally for chunked docs)
+    """
     matched: list[str] = []
     seen: set[str] = set()
-    for tag, patterns in _COMPILED_RULES:
-        if tag in seen:
-            continue
-        for pat in patterns:
-            if pat.search(text):
+
+    # --- Phase 1: Header detection (first 3 lines) ---
+    lines = text.split("\n")
+    header_lines = lines[:3]
+    for line in header_lines:
+        if is_header_line(line):
+            tag = header_to_tag(line)
+            if tag and tag not in seen:
                 matched.append(tag)
                 seen.add(tag)
+                break  # one header tag per chunk
+
+    # --- Phase 2: Keyword matching on body (skip if already at max) ---
+    if len(matched) < max_tags:
+        for tag, patterns in _COMPILED_RULES:
+            if tag in seen:
+                continue
+            for pat in patterns:
+                if pat.search(text):
+                    matched.append(tag)
+                    seen.add(tag)
+                    break
+            if len(matched) >= max_tags:
                 break
-        if len(matched) >= max_tags:
-            break
+
     return matched
 
 
@@ -175,13 +307,13 @@ def main():
     all_tags: list[list[str]] = []
     for idx, text in enumerate(texts):
         tags = assign_tags(text)
-        # Position-based tags for chunked documents (structural backbone)
+        # Position-based fallback for chunked documents (last resort)
         total = chunk_total_counts[idx]
         if total > 1:
             seq = chunk_seq_nos[idx]
-            if seq == 0 and "abstract" not in tags:
+            if seq == 0 and "abstract" not in tags and "summary" not in tags:
                 tags.insert(0, "abstract")
-            if seq >= total - 2 and "conclusion" not in tags:
+            if seq >= total - 2 and "conclusion" not in tags and "results" not in tags:
                 tags.insert(0, "conclusion")
         all_tags.append(tags)
         for t in tags:
