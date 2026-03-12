@@ -1,5 +1,52 @@
 # Mycelium — Changelog
 
+## 2026-03-12: Colony Store — per-tick Qdrant I/O 全廃
+
+### 概要
+per-tick の Qdrant I/O（scrollAll + setPayload×N + deletePoints）を全廃し、
+`colony-store.ts`（`Map<string, NodeWithVector>`）をランタイム中の SSOT とした。
+Qdrant は永続化層としてのみ使用。
+
+### Before → After (per tick)
+| 操作 | Before | After |
+|------|--------|-------|
+| 全ノード読み出し | `scrollAll()` HTTP GET | `store.getAll()` in-memory |
+| 状態更新 | `setPayload()` × N HTTP POST | `store.applyTickResult()` in-memory |
+| 死亡ノード削除 | `deletePoints()` HTTP POST | in-memory (Map.delete) |
+| **合計 HTTP/tick** | **N+2** | **0** (spawn 時のみ 1) |
+
+### Qdrant を使用する残りの経路
+- **初期ブートストラップ**: `store.loadFromQdrant()` — 起動時 1 回のみ
+- **Spawn 子ノード永続化**: 新ベクトルの Qdrant 書き込み（発生時のみ）
+- **MCP ingest write-through**: `store.ingestAndPersist()` — store + Qdrant 同時書き込み
+- **Loader inject/harvest**: Qdrant にも書き込み（永続化）、harvest 後に削除
+
+### 並行性に関する注意事項
+- **Loader (dispatcher.ts)**: inject → runTick → harvest が全て `await` で直列実行。競合なし
+- **MCP server (server.ts)**: `startTick()` の setInterval と `mycelium_push` が非同期並行だが、
+  `tickCore()` は**純粋な同期関数**（内部に `await` なし）のため、JS イベントループが
+  事実上の排他制御として機能する。tick 実行中に push が割り込むことはない
+- **store.size() 上限ガードは未実装**: spawn 暴走時の安全弁は現状なし。
+  現在の代謝パラメータでは spawn rate が低く実運用で問題になる可能性は低いが、
+  将来的に metabolism.json の spawn 閾値を下げる場合は要検討
+
+### インメモリ射影パターンの汎用性
+この設計は「ベクトル DB を永続化層に押し下げ、ランタイムはインメモリで回す」汎用パターン:
+- **有効条件**: N < ~50K、ミュータブル状態がベクトル以外にある、高頻度読み書きサイクル
+- **ベクトル更新は実質不要**: embedding は一度生成したら不変。「更新」= delete + re-embed
+- **ANN vs brute-force**: N < ~10K なら brute-force cosine で差は無視できる
+
+### 変更ファイル
+- `src/core/colony-store.ts` (NEW): in-memory store — loadFromQdrant, getAll, getByIds, search, applyTickResult, addNode, removeNodes, flushToQdrant, ingestAndPersist
+- `src/core/tick.ts`: scrollAll/setPayload/deletePoints → store.getAll()/store.applyTickResult()
+- `src/loader/feed-instance.ts`: scrollAll → store.getByIds(), harvest 時 store.removeNodes() 追加
+- `src/server.ts`: countPoints/searchPoints → store.size()/store.search(), upsertPoints → store.ingestAndPersist()
+
+### ロールバック
+colony-store.ts を削除し、tick.ts/feed-instance.ts/server.ts を revert（commit `46f988b` 以前の状態）。
+
+---
+
 ## 2026-03-10: selectionBias + targetAffinity — 種族間選好と行動意図ベース対象選択
 
 ### 概念
