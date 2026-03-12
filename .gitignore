@@ -25,3 +25,6 @@ package-lock.json
 # Training artifacts (mutable, auto-generated)
 data/species-weights.json
 data/snapshots/species-weights-2*.json
+
+# Raw HuggingFace datasets (large, downloaded via --save-raw)
+data/raw/

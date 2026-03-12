@@ -1,4 +1,9 @@
 FROM python:3.11-slim
-RUN pip install --no-cache-dir datasets sentence-transformers qdrant-client
-WORKDIR /scripts
-ENTRYPOINT ["python", "prepare_source.py"]
+RUN pip install --no-cache-dir "datasets>=2.18,<3.0" sentence-transformers qdrant-client
+WORKDIR /app
+# Mount points:
+#   /app/scripts  ← bind-mount scripts/
+#   /app/data/raw ← bind-mount data/raw/ (persists downloaded datasets)
+# Default: process_source.py (Phase 2 processor)
+# Override for download: docker run ... prepare-source python scripts/prepare_source.py ...
+ENTRYPOINT ["python", "scripts/process_source.py"]
