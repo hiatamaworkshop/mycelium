@@ -30,6 +30,8 @@ import * as store from "../core/colony-store.js";
 export interface DispatcherConfig {
   /** Ticks per instance before harvest */
   targetTicks: number;
+  /** Tick% at which to harvest survivors (0.0–1.0). Controlled by FILTER_HARDNESS */
+  harvestPct: number;
   /** Max ticks between cascade instance starts (fallback) */
   cascadeDelayTicks: number;
   /** Minimum ticks after inject before considering next (floor) */
@@ -43,6 +45,7 @@ export interface DispatcherConfig {
 
 export const DEFAULT_DISPATCHER_CONFIG: DispatcherConfig = {
   targetTicks: 60,
+  harvestPct: 0.6,
   cascadeDelayTicks: 30,
   cascadeMinDelay: 5,
   absorptionRatio: 0.4,
@@ -194,6 +197,7 @@ export class Dispatcher {
         slot.points,
         this.dispatchConfig.targetTicks,
         slot.chunkRegistry,
+        this.dispatchConfig.harvestPct,
       ),
     );
 

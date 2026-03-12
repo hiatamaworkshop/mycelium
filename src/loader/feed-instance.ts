@@ -79,6 +79,7 @@ export class FeedInstance {
   readonly targetTicks: number;
   readonly chunkRegistry: ChunkRegistry;
   readonly forceSpore: boolean;
+  readonly harvestPct: number;
 
   status: InstanceStatus = "pending";
   startTick = 0;
@@ -97,20 +98,26 @@ export class FeedInstance {
   private clusterSnapshot: MyceliumNode[] | null = null;
   private clusterSnapshotTick: number;
 
+  // Harvest tick: the tick at which survival is judged (harvestPct × targetTicks)
+  private harvestTick: number;
+
   constructor(
     id: string,
     batchToken: string,
     sourcePoints: SourcePoint[],
     targetTicks: number,
     chunkRegistry: ChunkRegistry,
+    harvestPct: number = 0.6,
   ) {
     this.id = id;
     this.batchToken = batchToken;
     this.sourcePoints = sourcePoints;
     this.targetTicks = targetTicks;
     this.chunkRegistry = chunkRegistry;
+    this.harvestPct = harvestPct;
     this.forceSpore = (process.env.LOADER_FORCE_SPORE ?? "").toLowerCase() === "true";
     this.clusterSnapshotTick = Math.floor(targetTicks * (M.pushback?.clusterPct ?? 0.6));
+    this.harvestTick = Math.floor(targetTicks * harvestPct);
   }
 
   get nodeCount(): number {
@@ -207,7 +214,7 @@ export class FeedInstance {
   }
 
   isComplete(): boolean {
-    return this.status === "running" && this.ticksElapsed >= this.targetTicks;
+    return this.status === "running" && this.ticksElapsed >= this.harvestTick;
   }
 
   // ---- Harvest survivors (per-sourceId reporting with pushback classification) ----

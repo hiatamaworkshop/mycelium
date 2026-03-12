@@ -239,5 +239,18 @@
       "hitCountCap": "Denominator for min(hitCount/N, 1) in h/d bias. 5 = caps at 5 recall hits",
       "fixedBonus": "Bonus for status=fixed engram nodes: +N% w, −N% d. 0.15 = ±15%"
     }
+  },
+  "hardness": {
+    "presets": {
+      "soft": { "harvestPct": 0.3 },
+      "mid": { "harvestPct": 0.6 },
+      "hard": { "harvestPct": 0.9 }
+    },
+    "_tuning": {
+      "harvestPct": "Tick% at which to judge survival. Same ecosystem, different observation point",
+      "soft": "30% — early snapshot, many still alive → coarse filter, more output",
+      "mid": "60% — current clusterPct equivalent → balanced filter",
+      "hard": "90% — late snapshot, only the strongest remain → strict filter, minimal output"
+    }
   }
 }

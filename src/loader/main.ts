@@ -24,6 +24,7 @@
 //   CASCADE_MAX_DELAY     — Max ticks between cascade inject (default: 30)
 //   CASCADE_MIN_DELAY     — Min ticks before considering next inject (default: 5)
 //   ABSORPTION_RATIO      — Interaction spike absorption threshold (default: 0.4)
+//   FILTER_HARDNESS       — "soft" | "mid" | "hard" (default: mid)
 
 import { DEFAULT_CONFIG } from "../types.js";
 import type { MyceliumConfig } from "../types.js";
@@ -34,8 +35,11 @@ import { Dispatcher, DEFAULT_DISPATCHER_CONFIG } from "./dispatcher.js";
 import type { DispatcherConfig } from "./dispatcher.js";
 import type { SurvivorReport } from "./feed-instance.js";
 import { parseIsolationMode, buildWorldDefinitions } from "./world-config.js";
+import { resolveHardness } from "./hardness.js";
 
 // ---- Config from environment ----
+
+const { level: hardnessLevel, preset: hardnessPreset } = resolveHardness(process.env.FILTER_HARDNESS);
 
 const qdrantUrl = process.env.QDRANT_URL ?? "http://localhost:6334";
 
@@ -56,6 +60,7 @@ const myceliumConfig: MyceliumConfig = {
 const dispatchConfig: DispatcherConfig = {
   ...DEFAULT_DISPATCHER_CONFIG,
   targetTicks: parseInt(process.env.TARGET_TICKS ?? "60", 10),
+  harvestPct: hardnessPreset.harvestPct,
   tickIntervalMs: parseInt(process.env.TICK_INTERVAL_MS ?? "3000", 10),
   cascadeDelayTicks: parseInt(process.env.CASCADE_MAX_DELAY ?? "30", 10),
   cascadeMinDelay: parseInt(process.env.CASCADE_MIN_DELAY ?? "5", 10),
@@ -96,6 +101,7 @@ async function main(): Promise<void> {
   console.error(`  sources:       ${sourceCollectionNames.join(", ")}`);
   console.error(`  isolation:     ${isolationMode} (${worlds.length} world(s))`);
   console.error(`  slot capacity: ${slotCapacity} nodes/slot`);
+  console.error(`  hardness:      ${hardnessLevel} (harvest at ${(hardnessPreset.harvestPct * 100).toFixed(0)}% of ticks)`);
   console.error(`  ticks:         ${dispatchConfig.targetTicks}`);
   console.error(`  interval:      ${dispatchConfig.tickIntervalMs}ms`);
   console.error(`  cascade:       adaptive (min=${dispatchConfig.cascadeMinDelay}, max=${dispatchConfig.cascadeDelayTicks}, ratio=${dispatchConfig.absorptionRatio})`);

@@ -327,6 +327,23 @@ export interface MetabolismSchema {
     hitCountCap: number;
     fixedBonus: number;
   };
+
+  hardness?: {
+    presets: Record<string, HardnessPreset>;
+  };
+}
+
+// ---- Hardness ----
+
+export type HardnessLevel = "soft" | "mid" | "hard";
+
+/**
+ * Hardness = what % of ticks to run before judging survival.
+ * The ecosystem runs identically — only the observation point changes.
+ */
+export interface HardnessPreset {
+  /** Tick% at which to harvest survivors (0.0–1.0) */
+  harvestPct: number;
 }
 
 // ---- Config ----
