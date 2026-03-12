@@ -99,7 +99,7 @@ export class FeedInstance {
     this.sourcePoints = sourcePoints;
     this.targetTicks = targetTicks;
     this.chunkRegistry = chunkRegistry;
-    this.forceSpore = (process.env.LOADER_SPECIES_FROM_TAGS ?? "").toLowerCase() !== "true";
+    this.forceSpore = (process.env.LOADER_FORCE_SPORE ?? "").toLowerCase() === "true";
     this.clusterSnapshotTick = Math.floor(targetTicks * (M.pushback?.clusterPct ?? 0.6));
   }
 

@@ -8,13 +8,26 @@ Usage:
                                    [--collection NAME] [--qdrant-url URL]
                                    [--text-field FIELD] [--id-field FIELD]
                                    [--chunk-size N] [--chunk-overlap N]
+                                   [--doc-separator REGEX] [--section-field FIELD]
 
 Example (short texts, no chunking):
   python scripts/prepare_source.py --dataset "ag_news" --split "train[:500]" --text-field "text"
 
-Example (long texts, with chunking):
-  python scripts/prepare_source.py --dataset "ccdv/arxiv-summarization" --split "train[:5]" \
+Example (long texts, with chunking — arxiv):
+  python scripts/prepare_source.py --dataset "ccdv/arxiv-summarization" --split "train[:5]" \\
     --text-field "article" --chunk-size 500 --chunk-overlap 50
+
+Example (scientific_papers — inject section headers):
+  python scripts/prepare_source.py --dataset "armanc/scientific_papers" --split "pubmed[:10]" \\
+    --text-field "article" --section-field "section_names" --chunk-size 500
+
+Example (big_patent — patent headers auto-detected):
+  python scripts/prepare_source.py --dataset "NortheasternUniversity/big_patent" --split "train[:10]" \\
+    --text-field "description" --chunk-size 500
+
+Example (multi_news — split on ||||| separator):
+  python scripts/prepare_source.py --dataset "alexfabbri/multi_news" --split "train[:100]" \\
+    --text-field "document" --doc-separator '\\|{3,}'
 """
 
 import argparse
@@ -27,11 +40,22 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, PointStruct, VectorParams
 from sentence_transformers import SentenceTransformer
 
-# ---------------------------------------------------------------------------
-# Section header detection
-# ---------------------------------------------------------------------------
+# ===========================================================================
+# Academic / structured-document header detection
+# ===========================================================================
+# For chunked long-form documents (papers, reports, manuals) where section
+# headers carry structural meaning.  Used by assign_tags() Phase 1.
 
-# Patterns that indicate a section header line
+# Regex to strip leading noise before header matching
+_HEADER_PREFIX_STRIP = re.compile(
+    r"^(?:"
+    r"\[\d+\]\s*"           # Patent paragraph numbering: [0001]
+    r"|"
+    r"\[sec:[^\]]*\]\s*"    # ArXiv section labels: [sec:intro]
+    r")*"
+)
+
+# Patterns that indicate a section header line (applied AFTER prefix stripping)
 _HEADER_PATTERNS: list[re.Pattern] = [
     re.compile(r"^#{1,4}\s+.+"),                          # Markdown: ## Title
     re.compile(r"^\d+\.(?:\d+\.)*\s+[A-Z]"),              # Numbered: 1. Introduction, 2.3 Methods
@@ -40,11 +64,25 @@ _HEADER_PATTERNS: list[re.Pattern] = [
                r"Results?|Discussion|Conclusions?|References|Acknowledgment|"
                r"Appendix|Related\s+Work|Experiments?|Evaluation|"
                r"Implementation|Overview|Summary|Analysis|Limitations?)\s*$",
-               re.IGNORECASE),                             # Known section names (standalone line)
+               re.IGNORECASE),                             # Known academic section names
+    re.compile(r"^(?:Field\s+of\s+the\s+Invention|"
+               r"Background\s+of\s+the\s+Invention|"
+               r"Summary\s+of\s+the\s+Invention|"
+               r"Brief\s+Summary|"
+               r"Detailed\s+Description(?:\s+of.*)?|"
+               r"Brief\s+Description\s+of.*Drawings|"
+               r"Claims?|Examples?)\s*$",
+               re.IGNORECASE),                             # Patent section names
 ]
 
-# Header text → tag mapping (normalized lowercase match)
+# Header text → tag mapping (species-mapping.json tags)
+#   anchor:     abstract, conclusion
+#   sentinel:   methodology
+#   herald:     results
+#   spore:      hypothesis
+#   summarizer: summary, report
 _HEADER_TAG_MAP: list[tuple[re.Pattern, str]] = [
+    # ---- Academic sections ----
     (re.compile(r"\babstract\b", re.I),                    "abstract"),
     (re.compile(r"\bintroduction\b", re.I),                "summary"),
     (re.compile(r"\bbackground\b", re.I),                  "summary"),
@@ -61,7 +99,24 @@ _HEADER_TAG_MAP: list[tuple[re.Pattern, str]] = [
     (re.compile(r"\breferences\b", re.I),                  "report"),
     (re.compile(r"\bimplementation\b", re.I),              "methodology"),
     (re.compile(r"\banalysis\b", re.I),                    "results"),
+    # ---- Patent sections ----
+    (re.compile(r"\bfield of the invention\b", re.I),      "methodology"),
+    (re.compile(r"\bsummary of the invention\b", re.I),    "abstract"),
+    (re.compile(r"\bbrief summary\b", re.I),               "abstract"),
+    (re.compile(r"\bdetailed description\b", re.I),        "methodology"),
+    (re.compile(r"\bdescription of.*drawings\b", re.I),    "report"),
+    (re.compile(r"\bclaims?\b", re.I),                     "conclusion"),
+    (re.compile(r"\bexamples?\b", re.I),                   "hypothesis"),
 ]
+
+
+def _clean_header(line: str) -> str:
+    """Strip noise prefixes from a potential header line."""
+    s = line.strip()
+    s = _HEADER_PREFIX_STRIP.sub("", s)          # [0001], [sec:xxx]
+    s = s.lstrip("#").strip().rstrip(":").strip()  # Markdown #, trailing :
+    s = re.sub(r"^\d+(?:\.\d+)*\s*", "", s)       # Leading numbers: 1.2 Methods → Methods
+    return s
 
 
 def is_header_line(line: str) -> bool:
@@ -69,32 +124,35 @@ def is_header_line(line: str) -> bool:
     stripped = line.strip()
     if not stripped or len(stripped) > 120:
         return False
-    return any(p.match(stripped) for p in _HEADER_PATTERNS)
+    cleaned = _HEADER_PREFIX_STRIP.sub("", stripped)
+    return any(p.match(cleaned) for p in _HEADER_PATTERNS)
 
 
 def header_to_tag(header_text: str) -> str | None:
     """Map a header line to a tag. Returns None if no match."""
-    stripped = header_text.strip().lstrip("#").strip().rstrip(":").strip()
-    # Strip leading numbers: "1.2 Methods" → "Methods"
-    stripped = re.sub(r"^\d+(?:\.\d+)*\s*", "", stripped)
+    cleaned = _clean_header(header_text)
+    if not cleaned:
+        return None
     for pat, tag in _HEADER_TAG_MAP:
-        if pat.search(stripped):
+        if pat.search(cleaned):
             return tag
     return None
 
 
-# ---------------------------------------------------------------------------
-# Tag keyword rules — body-level fallback (mirrors species-mapping.json)
-# Only used when header-based tagging doesn't apply
-# ---------------------------------------------------------------------------
+# ===========================================================================
+# General-purpose keyword rules (body-level)
+# ===========================================================================
+# For ANY text type (short articles, notes, logs, etc.).
+# Matches keywords anywhere in the chunk body.
+# Grouped by target species (mirrors species-mapping.json).
 
 TAG_RULES: list[tuple[str, list[str]]] = [
-    # anchor — critical failures
+    # ---- anchor: critical failures, incidents ----
     ("error",      [r"\berror\b", r"\bexception\b", r"\bfail(?:ure|ed)?\b", r"\bcrash(?:ed|es)?\b"]),
     ("bug",        [r"\bbug\b", r"\bdefect\b", r"\bregress(?:ion)?\b"]),
     ("fix",        [r"\bfix(?:ed|es)?\b", r"\bpatch(?:ed)?\b", r"\bresolv(?:ed|es)?\b", r"\bhotfix\b"]),
 
-    # sentinel — rules, policies, methodology
+    # ---- sentinel: rules, policies, configuration ----
     ("config",     [r"\bconfig(?:uration)?\b", r"\bsetting\b", r"\bsetup\b", r"\binstall(?:ation)?\b"]),
     ("env",        [r"\benvironment\b", r"\binfra(?:structure)?\b", r"\bdocker\b",
                     r"\bkubernetes\b", r"\bk8s\b"]),
@@ -102,13 +160,13 @@ TAG_RULES: list[tuple[str, list[str]]] = [
     ("policy",     [r"\bpolicy\b", r"\bcompliance\b", r"\bsecurity\b", r"\bvalidat(?:ion|e)\b",
                     r"\bconstraint\b", r"\blint\b", r"\baudit\b"]),
 
-    # herald — releases, changes
+    # ---- herald: releases, changes, announcements ----
     ("release",    [r"\brelease(?:d|s)?\b", r"\bdeploy(?:ed|ment)?\b", r"\bship(?:ped)?\b",
                     r"\blaunch(?:ed)?\b"]),
     ("commit",     [r"\bcommit\b", r"\bchangelog\b", r"\bmigrat(?:ion|e|ing)\b",
                     r"\bbreaking\b", r"\bdeprecate[ds]?\b"]),
 
-    # spore — ideas, drafts, hypotheses
+    # ---- spore: ideas, drafts, hypotheses ----
     ("idea",       [r"\bidea\b", r"\bconcept\b", r"\bbrainstorm\b"]),
     ("draft",      [r"\bdraft\b", r"\bwip\b", r"\bwork[- ]in[- ]progress\b"]),
     ("hypothesis", [r"\bhypothesis\b", r"\bprototyp(?:e|ing)\b",
@@ -120,6 +178,83 @@ _COMPILED_RULES: list[tuple[str, list[re.Pattern]]] = [
     (tag, [re.compile(p, re.IGNORECASE) for p in patterns])
     for tag, patterns in TAG_RULES
 ]
+
+
+# ===========================================================================
+# Preprocessing — dataset-specific transforms (before chunking)
+# ===========================================================================
+
+def split_on_separator(raw_texts: list[str], raw_ids: list, pattern: str) -> tuple[list[str], list]:
+    """Split each document on a regex separator into multiple sub-documents.
+
+    For multi_news ("|||||"), use pattern r'\\|{3,}' to match 3+ pipes flexibly.
+    Returns expanded (texts, ids) where ids get `:N` suffix.
+    """
+    sep_re = re.compile(pattern)
+    out_texts: list[str] = []
+    out_ids: list = []
+    split_count = 0
+    for i, raw in enumerate(raw_texts):
+        parts = sep_re.split(raw)
+        parts = [p.strip() for p in parts if p.strip()]
+        if len(parts) <= 1:
+            out_texts.append(raw)
+            out_ids.append(raw_ids[i])
+        else:
+            split_count += 1
+            for j, part in enumerate(parts):
+                out_texts.append(part)
+                out_ids.append(f"{raw_ids[i]}:{j}")
+    if split_count > 0:
+        print(f"  → doc-separator: {len(raw_texts)} docs → {len(out_texts)} sub-docs ({split_count} split)")
+    return out_texts, out_ids
+
+
+def inject_section_names(raw_texts: list[str], section_names_col: list[str]) -> list[str]:
+    """Inject section names from a separate field into article text as header lines.
+
+    For scientific_papers: section_names are \\n-separated, article paragraphs are \\n-separated.
+    Strategy: distribute N section headers proportionally across M paragraphs.
+    """
+    result: list[str] = []
+    injected_count = 0
+    for text, sections_raw in zip(raw_texts, section_names_col):
+        if not sections_raw or not sections_raw.strip():
+            result.append(text)
+            continue
+
+        # Parse and clean section names
+        names = [s.strip() for s in sections_raw.split("\n") if s.strip()]
+        names = [_HEADER_PREFIX_STRIP.sub("", n).strip() for n in names]
+        names = [n for n in names if n]
+
+        if not names:
+            result.append(text)
+            continue
+
+        # Split article into paragraphs (single \n separated in scientific_papers)
+        paragraphs = [p.strip() for p in text.split("\n") if p.strip()]
+        if not paragraphs:
+            result.append(text)
+            continue
+
+        # Distribute section headers proportionally across paragraphs
+        step = max(1, len(paragraphs) // len(names))
+        new_parts: list[str] = []
+        name_idx = 0
+        for pi, para in enumerate(paragraphs):
+            if name_idx < len(names) and pi == name_idx * step:
+                new_parts.append(names[name_idx])
+                name_idx += 1
+            new_parts.append(para)
+
+        # Join with double newlines so _split_paragraphs and chunk_text work correctly
+        result.append("\n\n".join(new_parts))
+        injected_count += 1
+
+    if injected_count > 0:
+        print(f"  → section-field: injected headers into {injected_count}/{len(raw_texts)} docs")
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -202,13 +337,18 @@ def chunk_text(text: str, chunk_size: int, overlap: int) -> list[str]:
 # ---------------------------------------------------------------------------
 
 def assign_tags(text: str, max_tags: int = 3) -> list[str]:
-    """Assign tags using header detection first, keyword matching as fallback.
+    """Assign tags via two independent layers.
 
-    Priority:
-    1. Section header in first 3 lines → header-based tag
-    2. Keyword matching on body text (excludes structural terms like abstract/conclusion
-       which are handled by headers)
-    3. Position-based fallback (added externally for chunked docs)
+    Layer 1 — Academic header detection (chunked docs only in practice):
+      Checks first 3 lines for section headers (## Abstract, 1. Introduction, etc.)
+      and maps them to structural tags (abstract, methodology, results, ...).
+
+    Layer 2 — General keyword matching (all text types):
+      Scans body text for domain keywords (error, config, release, idea, ...).
+      These are NOT academic-specific and apply to short articles, notes, logs, etc.
+
+    Position-based fallback (applied externally for chunked docs):
+      First chunk → "abstract", last 2 chunks → "conclusion" (if no existing tag).
     """
     matched: list[str] = []
     seen: set[str] = set()
@@ -254,6 +394,12 @@ def main():
                         help="Chunk size in words (0=no chunking). Recommended: 80-120 for MiniLM")
     parser.add_argument("--chunk-overlap", type=int, default=15,
                         help="Overlap words between chunks (default: 15)")
+    parser.add_argument("--doc-separator", default="",
+                        help="Regex to split each row into sub-documents before chunking. "
+                             r"For multi_news: '\\|{3,}' (3+ pipes)")
+    parser.add_argument("--section-field", default="",
+                        help="Field containing \\n-separated section names to inject as headers. "
+                             "For scientific_papers: 'section_names'")
     parser.add_argument("--force", action="store_true",
                         help="Delete existing collection before creating. Without this flag, "
                              "existing collections are protected (upsert/append only)")
@@ -266,9 +412,20 @@ def main():
         ds = ds.select(range(min(args.limit, len(ds))))
     print(f"  → {len(ds)} rows loaded")
 
-    raw_texts = ds[args.text_field]
+    raw_texts = list(ds[args.text_field])
     has_id = args.id_field and args.id_field in ds.column_names
     raw_ids = ds[args.id_field] if has_id else list(range(len(ds)))
+
+    # ---- Preprocessing: doc separator (multi_news etc.) ----
+    if args.doc_separator:
+        raw_texts, raw_ids = split_on_separator(raw_texts, raw_ids, args.doc_separator)
+
+    # ---- Preprocessing: section name injection (scientific_papers etc.) ----
+    if args.section_field:
+        if args.section_field in ds.column_names:
+            raw_texts = inject_section_names(raw_texts, list(ds[args.section_field]))
+        else:
+            print(f"  ⚠ --section-field '{args.section_field}' not found in dataset columns: {ds.column_names}")
 
     # ---- Chunk (if needed) ----
     texts: list[str] = []
