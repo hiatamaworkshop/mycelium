@@ -450,7 +450,7 @@ async function seedNodes(M, digestor) {
     const summary = (p.contents && p.contents[0]) || p.summary || "source node";
     const trigger = p.trigger || "manual";
     const tags = p.tags || [];
-    const sp = IS_ENGRAM_MODE ? resolveSpecies(trigger, tags) : "spore";
+    const sp = resolveSpecies(trigger, tags);
     speciesCounts[sp] = (speciesCounts[sp] || 0) + 1;
     const inherited = digestor.getMemory(sp);
     const inheritedRes = digestor.getResonanceDelta(sp);

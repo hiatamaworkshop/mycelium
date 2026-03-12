@@ -13,14 +13,18 @@
 // Harvest: per-sourceId survival + pushback classification
 //   (pure / loner / redundant / merged / dead)
 
-import type { MyceliumConfig, Species } from "../types.js";
+import type { MyceliumConfig, MyceliumNode, Species } from "../types.js";
 import type { SourcePoint } from "./source-scroll.js";
 import type { ChunkRegistry } from "./slot-allocator.js";
 import type { DeathRecord } from "../core/pushback.js";
+import metabolismRaw from "../config/metabolism.json" with { type: "json" };
+import type { MetabolismSchema } from "../types.js";
 import { extractRedundantIds, extractLonerIds, extractPureSurvivors, extractMergerClusters } from "../core/pushback.js";
 import { createNode, nodeToPayload, payloadToNode, resolveSpecies } from "../core/node.js";
 import { getSpeciesMemory, getSpeciesResonanceDelta } from "../core/digestor.js";
 import { upsertPoints, scrollAll, deletePoints } from "../qdrant.js";
+
+const M = metabolismRaw as unknown as MetabolismSchema;
 
 // ---- Classification ----
 
@@ -78,6 +82,10 @@ export class FeedInstance {
   // Death log: accumulated from global tick deaths, filtered to this instance's nodes
   private deathLog: Map<string, DeathRecord> = new Map();
 
+  // Cluster snapshot: captured once at ~60% ticks for merger detection
+  private clusterSnapshot: MyceliumNode[] | null = null;
+  private clusterSnapshotTick: number;
+
   constructor(
     id: string,
     batchToken: string,
@@ -91,6 +99,7 @@ export class FeedInstance {
     this.targetTicks = targetTicks;
     this.chunkRegistry = chunkRegistry;
     this.forceSpore = (process.env.LOADER_SPECIES_FROM_TAGS ?? "").toLowerCase() !== "true";
+    this.clusterSnapshotTick = Math.floor(targetTicks * (M.pushback?.clusterPct ?? 0.6));
   }
 
   get nodeCount(): number {
@@ -157,7 +166,7 @@ export class FeedInstance {
 
   // ---- Tick tracking + death log collection ----
 
-  onTick(tickDeaths: Map<string, DeathRecord>): void {
+  async onTick(tickDeaths: Map<string, DeathRecord>, config: MyceliumConfig): Promise<void> {
     if (this.status === "running") {
       this.ticksElapsed++;
 
@@ -166,6 +175,17 @@ export class FeedInstance {
         if (this.injectedNodeIds.has(nodeId)) {
           this.deathLog.set(nodeId, record);
         }
+      }
+
+      // Capture cluster snapshot once at ~60% ticks (for merger detection)
+      if (this.clusterSnapshot === null && this.ticksElapsed === this.clusterSnapshotTick) {
+        const allPoints = await scrollAll(config.qdrantUrl, config.collection, false);
+        const myNodes = allPoints.filter(p => this.injectedNodeIds.has(p.id));
+        this.clusterSnapshot = myNodes.map(p => payloadToNode(p.id, p.payload));
+        console.error(
+          `[loader:${this.id}] cluster snapshot at tick ${this.ticksElapsed}/${this.targetTicks}: ` +
+          `${this.clusterSnapshot.length} nodes`,
+        );
       }
     }
   }
@@ -192,7 +212,8 @@ export class FeedInstance {
     const pureSurvivorCandidates = extractPureSurvivors(myLivingNodes);
     const pureNodeIds = new Set(pureSurvivorCandidates.map(c => c.nodeId));
 
-    const mergerClusters = extractMergerClusters(myLivingNodes);
+    // Use 60% tick snapshot for merger detection if available, fall back to harvest-time nodes
+    const mergerClusters = extractMergerClusters(this.clusterSnapshot ?? myLivingNodes);
     const mergerNodeIds = new Set(mergerClusters.map(c => c.originId));
 
     // Death-based analysis (relative ticks for this instance)

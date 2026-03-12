@@ -33,20 +33,24 @@ from sentence_transformers import SentenceTransformer
 # ---------------------------------------------------------------------------
 
 TAG_RULES: list[tuple[str, list[str]]] = [
-    # anchor — immovable foundation: errors, infra, env, hard facts
+    # anchor — paper backbone: abstract, conclusion, critical failures
+    ("abstract",   [r"\babstract\b"]),
+    ("conclusion", [r"\bconclusion(?:s)?\b", r"\bconcluding\b"]),
     ("error",      [r"\berror\b", r"\bexception\b", r"\bfail(?:ure|ed)?\b", r"\bcrash(?:ed|es)?\b"]),
     ("bug",        [r"\bbug\b", r"\bdefect\b", r"\bregress(?:ion)?\b"]),
     ("fix",        [r"\bfix(?:ed|es)?\b", r"\bpatch(?:ed)?\b", r"\bresolv(?:ed|es)?\b", r"\bhotfix\b"]),
+
+    # sentinel — rules, policies, methodology
+    ("methodology",[r"\bmethodology\b", r"\bmethod(?:s)?\b"]),
     ("config",     [r"\bconfig(?:uration)?\b", r"\bsetting\b", r"\bsetup\b", r"\binstall(?:ation)?\b"]),
     ("env",        [r"\benvironment\b", r"\benv\b", r"\binfra(?:structure)?\b", r"\bdocker\b",
                     r"\bkubernetes\b", r"\bk8s\b", r"\bport\b", r"\bpath\b"]),
-
-    # sentinel — rules, policies, standards, constraints
     ("rule",       [r"\brule\b", r"\bconvention\b", r"\bstandard\b", r"\bguideline\b"]),
     ("policy",     [r"\bpolicy\b", r"\bcompliance\b", r"\bsecurity\b", r"\bvalidat(?:ion|e)\b",
                     r"\bconstraint\b", r"\brequire(?:ment|d)?\b", r"\blint\b", r"\baudit\b"]),
 
-    # herald — announcements, releases, changes, migrations
+    # herald — results, findings, releases, changes
+    ("results",    [r"\bresult(?:s)?\b", r"\bfinding(?:s)?\b", r"\boutcome(?:s)?\b"]),
     ("release",    [r"\brelease(?:d|s)?\b", r"\bdeploy(?:ed|ment)?\b", r"\bship(?:ped)?\b",
                     r"\blaunch(?:ed)?\b"]),
     ("commit",     [r"\bcommit\b", r"\bchangelog\b", r"\bmigrat(?:ion|e|ing)\b",
@@ -61,7 +65,7 @@ TAG_RULES: list[tuple[str, list[str]]] = [
                     r"\bexplor(?:e|ation|ing)\b", r"\bsuggest(?:ion|ed)?\b"]),
 
     # summarizer — summaries, reports, analysis (catch-all flavor)
-    ("summary",    [r"\bsummar(?:y|ize|ies)\b", r"\bdigest\b", r"\boverview\b", r"\babstract\b"]),
+    ("summary",    [r"\bsummar(?:y|ize|ies)\b", r"\bdigest\b", r"\boverview\b"]),
     ("report",     [r"\breport\b", r"\blog\b", r"\breview\b", r"\banalys[ie]s\b",
                     r"\bcompar(?:ison|e|ing)\b", r"\bbenchmark\b", r"\bsurvey\b"]),
 ]
@@ -138,6 +142,7 @@ def main():
     texts: list[str] = []
     source_ids: list[str] = []
     chunk_seq_nos: list[int] = []
+    chunk_total_counts: list[int] = []  # total chunks per source doc
 
     if args.chunk_size > 0:
         print(f"Chunking {len(raw_texts)} documents (chunk_size={args.chunk_size}, overlap={args.chunk_overlap}) ...")
@@ -147,11 +152,13 @@ def main():
                 texts.append(chunk)
                 source_ids.append(str(raw_ids[i]))
                 chunk_seq_nos.append(seq)
+                chunk_total_counts.append(len(chunks))
         print(f"  → {len(raw_texts)} docs → {len(texts)} chunks (avg {len(texts)/len(raw_texts):.1f} chunks/doc)")
     else:
         texts = list(raw_texts)
         source_ids = [str(rid) for rid in raw_ids]
         chunk_seq_nos = [0] * len(texts)
+        chunk_total_counts = [1] * len(texts)
 
     # ---- Embed ----
     print("Loading model: all-MiniLM-L6-v2")
@@ -166,8 +173,16 @@ def main():
     print("Assigning tags ...")
     tag_stats: dict[str, int] = {}
     all_tags: list[list[str]] = []
-    for text in texts:
+    for idx, text in enumerate(texts):
         tags = assign_tags(text)
+        # Position-based tags for chunked documents (structural backbone)
+        total = chunk_total_counts[idx]
+        if total > 1:
+            seq = chunk_seq_nos[idx]
+            if seq == 0 and "abstract" not in tags:
+                tags.insert(0, "abstract")
+            if seq >= total - 2 and "conclusion" not in tags:
+                tags.insert(0, "conclusion")
         all_tags.append(tags)
         for t in tags:
             tag_stats[t] = tag_stats.get(t, 0) + 1

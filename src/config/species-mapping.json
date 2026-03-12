@@ -1,8 +1,11 @@
 {
   "rules": [
     { "match": { "tags": ["crash", "outage", "fatal"] },               "species": "anchor" },
+    { "match": { "tags": ["abstract", "conclusion"] },                 "species": "anchor" },
     { "match": { "tags": ["error", "bug", "fix"] },                    "species": "sentinel" },
+    { "match": { "tags": ["methodology"] },                            "species": "sentinel" },
     { "match": { "tags": ["gotcha"] },                                 "species": "herald" },
+    { "match": { "tags": ["results", "findings"] },                    "species": "herald" },
     { "match": { "tags": ["config", "env", "infra", "docker"] },       "species": "summarizer" },
     { "match": { "tags": ["rule", "convention", "lint", "policy"] },   "species": "sentinel" },
     { "match": { "tags": ["release", "deploy", "commit", "ship"] },    "species": "herald" },

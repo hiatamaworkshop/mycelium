@@ -202,7 +202,7 @@ export class Dispatcher {
       // Collect death log from this tick and route to instances
       const tickDeaths = getAndClearDeathLog();
       for (const instance of this.instances) {
-        instance.onTick(tickDeaths);
+        await instance.onTick(tickDeaths, this.config);
       }
 
       // Check absorption: is the ecosystem ready for next inject?
