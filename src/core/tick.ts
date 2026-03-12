@@ -39,6 +39,11 @@ export function getAndClearDeathLog(): Map<string, DeathRecord> {
   return snapshot;
 }
 
+/** Clear death log without returning a copy (for world isolation reset). */
+export function resetTickState(): void {
+  deathLog.clear();
+}
+
 // ---- Tick result (backward-compatible summary) ----
 
 export interface TickResult {

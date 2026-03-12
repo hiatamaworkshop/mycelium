@@ -38,6 +38,8 @@ export interface SurvivorReport {
   sourceId: string;
   /** Original collection name */
   collection: string;
+  /** World name (isolation mode) */
+  worldName?: string;
   /** Batch token for slot traceability */
   batchToken: string;
   /** Total chunks injected for this sourceId */

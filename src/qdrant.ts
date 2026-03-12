@@ -6,6 +6,11 @@ import type { MyceliumPointPayload } from "./types.js";
 
 // ---- Collection management ----
 
+export async function deleteCollection(url: string, name: string): Promise<boolean> {
+  const res = await fetch(`${url}/collections/${name}`, { method: "DELETE" });
+  return res.ok;
+}
+
 export async function ensureCollection(
   url: string,
   name: string,

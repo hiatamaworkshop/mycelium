@@ -2,33 +2,28 @@
 // Dispatcher — cascade orchestration for FeedInstances
 // ============================================================
 //
-// Receives SlotAssignment[] from the SlotAllocator and runs
-// the cascade pipeline. Each slot becomes a FeedInstance.
+// Two modes:
 //
-// All instances share the same Mycelium Qdrant collection.
-// The tick engine processes ALL nodes together — cross-instance
-// interaction is a feature, not a bug.
+// 1. Shared mode (legacy): All slots share one Mycelium Qdrant collection.
+//    Cross-instance interaction. Adaptive injection timing.
+//    → run(slots)
 //
-// Injection timing: ADAPTIVE (ecosystem-driven)
-//   After injecting a slot, monitor TickResult.interactions.
-//   When the interaction spike settles (absorbed), inject next.
-//   Fallback: cascadeDelayTicks (max wait).
-//
-// Cascade timeline example (3 slots, adaptive):
-//   t=0  : slot-0 inject → slot-0 running
-//   t=N  : interactions settled → slot-1 inject
-//   t=M  : interactions settled → slot-2 inject
-//   t=N+60: slot-0 complete → harvest
-//   ...
+// 2. World-isolated mode: Each world gets its own collection.
+//    Singleton state is reset between worlds. Cascade still applies
+//    within a world if it has multiple slots.
+//    → runWorld(world, slots)
 
 import type { MyceliumConfig } from "../types.js";
 import type { SlotAssignment } from "./slot-allocator.js";
+import type { WorldDefinition } from "./world-config.js";
 import { FeedInstance } from "./feed-instance.js";
 import type { SurvivorReport } from "./feed-instance.js";
-import { runTick, getAndClearDeathLog } from "../core/tick.js";
+import { runTick, getAndClearDeathLog, resetTickState } from "../core/tick.js";
 import type { TickResult } from "../core/tick.js";
 import { ensureCollection } from "../qdrant.js";
-import { loadSpeciesMemory } from "../core/digestor.js";
+import { loadSpeciesMemory, resetDefaultDigestor } from "../core/digestor.js";
+import { clearSnapshots } from "../core/observatory.js";
+import * as store from "../core/colony-store.js";
 
 // ---- Dispatcher config ----
 
@@ -135,17 +130,62 @@ export class Dispatcher {
     private dispatchConfig: DispatcherConfig,
   ) {}
 
-  // ---- Run the full cascade pipeline ----
+  // ---- Shared mode (legacy): all slots in one collection ----
 
   async run(slots: SlotAssignment[]): Promise<SurvivorReport[]> {
-    // Initialize Qdrant collection
     await ensureCollection(
       this.config.qdrantUrl,
       this.config.collection,
       this.config.embeddingDimension,
     );
     loadSpeciesMemory(this.config);
+    return this._runInternal(this.config, slots);
+  }
 
+  // ---- World-isolated mode: reset state, run in dedicated collection ----
+
+  async runWorld(world: WorldDefinition, slots: SlotAssignment[]): Promise<SurvivorReport[]> {
+    // 1. Reset all singleton state for clean isolation
+    store.clear();
+    resetTickState();
+    clearSnapshots();
+    resetDefaultDigestor();
+
+    // 2. World-specific config
+    const worldConfig: MyceliumConfig = {
+      ...this.config,
+      collection: world.collection,
+    };
+
+    // 3. Initialize world's Qdrant collection + species memory
+    await ensureCollection(
+      worldConfig.qdrantUrl,
+      worldConfig.collection,
+      worldConfig.embeddingDimension,
+    );
+    loadSpeciesMemory(worldConfig);
+
+    // 4. Reset instance state
+    this.instances = [];
+    this.globalTick = 0;
+    this.allReports = [];
+    this.lastTickResult = null;
+
+    console.error(
+      `[dispatcher:world] "${world.name}" → collection=${world.collection}, ` +
+      `${slots.length} slot(s), ${slots.reduce((s, sl) => s + sl.points.length, 0)} points`,
+    );
+
+    // 5. Run cascade within this world
+    return this._runInternal(worldConfig, slots);
+  }
+
+  // ---- Internal cascade loop (shared by both modes) ----
+
+  private async _runInternal(
+    config: MyceliumConfig,
+    slots: SlotAssignment[],
+  ): Promise<SurvivorReport[]> {
     // Create FeedInstances from slot assignments
     this.instances = slots.map(
       (slot) => new FeedInstance(
@@ -189,20 +229,20 @@ export class Dispatcher {
 
         // IO control: inject is synchronous from tick loop's perspective
         // Other instances don't tick during inject (Qdrant I/O protection)
-        await instance.inject(this.config, this.globalTick);
+        await instance.inject(config, this.globalTick);
         nextInjectIdx++;
         readyToInject = false; // wait for absorption
       }
 
       // Run one tick (processes ALL nodes in the collection)
       this.globalTick++;
-      const tickResult = await runTick(this.config, this.globalTick);
+      const tickResult = await runTick(config, this.globalTick);
       this.lastTickResult = tickResult;
 
       // Collect death log from this tick and route to instances
       const tickDeaths = getAndClearDeathLog();
       for (const instance of this.instances) {
-        await instance.onTick(tickDeaths, this.config);
+        await instance.onTick(tickDeaths, config);
       }
 
       // Check absorption: is the ecosystem ready for next inject?
@@ -215,7 +255,7 @@ export class Dispatcher {
       // Check for completed instances → harvest
       for (const instance of this.instances) {
         if (instance.isComplete()) {
-          const reports = await instance.harvest(this.config);
+          const reports = await instance.harvest(config);
           this.allReports.push(...reports);
         }
       }

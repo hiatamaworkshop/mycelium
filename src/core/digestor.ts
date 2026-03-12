@@ -68,6 +68,8 @@ export interface DigestorInstance {
   getResonanceDeltaAll(): Record<Species, Record<Species, number>>;
   setResonanceDelta(delta: Record<string, Record<string, number>>): void;
   shouldDigest(tickNumber: number): boolean;
+  /** Reset all state to zero (for world isolation). */
+  reset(): void;
 }
 
 export interface DigestorOptions {
@@ -415,6 +417,16 @@ export function createDigestor(options?: DigestorOptions): DigestorInstance {
       const interval = M.scoring.digestIntervalTicks;
       return tickNumber > 0 && tickNumber % interval === 0;
     },
+
+    reset(): void {
+      for (const sp of ALL_SPECIES) {
+        speciesMemory[sp] = zeroMatrix(BEHAVIOR_KEYS.length, FEELINGS_DIM);
+        resonanceSensitivityDelta[sp] = zeroResonance();
+      }
+      resetAccumulators();
+      generationCount = 0;
+      lastDigestTick = 0;
+    },
   };
 }
 
@@ -468,4 +480,8 @@ export function persistSpeciesMemory(config: MyceliumConfig): string {
 
 export function shouldDigest(tickNumber: number): boolean {
   return defaultDigestor.shouldDigest(tickNumber);
+}
+
+export function resetDefaultDigestor(): void {
+  defaultDigestor.reset();
 }
