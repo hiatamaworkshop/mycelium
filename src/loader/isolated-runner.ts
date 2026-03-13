@@ -358,6 +358,7 @@ export class IsolatedRunner {
               deepChainCount: mc.deepChainCount,
               species,
               sampleText: (node?.contents[0] ?? text).slice(0, 150),
+              memberTexts: node?.contents ?? [text],
               composition: mc.composition,
             });
           }

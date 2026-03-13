@@ -40,6 +40,17 @@ export function cleanText(raw: string): string {
   return t.trim();
 }
 
+/** Strip merge content markers: »[h]text|0.91 → text */
+function stripMergeMarkers(raw: string): string {
+  // Remove leading »[x] chains (e.g., »[t]»[s]»[p]content → content)
+  let t = raw.replace(/^(?:»\[[a-z]\])+/, "");
+  // Also handle bare » without species tag
+  t = t.replace(/^»+/, "");
+  // Remove trailing |cosine values (e.g., |0.91|0.82)
+  t = t.replace(/(?:\|\d+\.\d+)+$/, "");
+  return t;
+}
+
 /** Clean a short snippet — applies cleanText, strips trailing truncation artifacts, limits to 80 chars */
 function cleanSnippet(raw: string): string {
   let t = cleanText(raw);
@@ -253,6 +264,8 @@ export interface SourceDigest {
     deep: number;
     role: string;
     text: string;
+    /** Absorbed member texts (origin first, then »-prefixed absorbed contents) */
+    members?: string[];
     /** Species composition of absorbed members mapped to roles */
     composition?: Record<string, number>;
   }>;
@@ -604,6 +617,8 @@ function buildDigest(reports: SurvivorReport[], query?: DigestQuery): DigestRepo
           }
           if (Object.keys(roleComp).length === 0) roleComp = undefined;
         }
+        // Clean and extract member texts (origin + absorbed)
+        const members = c.memberTexts?.map(t => extract(cleanText(stripMergeMarkers(t))));
         return {
           seq: c.originChunkSeqNo,
           size: c.clusterSize,
@@ -611,6 +626,7 @@ function buildDigest(reports: SurvivorReport[], query?: DigestQuery): DigestRepo
           deep: c.deepChainCount,
           role: toRole(c.species),
           text: extract(c.sampleText),
+          members,
           composition: roleComp,
         };
       });

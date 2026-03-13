@@ -64,6 +64,8 @@ export interface ClusterDetail {
   deepChainCount: number;
   species: Species;
   sampleText: string;
+  /** All contents of the cluster origin node (origin text + absorbed member texts) */
+  memberTexts?: string[];
   /** Species composition of absorbed members (excludes origin) */
   composition?: Partial<Record<Species, number>>;
 }
