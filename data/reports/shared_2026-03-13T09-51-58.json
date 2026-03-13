@@ -1,0 +1,238 @@
+[
+  {
+    "sourceId": "source_arxiv:8",
+    "collection": "source_arxiv",
+    "batchToken": "batch-13-mmopwj90",
+    "totalChunks": 25,
+    "survivingChunks": 2,
+    "survivalRate": 0.08,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 1,
+      "anchor": 2,
+      "spore": 1
+    },
+    "survivingTexts": [
+      ", pp . 233260 . kokkinos , i. , maragos , p. , 2009 .\n\nsynergy between object recognition and image segmentation using the expectation - maximization algorithm .\n\nieee transactions on pattern analysis and machine intelligience , vol.31  ( 8) , pp.14861501 .\n\nbrejl , m. , sonka , m. , 2000 .\n\nobject localization and border detection criteria design in edge - based image segmentation : automated learning from examples .\n\nieee transactions on medical imaging , vol.19  ( 10 ) , pp.973985 .\n\nfripp , j. , crozier , s. , warfield , s.k . ,",
+      "pp.973985 . fripp , j. , crozier , s. , warfield , s.k . ,\n\nourselin , s. , 2005 .\n\nautomatic initialisation of 3d deformable models for cartilage segmentation . in proceedings of digital image computing : techniques and applications , pp .",
+      "expect better performance if higher resolution ct data are employed in modeling or testing .\n\nthis paper is published in spie medical imaging conference - 2010 .\n\nfalcao , a.x . ,\n\nudupa , j.k . ,\n\nsamarasekera , s. , sharma , s. , hirsch , b.e . , and lotufo , r.a . , 1998\n\nuser - steered image segmentation paradigms : live wire and live lane . graph .\n\nmodels image process .\n\n60  ( 4 ) , pp .\n\n233260 .\n\nkokkinos , i. , maragos , p. , 2009 .",
+      "the b - scale image yields a few largest balls remaining in the image .\n\nthese are used for the construction of the relationship between the segmented training objects and the corresponding images .\n\nthe resulting images have a strong relationship with the actual delineated objects .\n\nrelationship between @xmath2 and @xmath3 : * a principal component @xmath4 system is built via pca for the segmented objects in each image , and their mean @xmath5 system , denoted @xmath6 , is found over all training images .\n\n@xmath6 has an origin and three @xmath5 axes ."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 1,
+      "merged": 1,
+      "loner": 8,
+      "redundant": 1,
+      "dead": 14
+    },
+    "sourceMetadata": {
+      "dataset": "ccdv/arxiv-summarization",
+      "config": "",
+      "chunkTotal": 25
+    },
+    "survivorTags": {
+      "conclusion": 2
+    },
+    "chunkDetails": [
+      {
+        "chunkSeqNo": 23,
+        "text": ", pp . 233260 . kokkinos , i. , maragos , p. , 2009 .\n\nsynergy between object recognition and image segmentation using the expectation - maximization algorithm .\n\nieee transactions on pattern analysis and machine intelligience , vol.31  ( 8) , pp.14861501 .\n\nbrejl , m. , sonka , m. , 2000 .\n\nobject localization and border detection criteria design in edge - based image segmentation : automated learning from examples .\n\nieee transactions on medical imaging , vol.19  ( 10 ) , pp.973985 .\n\nfripp , j. , crozier , s. , warfield , s.k . ,",
+        "species": "anchor",
+        "classification": "merged"
+      },
+      {
+        "chunkSeqNo": 24,
+        "text": "pp.973985 . fripp , j. , crozier , s. , warfield , s.k . ,\n\nourselin , s. , 2005 .\n\nautomatic initialisation of 3d deformable models for cartilage segmentation . in proceedings of digital image computing : techniques and applications , pp .",
+        "species": "anchor",
+        "classification": "pure"
+      }
+    ],
+    "pureSurvivors": [
+      {
+        "chunkSeqNo": 24,
+        "text": "pp.973985 . fripp , j. , crozier , s. , warfield , s.k . ,\n\nourselin , s. , 2005 .\n\nautomatic initialisation of 3d deformable models for cartilage segmentation . in proceedings of digital image computing : techniques and applications , pp .",
+        "species": "anchor",
+        "classification": "pure"
+      }
+    ],
+    "mergerClusters": [],
+    "deadBriefs": [
+      {
+        "chunkSeqNo": 0,
+        "classification": "dead",
+        "snippet": "the segmentation process as a whole can be thought of as consisting of two tasks",
+        "cause": "spawn",
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 1,
+        "classification": "loner",
+        "snippet": "method is introduced for object recognition to assist in segmentation ( delineat",
+        "cause": "merge",
+        "cosine": 0.6722145975269869,
+        "posRes": 0.026278229748993513
+      },
+      {
+        "chunkSeqNo": 2,
+        "classification": "dead",
+        "snippet": "expert @xcite in the literature , model based methods can be employed for recogn",
+        "cause": "spawn",
+        "posRes": 0.28069613485939404
+      },
+      {
+        "chunkSeqNo": 3,
+        "classification": "loner",
+        "snippet": "atlas to determine the initial position for a shape model of the knee cartilage ",
+        "cause": "merge",
+        "cosine": 0.5075192542816287,
+        "posRes": 0.12215526574455386
+      },
+      {
+        "chunkSeqNo": 4,
+        "classification": "dead",
+        "snippet": "approach of automatically recognizing objects in 3d images without performing el",
+        "cause": "spawn",
+        "posRes": 0.4806255527125317
+      },
+      {
+        "chunkSeqNo": 5,
+        "classification": "dead",
+        "snippet": "- wire algorithm @xcite is used to segment @xmath1 different objects from @xmath",
+        "cause": "merge",
+        "cosine": 0.6071994285807849,
+        "posRes": 0.5615481847634018
+      },
+      {
+        "chunkSeqNo": 6,
+        "classification": "loner",
+        "snippet": "objectness '' of a given image without doing explicit segmentation . for each vo",
+        "cause": "merge",
+        "cosine": 0.593952066858434,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 7,
+        "classification": "dead",
+        "snippet": "the b - scale image yields a few largest balls remaining in the image .\n\nthese a"
+      },
+      {
+        "chunkSeqNo": 8,
+        "classification": "dead",
+        "snippet": "found over all training images . @xmath6 has an origin and three @xmath5 axes .\n",
+        "cause": "merge",
+        "cosine": 0.7141300010499498,
+        "posRes": 0.1160637677471065
+      },
+      {
+        "chunkSeqNo": 9,
+        "classification": "redundant",
+        "snippet": "@xmath2 in @xmath10 with a proper pose as indicated in step 4 below . *\n\nhierarc",
+        "cause": "merge",
+        "cosine": 0.7686823835660173,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 10,
+        "classification": "dead",
+        "snippet": "we use transformation @xmath9 and @xmath11 to determine the pose of @xmath2 in @",
+        "cause": "merge",
+        "cosine": 0.5566359054821605,
+        "posRes": 0.18202769273995761
+      },
+      {
+        "chunkSeqNo": 11,
+        "classification": "loner",
+        "snippet": "gives high recognition rates , there is no need to do any elaborate searches .\n\n",
+        "cause": "merge",
+        "cosine": 0.5590649500399605,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 12,
+        "classification": "loner",
+        "snippet": "this delineation algorithm is presented in a companion paper submitted to this s",
+        "cause": "spawn",
+        "posRes": 0.12311225232359643
+      },
+      {
+        "chunkSeqNo": 13,
+        "classification": "dead",
+        "snippet": "and _ position _ of objects in an image @xcite . among such information ,\n\n_ sha",
+        "cause": "merge",
+        "cosine": 0.5716188042715179,
+        "posRes": 0.1279480559441594
+      },
+      {
+        "chunkSeqNo": 14,
+        "classification": "dead",
+        "snippet": "to noise , poor resolution , clutter , and occlusion in the images @xcite .\n\nthe",
+        "cause": "merge",
+        "cosine": 0.5155667506578245,
+        "posRes": 0.34086312727504353
+      },
+      {
+        "chunkSeqNo": 15,
+        "classification": "loner",
+        "snippet": "way of specifying key points on the shapes starting from the same anatomical loc",
+        "cause": "merge",
+        "cosine": 0.5367093719593091,
+        "posRes": 0.08259198081735372
+      },
+      {
+        "chunkSeqNo": 16,
+        "classification": "dead",
+        "snippet": "- consuming , prone to errors , and restricted to only 2d objects @xcite .\n\nbeca",
+        "cause": "spawn",
+        "posRes": 0.5699034340090658
+      },
+      {
+        "chunkSeqNo": 17,
+        "classification": "dead",
+        "snippet": "space landmarking technique in pseudo-3d manner where 3d object is annotated sli",
+        "cause": "merge",
+        "cosine": 0.8548432757657138,
+        "posRes": 0.09566859921945561
+      },
+      {
+        "chunkSeqNo": 18,
+        "classification": "loner",
+        "snippet": "a fixed number of points on each boundary automatically @xcite . selecting the s",
+        "cause": "merge",
+        "cosine": 0.6374729431381256,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 19,
+        "classification": "loner",
+        "snippet": "landmarks are used for different objects considering their size . [ cols=\"^ \" , ",
+        "cause": "merge",
+        "cosine": 0.5765434001553575,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 20,
+        "classification": "dead",
+        "snippet": "- scale concept has been previously used in object delineation , filtering and r",
+        "cause": "spawn",
+        "posRes": 0.1459810037776472
+      },
+      {
+        "chunkSeqNo": 21,
+        "classification": "dead",
+        "snippet": "specificity of recognition increases dramatically as the number of objects in th",
+        "cause": "merge",
+        "cosine": 0.5492545670282315,
+        "posRes": 0.3496638823620869
+      },
+      {
+        "chunkSeqNo": 22,
+        "classification": "dead",
+        "snippet": "expect better performance if higher resolution ct data are employed in modeling "
+      }
+    ],
+    "consensusRate": 0.84,
+    "worldName": "shared"
+  }
+]

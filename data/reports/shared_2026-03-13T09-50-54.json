@@ -1,0 +1,253 @@
+[
+  {
+    "sourceId": "source_arxiv:8",
+    "collection": "source_arxiv",
+    "batchToken": "batch-13-mmopv64y",
+    "totalChunks": 25,
+    "survivingChunks": 4,
+    "survivalRate": 0.16,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 1,
+      "herald": 3,
+      "anchor": 3,
+      "spore": 2
+    },
+    "survivingTexts": [
+      "a fixed number of points on each boundary automatically @xcite . selecting the starting point\n\nhas been done manually by annotating the same anatomical point for each shape in the training set .\n\nfigure  [ img : landmarking_abd ] shows annotated landmarks for five different objects ( skin , liver , right kidney , left kidney , spleen ) in a ct slice of the abdominal region .\n\nnote that different number of landmarks are used for different objects considering their size .    [ cols=\"^ \" , ]",
+      "way of specifying key points on the shapes starting from the same anatomical locations .\n\nonce step ( 1 ) is accomplished , the remaining problem turns into a problem of establishing point correspondence in 2d shapes , which is easily solved .\n\nit is extremely significant to choose correct correspondences so that a good representation of the modelled object results .\n\nalthough landmark correspondence is usually established manually by experts , it is time - consuming , prone to errors , and restricted to only 2d objects  @xcite .",
+      ", pp . 233260 . kokkinos , i. , maragos , p. , 2009 .\n\nsynergy between object recognition and image segmentation using the expectation - maximization algorithm .\n\nieee transactions on pattern analysis and machine intelligience , vol.31  ( 8) , pp.14861501 .\n\nbrejl , m. , sonka , m. , 2000 .\n\nobject localization and border detection criteria design in edge - based image segmentation : automated learning from examples .\n\nieee transactions on medical imaging , vol.19  ( 10 ) , pp.973985 .\n\nfripp , j. , crozier , s. , warfield , s.k . ,",
+      "expert @xcite in the literature , model based methods can be employed for recognition .\n\nfor example , in @xcite , the position of an organ model ( such as liver ) is estimated by its histogram . in  @xcite ,\n\ngeneralized hough transform is succesfully extended to incorporate variability of shape for 2d segmentation problem .\n\natlas based methods are also used to define initial position for a shape model . in  @xcite\n\n, affine registration is performed to align the data into an atlas to determine the initial position for a shape model of the knee cartilage .",
+      "- scale concept has been previously used in object delineation , filtering and registration .\n\nour results suggest that their ability to capture object geography in conjunction with shape models may be useful in quick and simple yet accurate object recognition strategies .\n\n( 2 ) the presented method is general and does not depend on exploiting the peculiar characteristics of the application situation .\n\n( 3 ) the specificity of recognition increases dramatically as the number of objects in the model increases .",
+      "pp.973985 . fripp , j. , crozier , s. , warfield , s.k . ,\n\nourselin , s. , 2005 .\n\nautomatic initialisation of 3d deformable models for cartilage segmentation . in proceedings of digital image computing : techniques and applications , pp .",
+      "specificity of recognition increases dramatically as the number of objects in the model increases .\n\n( 4 ) we emphasize that both modeling and testing procedures are carried out on the ct data sets that are part of the clinical pet / ct data routinely acquired in our hospital .\n\nthe ct data set are thus of relatively poor ( spatial and contrast ) resolution compared to other ct - alone studies with or without contrast .\n\nwe expect better performance if higher resolution ct data are employed in modeling or testing .",
+      "- wire algorithm @xcite is used to segment @xmath1 different objects from @xmath0 subjects .\n\nsegmented objects are used for the automatic extraction of landmarks in a slice - by - slice manner  @xcite . from the landmark information for all objects ,\n\na model assembly @xmath2 is constructed .\n\nb - scale encoding : * the b - scale value at every voxel in an image helps to understand `` objectness '' of a given image without doing explicit segmentation . for each voxel ,",
+      "the segmentation process as a whole can be thought of as consisting of two tasks : recognition and delineation .\n\nrecognition is to determine roughly `` where '' the object is and to distinguish it from other object - like entities .\n\nalthough delineation is the final step for defining the spatial extent of the object region / boundary in the image , an efficient recognition strategy is a key for successful delineation . in this study ,\n\na novel , general method is introduced for object recognition to assist in segmentation ( delineation ) tasks ."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 2,
+      "merged": 2,
+      "loner": 10,
+      "redundant": 2,
+      "dead": 9
+    },
+    "sourceMetadata": {
+      "dataset": "ccdv/arxiv-summarization",
+      "config": "",
+      "chunkTotal": 25
+    },
+    "survivorTags": {
+      "abstract": 1,
+      "results": 1,
+      "conclusion": 2
+    },
+    "chunkDetails": [
+      {
+        "chunkSeqNo": 0,
+        "text": "the segmentation process as a whole can be thought of as consisting of two tasks : recognition and delineation .\n\nrecognition is to determine roughly `` where '' the object is and to distinguish it from other object - like entities .\n\nalthough delineation is the final step for defining the spatial extent of the object region / boundary in the image , an efficient recognition strategy is a key for successful delineation . in this study ,\n\na novel , general method is introduced for object recognition to assist in segmentation ( delineation ) tasks .",
+        "species": "anchor",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 21,
+        "text": "specificity of recognition increases dramatically as the number of objects in the model increases .\n\n( 4 ) we emphasize that both modeling and testing procedures are carried out on the ct data sets that are part of the clinical pet / ct data routinely acquired in our hospital .\n\nthe ct data set are thus of relatively poor ( spatial and contrast ) resolution compared to other ct - alone studies with or without contrast .\n\nwe expect better performance if higher resolution ct data are employed in modeling or testing .",
+        "species": "herald",
+        "classification": "merged"
+      },
+      {
+        "chunkSeqNo": 23,
+        "text": ", pp . 233260 . kokkinos , i. , maragos , p. , 2009 .\n\nsynergy between object recognition and image segmentation using the expectation - maximization algorithm .\n\nieee transactions on pattern analysis and machine intelligience , vol.31  ( 8) , pp.14861501 .\n\nbrejl , m. , sonka , m. , 2000 .\n\nobject localization and border detection criteria design in edge - based image segmentation : automated learning from examples .\n\nieee transactions on medical imaging , vol.19  ( 10 ) , pp.973985 .\n\nfripp , j. , crozier , s. , warfield , s.k . ,",
+        "species": "anchor",
+        "classification": "merged"
+      },
+      {
+        "chunkSeqNo": 24,
+        "text": "pp.973985 . fripp , j. , crozier , s. , warfield , s.k . ,\n\nourselin , s. , 2005 .\n\nautomatic initialisation of 3d deformable models for cartilage segmentation . in proceedings of digital image computing : techniques and applications , pp .",
+        "species": "anchor",
+        "classification": "pure"
+      }
+    ],
+    "pureSurvivors": [
+      {
+        "chunkSeqNo": 0,
+        "text": "the segmentation process as a whole can be thought of as consisting of two tasks : recognition and delineation .\n\nrecognition is to determine roughly `` where '' the object is and to distinguish it from other object - like entities .\n\nalthough delineation is the final step for defining the spatial extent of the object region / boundary in the image , an efficient recognition strategy is a key for successful delineation . in this study ,\n\na novel , general method is introduced for object recognition to assist in segmentation ( delineation ) tasks .",
+        "species": "anchor",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 24,
+        "text": "pp.973985 . fripp , j. , crozier , s. , warfield , s.k . ,\n\nourselin , s. , 2005 .\n\nautomatic initialisation of 3d deformable models for cartilage segmentation . in proceedings of digital image computing : techniques and applications , pp .",
+        "species": "anchor",
+        "classification": "pure"
+      }
+    ],
+    "mergerClusters": [
+      {
+        "originChunkSeqNo": 23,
+        "clusterSize": 2,
+        "depth1Count": 1,
+        "deepChainCount": 0,
+        "species": "anchor",
+        "sampleText": ", pp . 233260 . kokkinos , i. , maragos , p. , 2009 .\n\nsynergy between object recognition and image segmentation using the expectation - maximization "
+      }
+    ],
+    "deadBriefs": [
+      {
+        "chunkSeqNo": 1,
+        "classification": "loner",
+        "snippet": "method is introduced for object recognition to assist in segmentation ( delineat",
+        "cause": "merge",
+        "cosine": 0.5986961368584871,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 2,
+        "classification": "dead",
+        "snippet": "expert @xcite in the literature , model based methods can be employed for recogn"
+      },
+      {
+        "chunkSeqNo": 3,
+        "classification": "loner",
+        "snippet": "atlas to determine the initial position for a shape model of the knee cartilage ",
+        "cause": "merge",
+        "cosine": 0.5075192542816287,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 4,
+        "classification": "loner",
+        "snippet": "approach of automatically recognizing objects in 3d images without performing el",
+        "cause": "merge",
+        "cosine": 0.6676386567158255,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 5,
+        "classification": "dead",
+        "snippet": "- wire algorithm @xcite is used to segment @xmath1 different objects from @xmath"
+      },
+      {
+        "chunkSeqNo": 6,
+        "classification": "loner",
+        "snippet": "objectness '' of a given image without doing explicit segmentation . for each vo",
+        "cause": "merge",
+        "cosine": 0.5028562922731471,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 7,
+        "classification": "loner",
+        "snippet": "the b - scale image yields a few largest balls remaining in the image .\n\nthese a",
+        "cause": "merge",
+        "cosine": 0.7141300010499498,
+        "posRes": 0.005444951112191653
+      },
+      {
+        "chunkSeqNo": 8,
+        "classification": "dead",
+        "snippet": "found over all training images . @xmath6 has an origin and three @xmath5 axes .\n",
+        "cause": "merge",
+        "cosine": 0.6071994285807849,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 9,
+        "classification": "redundant",
+        "snippet": "@xmath2 in @xmath10 with a proper pose as indicated in step 4 below . *\n\nhierarc",
+        "cause": "merge",
+        "cosine": 0.7890523125128751,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 10,
+        "classification": "dead",
+        "snippet": "we use transformation @xmath9 and @xmath11 to determine the pose of @xmath2 in @",
+        "cause": "merge",
+        "cosine": 0.5566359054821605,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 11,
+        "classification": "loner",
+        "snippet": "gives high recognition rates , there is no need to do any elaborate searches .\n\n",
+        "cause": "merge",
+        "cosine": 0.5715121869515852,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 12,
+        "classification": "loner",
+        "snippet": "this delineation algorithm is presented in a companion paper submitted to this s",
+        "cause": "merge",
+        "cosine": 0.5635072780138721,
+        "posRes": 0.00032286076045675736
+      },
+      {
+        "chunkSeqNo": 13,
+        "classification": "loner",
+        "snippet": "and _ position _ of objects in an image @xcite . among such information ,\n\n_ sha",
+        "cause": "merge",
+        "cosine": 0.7258113454364898,
+        "posRes": 0.0396844450654168
+      },
+      {
+        "chunkSeqNo": 14,
+        "classification": "dead",
+        "snippet": "to noise , poor resolution , clutter , and occlusion in the images @xcite .\n\nthe",
+        "cause": "merge",
+        "cosine": 0.6220003994861533,
+        "posRes": 0.06310321117532999
+      },
+      {
+        "chunkSeqNo": 15,
+        "classification": "dead",
+        "snippet": "way of specifying key points on the shapes starting from the same anatomical loc"
+      },
+      {
+        "chunkSeqNo": 16,
+        "classification": "redundant",
+        "snippet": "- consuming , prone to errors , and restricted to only 2d objects @xcite .\n\nbeca",
+        "cause": "merge",
+        "cosine": 0.7071165249167032,
+        "posRes": 0.03268789281529552
+      },
+      {
+        "chunkSeqNo": 17,
+        "classification": "dead",
+        "snippet": "space landmarking technique in pseudo-3d manner where 3d object is annotated sli",
+        "cause": "merge",
+        "cosine": 0.8548432757657138,
+        "posRes": 0.07436052803141177
+      },
+      {
+        "chunkSeqNo": 18,
+        "classification": "dead",
+        "snippet": "a fixed number of points on each boundary automatically @xcite . selecting the s"
+      },
+      {
+        "chunkSeqNo": 19,
+        "classification": "loner",
+        "snippet": "landmarks are used for different objects considering their size . [ cols=\"^ \" , ",
+        "cause": "merge",
+        "cosine": 0.5949698348114167,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 20,
+        "classification": "dead",
+        "snippet": "- scale concept has been previously used in object delineation , filtering and r"
+      },
+      {
+        "chunkSeqNo": 22,
+        "classification": "loner",
+        "snippet": "expect better performance if higher resolution ct data are employed in modeling ",
+        "cause": "merge",
+        "cosine": 0.5110650755647951,
+        "posRes": 0
+      }
+    ],
+    "consensusRate": 0.96,
+    "worldName": "shared"
+  }
+]
