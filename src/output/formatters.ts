@@ -5,16 +5,43 @@
 // Transforms raw SurvivorReport[] into structured responses
 // suitable for agents, LLMs, or downstream services.
 //
-// Three output modes:
+// Four output modes:
 //   compact    — minimal text digest (token-efficient for LLM context)
 //   detailed   — full breakdown with per-source stats
 //   structured — typed JSON for programmatic consumption
+//   digest     — 4-tier per-source output (meta/pure/clusters/survivors/dead)
 
-import type { SurvivorReport, ClassificationBreakdown } from "../loader/feed-instance.js";
+import type {
+  SurvivorReport, ClassificationBreakdown,
+  ChunkDetail, ClusterDetail, DeadBrief,
+} from "../loader/feed-instance.js";
+
+// ---- Text cleaning ----
+
+/**
+ * Clean LaTeX artifacts and noise from academic text.
+ * Preserves variable identity (@xmath42 → [x42]) for cross-reference.
+ */
+export function cleanText(raw: string): string {
+  let t = raw;
+  // @xmath{N} → [x{N}]
+  t = t.replace(/@xmath(\d+)/g, "[x$1]");
+  // @xcite → [ref]
+  t = t.replace(/@xcite/g, "[ref]");
+  // LaTeX commands: \command{...} → content, bare \command → remove
+  t = t.replace(/\\[a-z]+\{([^}]*)\}/g, "$1");
+  t = t.replace(/\\[a-z]+/g, "");
+  // Strip table fragments (lines with ≥5 & characters)
+  t = t.replace(/^.*(?:&.*){4,}&.*$/gm, "[table]");
+  // Collapse excessive whitespace
+  t = t.replace(/\n{3,}/g, "\n\n");
+  t = t.replace(/[ \t]{3,}/g, "  ");
+  return t.trim();
+}
 
 // ---- Output types ----
 
-export type ViewFormat = "compact" | "detailed" | "structured";
+export type ViewFormat = "compact" | "detailed" | "structured" | "digest";
 
 /** Per-source summary in structured mode */
 export interface SourceView {
@@ -54,6 +81,53 @@ export interface FormattedReport {
     survivingChunks: number;
     survivalRate: number;
   };
+}
+
+// ---- Digest types (4-tier) ----
+
+/** Per-source 4-tier digest for AI consumption */
+export interface SourceDigest {
+  meta: {
+    sourceId: string;
+    collection: string;
+    totalChunks: number;
+    survivingChunks: number;
+    survivalRate: number;
+    classification: ClassificationBreakdown;
+    consensusRate?: number;
+    sourceMetadata?: Record<string, unknown>;
+  };
+  pure: Array<{ seq: number; text: string; species: string }>;
+  clusters: Array<{
+    seq: number;
+    clusterSize: number;
+    depth1: number;
+    deep: number;
+    species: string;
+    sample: string;
+  }>;
+  survivors: Array<{ seq: number; text: string; species: string; cls: string }>;
+  dead: Array<{
+    seq: number;
+    cls: string;
+    snippet: string;
+    cause?: string;
+    cosine?: number;
+    posRes?: number;
+  }>;
+}
+
+export interface DigestReport {
+  format: "digest";
+  timestamp: string;
+  summary: {
+    totalSources: number;
+    totalChunks: number;
+    survivingChunks: number;
+    survivalRate: number;
+    classification: ClassificationBreakdown;
+  };
+  sources: SourceDigest[];
 }
 
 // ---- Aggregation helpers ----
@@ -247,6 +321,76 @@ function renderDetailed(report: FormattedReport): string {
   return lines.join("\n");
 }
 
+// ---- Digest builder (4-tier) ----
+
+function buildDigest(reports: SurvivorReport[], deadLimit: number): DigestReport {
+  const totalChunks = reports.reduce((s, r) => s + r.totalChunks, 0);
+  const survivingChunks = reports.reduce((s, r) => s + r.survivingChunks, 0);
+
+  const sources: SourceDigest[] = reports.map(r => {
+    const pure = (r.pureSurvivors ?? []).map(c => ({
+      seq: c.chunkSeqNo,
+      text: cleanText(c.text),
+      species: c.species,
+    }));
+
+    const clusters = (r.mergerClusters ?? []).map(c => ({
+      seq: c.originChunkSeqNo,
+      clusterSize: c.clusterSize,
+      depth1: c.depth1Count,
+      deep: c.deepChainCount,
+      species: c.species,
+      sample: cleanText(c.sampleText),
+    }));
+
+    const survivors = (r.chunkDetails ?? []).map(c => ({
+      seq: c.chunkSeqNo,
+      text: cleanText(c.text),
+      species: c.species,
+      cls: c.classification,
+    }));
+
+    const dead = (r.deadBriefs ?? []).slice(0, deadLimit).map(d => ({
+      seq: d.chunkSeqNo,
+      cls: d.classification,
+      snippet: d.snippet.slice(0, 80),
+      cause: d.cause,
+      cosine: d.cosine != null ? Math.round(d.cosine * 1000) / 1000 : undefined,
+      posRes: d.posRes != null ? Math.round(d.posRes * 1000) / 1000 : undefined,
+    }));
+
+    return {
+      meta: {
+        sourceId: r.sourceId,
+        collection: r.collection,
+        totalChunks: r.totalChunks,
+        survivingChunks: r.survivingChunks,
+        survivalRate: r.survivalRate,
+        classification: { ...r.classificationBreakdown },
+        consensusRate: r.consensusRate,
+        sourceMetadata: r.sourceMetadata,
+      },
+      pure,
+      clusters,
+      survivors,
+      dead,
+    };
+  });
+
+  return {
+    format: "digest",
+    timestamp: new Date().toISOString(),
+    summary: {
+      totalSources: reports.length,
+      totalChunks,
+      survivingChunks,
+      survivalRate: totalChunks > 0 ? survivingChunks / totalChunks : 0,
+      classification: sumBreakdown(reports),
+    },
+    sources,
+  };
+}
+
 // ---- Public API ----
 
 export interface FormatOptions {
@@ -254,6 +398,8 @@ export interface FormatOptions {
   format?: ViewFormat;
   /** Max sample texts per source (default: 3) */
   sampleLimit?: number;
+  /** Max dead briefs per source in digest mode (default: 50) */
+  deadLimit?: number;
 }
 
 /**
@@ -262,6 +408,7 @@ export interface FormatOptions {
  * - structured: returns FormattedReport as JSON string
  * - compact: short text digest for LLM context
  * - detailed: full human-readable breakdown
+ * - digest: 4-tier per-source output (meta/pure/clusters/survivors/dead)
  */
 export function formatReports(
   reports: SurvivorReport[],
@@ -269,17 +416,23 @@ export function formatReports(
 ): string {
   const format = opts.format ?? "structured";
   const sampleLimit = opts.sampleLimit ?? 3;
-
-  const structured = buildStructured(reports, sampleLimit);
+  const deadLimit = opts.deadLimit ?? 50;
 
   switch (format) {
-    case "compact":
+    case "digest":
+      return JSON.stringify(buildDigest(reports, deadLimit), null, 2);
+    case "compact": {
+      const structured = buildStructured(reports, sampleLimit);
       return renderCompact(structured);
-    case "detailed":
+    }
+    case "detailed": {
+      const structured = buildStructured(reports, sampleLimit);
       return renderDetailed(structured);
-    case "structured":
-      structured.format = "structured";
+    }
+    case "structured": {
+      const structured = buildStructured(reports, sampleLimit);
       return JSON.stringify(structured, null, 2);
+    }
   }
 }
 
@@ -291,4 +444,14 @@ export function buildReport(
   sampleLimit = 3,
 ): FormattedReport {
   return buildStructured(reports, sampleLimit);
+}
+
+/**
+ * Build typed DigestReport (for programmatic use without serialization).
+ */
+export function buildDigestReport(
+  reports: SurvivorReport[],
+  deadLimit = 50,
+): DigestReport {
+  return buildDigest(reports, deadLimit);
 }

@@ -1,0 +1,102 @@
+{
+  "0": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 63
+  },
+  "1": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 47
+  },
+  "2": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 78
+  },
+  "3": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 52
+  },
+  "4": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 133
+  },
+  "5": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 95
+  },
+  "6": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 39
+  },
+  "7": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 48
+  },
+  "8": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 25
+  },
+  "9": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 59
+  },
+  "10": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 213
+  },
+  "11": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 28
+  },
+  "12": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 329
+  },
+  "13": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 44
+  },
+  "14": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 156
+  },
+  "15": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 52
+  },
+  "16": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 63
+  },
+  "17": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 131
+  },
+  "18": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 9
+  },
+  "19": {
+    "dataset": "ccdv/arxiv-summarization",
+    "config": "",
+    "chunkTotal": 117
+  }
+}

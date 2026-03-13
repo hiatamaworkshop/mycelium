@@ -29,6 +29,7 @@
 //   CONSENSUS_RUNS        — Number of runs for majority-vote consensus (default: 10)
 //   CONSENSUS_THRESHOLD   — Min vote ratio to consider a chunk's classification stable (default: 0.4)
 //   CONSENSUS_JITTER      — Per-run initial w/h perturbation (0-1, default: 0.1 = ±10%)
+//   VIEW_FORMAT           — Output format: "digest" | "compact" | "detailed" | "structured" (default: raw JSON)
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -43,6 +44,8 @@ import type { SurvivorReport } from "./feed-instance.js";
 import { parseIsolationMode, buildWorldDefinitions } from "./world-config.js";
 import { resolveHardness } from "./hardness.js";
 import { IsolatedRunner, pLimit } from "./isolated-runner.js";
+import { formatReports } from "../output/formatters.js";
+import type { ViewFormat } from "../output/formatters.js";
 
 // ---- Config from environment ----
 
@@ -61,6 +64,7 @@ const parallelSlots = Math.max(1, parseInt(process.env.PARALLEL_SLOTS ?? "3", 10
 const consensusRuns = Math.max(1, parseInt(process.env.CONSENSUS_RUNS ?? "10", 10));
 const consensusThreshold = parseFloat(process.env.CONSENSUS_THRESHOLD ?? "0.4");
 const consensusJitter = parseFloat(process.env.CONSENSUS_JITTER ?? "0.1");
+const viewFormat = (process.env.VIEW_FORMAT ?? "") as ViewFormat | "";
 
 const myceliumConfig: MyceliumConfig = {
   ...DEFAULT_CONFIG,
@@ -307,8 +311,12 @@ function printReports(reports: SurvivorReport[]): void {
     }
   }
 
-  // JSON to stdout for programmatic consumption
-  console.log(JSON.stringify(reports, null, 2));
+  // Stdout for programmatic consumption
+  if (viewFormat) {
+    console.log(formatReports(reports, { format: viewFormat }));
+  } else {
+    console.log(JSON.stringify(reports, null, 2));
+  }
 
   // Save to file
   saveReports(reports);

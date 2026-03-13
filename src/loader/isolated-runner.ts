@@ -18,7 +18,7 @@ import type { MetabolismSchema } from "../types.js";
 import metabolismRaw from "../config/metabolism.json" with { type: "json" };
 import type { SlotAssignment } from "./slot-allocator.js";
 import type { DispatcherConfig } from "./dispatcher.js";
-import type { SurvivorReport, ChunkClassification, ClassificationBreakdown } from "./feed-instance.js";
+import type { SurvivorReport, ChunkClassification, ClassificationBreakdown, ChunkDetail, ClusterDetail, DeadBrief } from "./feed-instance.js";
 import type { NodeWithVector } from "../core/tick-core.js";
 import type { DeathRecord } from "../core/pushback.js";
 import { tickCore } from "../core/tick-core.js";
@@ -281,6 +281,15 @@ export class IsolatedRunner {
       else survivorsBySource.set(sid, [node]);
     }
 
+    // Build nodeId → spIdx reverse map for seqNo lookup
+    const nodeIdToSpIdx = new Map<string, number>();
+    for (const [nid, spIdx] of sourcePointIdxMap) {
+      nodeIdToSpIdx.set(nid, spIdx);
+    }
+
+    // Build merger origin lookup: nodeId → cluster detail
+    const mergerByNodeId = new Map(mergerClusters.map(c => [c.originId, c]));
+
     // Build per-sourceId reports
     const reports: SurvivorReport[] = [];
     for (const [qualifiedSid, entry] of slot.chunkRegistry) {
@@ -296,23 +305,78 @@ export class IsolatedRunner {
         if (node.contents.length > 0) survivingTexts.push(node.contents[0]);
       }
 
-      // Per-chunk classification breakdown
+      // Per-chunk classification breakdown + detail arrays
       const breakdown: ClassificationBreakdown = {
         pure: 0, merged: 0, loner: 0, redundant: 0, dead: 0,
       };
+      const chunkDetails: ChunkDetail[] = [];
+      const pureDetails: ChunkDetail[] = [];
+      const clusterDetails: ClusterDetail[] = [];
+      const deadBriefs: DeadBrief[] = [];
+
       const sourceNodeIds = [...nodeSourceMap.entries()]
         .filter(([, sid]) => sid === qualifiedSid)
         .map(([nid]) => nid);
+
       for (const nid of sourceNodeIds) {
+        const spIdx = nodeIdToSpIdx.get(nid) ?? -1;
+        const seqNo = slot.points[spIdx]?.payload.chunkSeqNo ?? spIdx;
+        const text = slot.points[spIdx]?.payload.text ?? "";
+
         if (survivorIds.has(nid)) {
-          if (pureNodeIds.has(nid)) breakdown.pure++;
+          const node = myLiving.find(n => n.id === nid);
+          const species = node?.species ?? "summarizer";
+          const isPure = pureNodeIds.has(nid);
+          const cls: ChunkClassification = isPure ? "pure" : "merged";
+
+          if (isPure) breakdown.pure++;
           else breakdown.merged++;
+
+          const detail: ChunkDetail = {
+            chunkSeqNo: seqNo,
+            text: node?.contents[0] ?? text,
+            species,
+            classification: cls,
+          };
+          chunkDetails.push(detail);
+          if (isPure) pureDetails.push(detail);
+
+          // Cluster detail for merger origins
+          const mc = mergerByNodeId.get(nid);
+          if (mc) {
+            clusterDetails.push({
+              originChunkSeqNo: seqNo,
+              clusterSize: mc.clusterSize,
+              depth1Count: mc.depth1Count,
+              deepChainCount: mc.deepChainCount,
+              species,
+              sampleText: (node?.contents[0] ?? text).slice(0, 150),
+            });
+          }
         } else {
-          if (lonerNodeIds.has(nid)) breakdown.loner++;
-          else if (redundantNodeIds.has(nid)) breakdown.redundant++;
-          else breakdown.dead++;
+          // Dead node — build brief
+          let cls: ChunkClassification;
+          if (lonerNodeIds.has(nid)) { cls = "loner"; breakdown.loner++; }
+          else if (redundantNodeIds.has(nid)) { cls = "redundant"; breakdown.redundant++; }
+          else { cls = "dead"; breakdown.dead++; }
+
+          const death = deathLog.get(nid);
+          deadBriefs.push({
+            chunkSeqNo: seqNo,
+            classification: cls as "redundant" | "loner" | "dead",
+            snippet: text.slice(0, 80),
+            cause: death?.cause,
+            cosine: death?.cosine,
+            posRes: death?.posRes,
+          });
         }
       }
+
+      // Sort by document position
+      chunkDetails.sort((a, b) => a.chunkSeqNo - b.chunkSeqNo);
+      pureDetails.sort((a, b) => a.chunkSeqNo - b.chunkSeqNo);
+      clusterDetails.sort((a, b) => b.clusterSize - a.clusterSize);
+      deadBriefs.sort((a, b) => a.chunkSeqNo - b.chunkSeqNo);
 
       reports.push({
         sourceId: qualifiedSid,
@@ -326,6 +390,10 @@ export class IsolatedRunner {
         partsComplete: survivors.length <= entry.totalChunks,
         classificationBreakdown: breakdown,
         sourceMetadata: entry.metadata,
+        chunkDetails,
+        pureSurvivors: pureDetails,
+        mergerClusters: clusterDetails,
+        deadBriefs,
       });
     }
 

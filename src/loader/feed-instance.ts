@@ -34,6 +34,34 @@ export type ChunkClassification = "pure" | "loner" | "redundant" | "merged" | "d
 /** Per-chunk classification distribution for a sourceId */
 export type ClassificationBreakdown = Record<ChunkClassification, number>;
 
+/** Individual chunk with position + classification */
+export interface ChunkDetail {
+  chunkSeqNo: number;
+  text: string;
+  species: Species;
+  classification: ChunkClassification;
+}
+
+/** Dead chunk brief (redundant/loner) — lightweight identifier + snippet */
+export interface DeadBrief {
+  chunkSeqNo: number;
+  classification: "redundant" | "loner" | "dead";
+  snippet: string;           // first ~80 chars
+  cause?: string;            // death cause from deathLog
+  cosine?: number;           // merge similarity (redundant)
+  posRes?: number;           // positive resonance (loner)
+}
+
+/** Merger cluster mapped to source position */
+export interface ClusterDetail {
+  originChunkSeqNo: number;
+  clusterSize: number;
+  depth1Count: number;
+  deepChainCount: number;
+  species: Species;
+  sampleText: string;
+}
+
 // ---- Survivor report (per sourceId) ----
 
 export interface SurvivorReport {
@@ -63,6 +91,14 @@ export interface SurvivorReport {
   consensusRate?: number;
   /** Doc-level metadata from sidecar (dataset, abstract, etc.) */
   sourceMetadata?: Record<string, unknown>;
+  /** Per-chunk detail for all survivors (pure + merged) with seqNo */
+  chunkDetails?: ChunkDetail[];
+  /** Pure survivor chunks only */
+  pureSurvivors?: ChunkDetail[];
+  /** Merger cluster details */
+  mergerClusters?: ClusterDetail[];
+  /** Dead chunk briefs (redundant + loner + dead) */
+  deadBriefs?: DeadBrief[];
 }
 
 // ---- Instance status ----
