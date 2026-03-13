@@ -1,0 +1,2313 @@
+[
+  {
+    "sourceId": "source_arxiv:14",
+    "collection": "source_arxiv",
+    "batchToken": "batch-6-mmorp605",
+    "totalChunks": 155,
+    "survivingChunks": 18,
+    "survivalRate": 0.11612903225806452,
+    "species": {
+      "summarizer": 6,
+      "sentinel": 3,
+      "herald": 17,
+      "anchor": 1,
+      "spore": 7
+    },
+    "survivingTexts": [
+      "j. , sawicki , m. , & brunner , r. 1999 , eds . ,\n\nphotometric redshifts and high - redshift galaxies ( san francisco : asp ) york , d. g. , et al .\n\n[table]",
+      ". 2002 ) , which have long faded by the time they are found .\n\nthe discovery of sne in archival data is expected to become frequent as high - quality astronomical databases become larger and more accessible , especially with the development of projects such as astrovirtel ( http://www.stecf.org/astrovirtel ) and the national virtual observatory ( brunner , djorgovski , & szalay 2001 ) .\n\nthe goal of the present work is to facilitate the scientific exploitation of sne for which no spectroscopic observations exist .\n\nthe obvious alternative for spectroscopy is multi - color broadband photometry .",
+      "treat the color space bounded by them as a possible location for such sne .\n\ncontrary to sne  ia , the color path of sne  ii - p is quite smooth .\n\nthe underlying spectral evolution is driven mostly by the change in the continuum slope , from very blue at early ages , growing redder with time ( e.g. , filippenko 1997 ) .",
+      "gal - yam , a. , & maoz , d. 2000 , iau circ .\n\n7405 gal - yam , a. , & maoz , d. 2002 , in preparation gal - yam , a. , maoz , d. , & sharon , k. 2002 , mnras , in press , astro - ph/0109089 gal - yam , a. , & shemmer , o. 2001 , iau circ .",
+      "possibly shows the transition from matter - dominated deceleration to [x13]-dominated acceleration at [x15] .\n\nsne  ii - p can also be used as primary distance estimators through the expanding photosphere method ( epm ; kirshner & kwan 1974 ; schmidt , kirshner , & eastman 1992 ; schmidt et al .\n\n1994 ) , as was most recently demonstrated by hamuy et al .\n\n( 2001 ) and leonard et al .\n\n( 2002a , b ) .",
+      "the need for a complete epm analysis unless a more accurate distance is desired .\n\nhamuy & pinto ( 2002 ) refine this technique , showing that a measurement of the plateau magnitude and the ejecta expansion velocity potentially yields a considerably smaller uncertainty in the derived distance .\n\nsn rates as a function of redshift probe the star - formation history of the universe , the physical mechanisms leading to sne  ia , and the cosmological parameters ( jorgensen et al .",
+      "gal - yam , a. , & shemmer , o. 2001 , iau circ .\n\n7602 ; see http://wise-obs.tau.ac.il/$$avishay/local.html germany , l.  m. , reiss , d.  j. , sadler , e.  m. , schmidt , b.  p. , & stubbs , c.  w. 2000 , , 533 , 320 goobar , a. , & perlmutter , s. 1995 , apj , 450 , 14 hamuy , m. , & pinto , p. a. 2002 , apjl , 566 , l63 hamuy , m. , et al .",
+      "as a known parameter . in the absence of a spectrum , the sn age\n\nmay sometimes be revealed by measuring the photometric light curve of the event .\n\nadmittedly , such followup may still pose a problem for faint or very numerous events , and is generally not possible for archival sne ( see riess et al .\n\n2001 for an exception ) .\n\nhowever , for many of the scientific uses of sne ( e.g. , the derivation of sn rates ) , the age of each event is immaterial .",
+      "this is demonstrated in the bottom panel of figure 4 for sne at [x7] .\n\nagain , late - time sne  ii - p are significantly redder than other types ( [x68] mag and [x69] mag ) , while early - time sne  ia are significantly bluer ( [x70] mag and [x71] mag ) , and remain so even in the presence of significant reddening by dust . at later times\n\n( over two months ) , sne  ia escape from the vicinity of other types and reach [x72] values above 1.2 mag .",
+      "that spectral shape distortions due to wavelength - dependent atmospheric refraction are not significant .\n\ntelluric lines were removed , generally through division by the spectrum of a featureless star . according to the galactic coordinates of the observed sn\n\n, the spectra were corrected for galactic reddening , using the maps of schlegel , finkbeiner , & davis ( 1998 ) and the extinction curve of cardelli , clayton , & mathis ( 1989 ) .",
+      "well as ii - p , ii - l , iin , and iib .\n\nsee filippenko ( 1997 ) for a thorough review and [x10] for more details .",
+      "a single type of sn , or that are avoided by various sn types .\n\nthe observed photometric colors of a candidate sn with a known redshift can then be plotted on the relevant diagrams , and constraints on its type and age may be drawn .\n\nas we show in [x20] , the type of a sn can sometimes be uniquely determined .",
+      "3 events are definitely not ii - p , iin , or iib events .\n\nhence 91 events ( 83% ) belong to our spectroscopically defined sn sample ( types ia , ib , ic , ii - p , iin , and iib ) , 13 events ( 12% ) may or may not be of these types , and just 6 events ( 5% ) are known to be of types not included in our database .",
+      "order to verify consistency and fill gaps in the temporal evolution , when needed .\n\ntable 1 lists the sne whose spectra constitute our database , with the prototypical event for each subtype listed first .\n\nwe have specifically avoided events that were known to either suffer considerable extinction , or to be otherwise peculiar . for sne",
+      "the missing spectral region is extrapolated linearly using the median value of the spectrum .\n\neach calculated magnitude that includes such an extrapolation is assigned an error equal to the amount of flux in the extrapolated part of the spectrum , thus providing a conservative error estimate .\n\nthe resulting synthetic photometry is then displayed on color - color diagrams .\n\nnote that in all the plots we present , the ordinate and abscissa are composed of colors consisting of adjacent bands ( e.g. , [x28] vs. [x29] , [x29] vs. [x1] etc . ) .",
+      "and calibrate the spectra that constitute much of the dataset used in this study .\n\nwe are grateful to a. fassia , m. hamuy , and y. qiu for supplying us with digital copies of their spectra of sn 1998s , 1999ee , and 1996cb , respectively .\n\nb. leibundgut generously provided help with sn light curves , and we thank d. branch , e. o. ofek , g. richards , and o. shemmer for useful suggestions .",
+      "; lowenstein 2000 ; gal - yam , maoz , & sharon 2002 ) .\n\nonce discovered , the study of a particular sn , and its use as a tool for any of the applications above , is almost always based on spectroscopic verification and classification .\n\nthe information extracted from sn spectra usually includes ( but is not limited to ) the sn type , redshift , and age ( relative to the dates of explosion or peak brightness ) .\n\nspectroscopic followup may not always be possible or practical .",
+      "e.g. , sn 1987a - like ) may be underrepresented in current sn statistics .\n\nanalysis of future surveys that will be sensitive to such events may require their inclusion in the spectral database .\n\nthe core of our classification algorithm is the spectral database : a compilation of optical spectra of nearby sne .\n\nmost of the these spectra were obtained with the shane 3-m reflector at lick observatory .",
+      "a. 2002 , apjl , 566 , l63 hamuy , m. , et al .\n\n2001 , apj , 558 , 615 hamuy , m. , et al .\n\n2002 , aj , in press , astro - ph/0203491 hardin , d. , et al .\n\n2000 , iau circ .\n\n7406 hflich , p. , straniero , o. , limongi , m. , dominguez , i. , & chieffi , a. 2001 , in rev .\n\nmexicana astron .\n\n10 , the seventh texas - mexico conference on astrophysics : flows , blows , and glows , ed .",
+      "1993 , apj , 415 , l103 filippenko , a. v. , et al .\n\n1992a , apj , 384 , l15 filippenko , a. v. , et al .\n\n1992b , aj , 104 , 1543 filippenko , a. v. , et al . 1995b , apj , 450 , l11 fukugita , m. , ichikawa , t. , gunn , j.  e. , doi , m. , shimasaku , k. , & schneider , d.  p.  1996\n\n, , 111 , 1748 galama , t. j. , et al .",
+      "prior to [x87] d ) can not be distinguished from core - collapse sne .\n\nlater in their evolution , these events acquire unique colors ( [x88] mag , [x89] mag ) that are different from all other types of sne .  as sn 1991t - like and sn 2000cx - like events are almost always bluer than `` normal '' sne  ia , they are generally easier to distinguish from core - collapse sne , and pose no special problem in our analysis .",
+      "when it is not likely to make one type of sn look like another .\n\nfirst , we find that for all types of sne and hosts , when [x51] the effect of contamination is indeed negligible . for young sne  ia , the worst - case scenario would be the contamination by a red elliptical host that could make them look like redder core - collapse sne . when observed in restframe blue colors ( e.g. , [x52] ) , this effect becomes significant only when [x53] , but if red bands ( e.g. , [x54] ) are used , contaminated sne  ia attain colors similar to those of the core - collapse population already at [x55] .",
+      "demonstrated ( riess et al . 1998 ; coil et al . 2000 ) .\n\nhowever , for all other types of sne , high - quality spectra of distant ( [x86] ) events are largely unavailable .\n\nsince we use synthetic broadband colors , only significant evolution in either the spectral slope or strong emission or absorption features will influence our classification method . nevertheless , this is a caveat that must be addressed once spectra of distant core - collapse sne become available .",
+      "[x29] colors ( [x34] mag ) but redder [x28] colors , around [x35] mag .\n\nit is also evident that old ( [x36]  d ) sne  ia have unique colors ( [x37] mag , [x38] mag ) , as do some of the sne  ii - p ( ages 19100  d ) which have the reddest colors of all sne . the arrow shows the reddening effect corresponding to [x39] mag of extinction , assuming the galactic reddening curve of cardelli et al .",
+      "see filippenko ( 1997 ) for a thorough review and [x10] for more details .\n\nit is widely accepted that sne  ia are produced from the thermonuclear disruption of a white dwarf at or near the chandrasekhar limit , while all other types of sne ( ib , ic , and ii ) result from the core collapse of massive stars .  while understanding sne , their properties , and their underlying physics is of great interest , sne are also useful tools in the study of various other important problems .",
+      "l. 1979 , a&a , 72 , 287 becker , a. , et al .\n\n2001 , baas , 199.1101.14 ; see also http://dls.bell-labs.com/team.html bessell , m.  s. , & brett , j.  m. 1988 , , 100 , 1134 brighenti , f. , & mathews , w. g. 1998 , apj , 515 , 542 brighenti , f. , & mathews , w. g. 2001 , apj , 553 , 103 brunner , r.  j. , djorgovski , s.  g. , & szalay , a.  s.  2001 , eds .",
+      ", and are therefore liable to mix with the redder core - collapse population .\n\nthis is illustrated in the bottom panel of the same figure , where indeed , underluminous sne  ia at early ages ( prior to [x87]  d ) can not be distinguished from core - collapse sne .",
+      "another kind of transient phenomenon gamma - ray burst afterglows ( rhoads 2001 ) .\n\nmulti - color wide - field surveys ( e.g. , becker et al .\n\n2001 ; jannuzi et al . 2001 ; sdss  york et al .",
+      "limitations allow us to present below just a few representative examples of such plots .\n\nsimilar plots for arbitrary values of [x12] may be obtained from our website ( http://wise-obs.tau.ac.il/$$dovip/typing ) .\n\nin figure 1 , we compare our data on sne  ia to template colors of normal sne  ia compiled by leibundgut ( 1988 ) .",
+      ". 2000 ; turatto et al . 2000 ; sn 1997ef iwamoto et al .\n\n2000 ; matheson et al . 2001 ) to faint sn 1987a - like events ( e.g. , arnett et al . 1989 , and references therein ) , and sn `` impostors '' ( e.g. , filippenko et al . 1995a ; van dyk et al . 2000 , and references therein ) .",
+      "sne of all types ( not just ia ) will undoubtedly be even larger .\n\nmiknaitis et al .\n\n( 2001b ) report that a systematic search for sne in these data is underway , and the first sne have already been reported ( miknaitis et al . 2001a ; rest , miceli , & covarrubias 2001 ; miknaitis & krisciunas 2001 ) .",
+      ", djorgovski , s. g. , & szalay , a. s. 2001 , eds .\n\n, virtual observatories of the future ( san francisco : asp , conf . ser .\n\n225 ) cappellaro , e. , et al .\n\n1997 , a&a , 322 , 431 cardelli , j. a. , clayton , g. c. , & mathis , j. s. 1989 , apj , 345 , 245 clocchiatti , a. , et al .\n\n2000 , , 529 , 661 coil , a. l. , et al . 2000 ,",
+      ", , 529 , 661 coil , a. l. , et al . 2000 ,\n\napj , 544 , l111 cousins , a. w. j. 1976 ; see moro & munari 2000 for details dahln , t. , & fransson , c. 1999 , a&a , 350 , 349 dahln , t. , & goobar , a. 2002 , pasp , 114 , 284 ( dg2002 ) dimai , a. 2001 , iau circ .\n\n7719 doggett , j. b. , & branch , d. 1985 , aj , 90 , 2303 fassia , a. , et al .",
+      ", a&a , 331 , l69 schaefer , b. e. 2000 , iau circ .\n\n7387 schlegel , d. j. , finkbeiner , d. p. , & davis , m. 1998 , apj , 500 , 525 schlegel , e. m. 1990 , mnras , 244 , 269 schmidt , b. p. , kirshner , r. p. , & eastman , r. g. 1992 , apj , 395 , 366 schmidt , b.  p. , et al .\n\n1994 , , 432 , 42 schmidt , b. p. , et al ."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 10,
+      "merged": 8,
+      "loner": 35,
+      "redundant": 51,
+      "dead": 51
+    },
+    "sourceMetadata": {
+      "dataset": "ccdv/arxiv-summarization",
+      "config": "",
+      "chunkTotal": 155
+    },
+    "survivorTags": {
+      "conclusion": 1
+    },
+    "chunkDetails": [
+      {
+        "chunkSeqNo": 8,
+        "text": "possibly shows the transition from matter - dominated deceleration to [x13]-dominated acceleration at [x15] .\n\nsne  ii - p can also be used as primary distance estimators through the expanding photosphere method ( epm ; kirshner & kwan 1974 ; schmidt , kirshner , & eastman 1992 ; schmidt et al .\n\n1994 ) , as was most recently demonstrated by hamuy et al .\n\n( 2001 ) and leonard et al .\n\n( 2002a , b ) .",
+        "species": "herald",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 12,
+        "text": "; lowenstein 2000 ; gal - yam , maoz , & sharon 2002 ) .\n\nonce discovered , the study of a particular sn , and its use as a tool for any of the applications above , is almost always based on spectroscopic verification and classification .\n\nthe information extracted from sn spectra usually includes ( but is not limited to ) the sn type , redshift , and age ( relative to the dates of explosion or peak brightness ) .\n\nspectroscopic followup may not always be possible or practical .",
+        "species": "herald",
+        "classification": "merged"
+      },
+      {
+        "chunkSeqNo": 15,
+        "text": ". 2002 ) , which have long faded by the time they are found .\n\nthe discovery of sne in archival data is expected to become frequent as high - quality astronomical databases become larger and more accessible , especially with the development of projects such as astrovirtel ( http://www.stecf.org/astrovirtel ) and the national virtual observatory ( brunner , djorgovski , & szalay 2001 ) .\n\nthe goal of the present work is to facilitate the scientific exploitation of sne for which no spectroscopic observations exist .\n\nthe obvious alternative for spectroscopy is multi - color broadband photometry .",
+        "species": "herald",
+        "classification": "merged"
+      },
+      {
+        "chunkSeqNo": 39,
+        "text": ". 2000 ; turatto et al . 2000 ; sn 1997ef iwamoto et al .\n\n2000 ; matheson et al . 2001 ) to faint sn 1987a - like events ( e.g. , arnett et al . 1989 , and references therein ) , and sn `` impostors '' ( e.g. , filippenko et al . 1995a ; van dyk et al . 2000 , and references therein ) .",
+        "species": "summarizer",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 95,
+        "text": "prior to [x87] d ) can not be distinguished from core - collapse sne .\n\nlater in their evolution , these events acquire unique colors ( [x88] mag , [x89] mag ) that are different from all other types of sne .  as sn 1991t - like and sn 2000cx - like events are almost always bluer than `` normal '' sne  ia , they are generally easier to distinguish from core - collapse sne , and pose no special problem in our analysis .",
+        "species": "herald",
+        "classification": "merged"
+      },
+      {
+        "chunkSeqNo": 128,
+        "text": "l. 1979 , a&a , 72 , 287 becker , a. , et al .\n\n2001 , baas , 199.1101.14 ; see also http://dls.bell-labs.com/team.html bessell , m.  s. , & brett , j.  m. 1988 , , 100 , 1134 brighenti , f. , & mathews , w. g. 1998 , apj , 515 , 542 brighenti , f. , & mathews , w. g. 2001 , apj , 553 , 103 brunner , r.  j. , djorgovski , s.  g. , & szalay , a.  s.  2001 , eds .",
+        "species": "herald",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 129,
+        "text": ", djorgovski , s. g. , & szalay , a. s. 2001 , eds .\n\n, virtual observatories of the future ( san francisco : asp , conf . ser .\n\n225 ) cappellaro , e. , et al .\n\n1997 , a&a , 322 , 431 cardelli , j. a. , clayton , g. c. , & mathis , j. s. 1989 , apj , 345 , 245 clocchiatti , a. , et al .\n\n2000 , , 529 , 661 coil , a. l. , et al . 2000 ,",
+        "species": "spore",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 130,
+        "text": ", , 529 , 661 coil , a. l. , et al . 2000 ,\n\napj , 544 , l111 cousins , a. w. j. 1976 ; see moro & munari 2000 for details dahln , t. , & fransson , c. 1999 , a&a , 350 , 349 dahln , t. , & goobar , a. 2002 , pasp , 114 , 284 ( dg2002 ) dimai , a. 2001 , iau circ .\n\n7719 doggett , j. b. , & branch , d. 1985 , aj , 90 , 2303 fassia , a. , et al .",
+        "species": "herald",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 135,
+        "text": "gal - yam , a. , & maoz , d. 2000 , iau circ .\n\n7405 gal - yam , a. , & maoz , d. 2002 , in preparation gal - yam , a. , maoz , d. , & sharon , k. 2002 , mnras , in press , astro - ph/0109089 gal - yam , a. , & shemmer , o. 2001 , iau circ .",
+        "species": "summarizer",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 136,
+        "text": "gal - yam , a. , & shemmer , o. 2001 , iau circ .\n\n7602 ; see http://wise-obs.tau.ac.il/$$avishay/local.html germany , l.  m. , reiss , d.  j. , sadler , e.  m. , schmidt , b.  p. , & stubbs , c.  w. 2000 , , 533 , 320 goobar , a. , & perlmutter , s. 1995 , apj , 450 , 14 hamuy , m. , & pinto , p. a. 2002 , apjl , 566 , l63 hamuy , m. , et al .",
+        "species": "spore",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 154,
+        "text": "j. , sawicki , m. , & brunner , r. 1999 , eds . ,\n\nphotometric redshifts and high - redshift galaxies ( san francisco : asp ) york , d. g. , et al .\n\n[table]",
+        "species": "anchor",
+        "classification": "pure"
+      }
+    ],
+    "pureSurvivors": [
+      {
+        "chunkSeqNo": 8,
+        "text": "possibly shows the transition from matter - dominated deceleration to [x13]-dominated acceleration at [x15] .\n\nsne  ii - p can also be used as primary distance estimators through the expanding photosphere method ( epm ; kirshner & kwan 1974 ; schmidt , kirshner , & eastman 1992 ; schmidt et al .\n\n1994 ) , as was most recently demonstrated by hamuy et al .\n\n( 2001 ) and leonard et al .\n\n( 2002a , b ) .",
+        "species": "herald",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 39,
+        "text": ". 2000 ; turatto et al . 2000 ; sn 1997ef iwamoto et al .\n\n2000 ; matheson et al . 2001 ) to faint sn 1987a - like events ( e.g. , arnett et al . 1989 , and references therein ) , and sn `` impostors '' ( e.g. , filippenko et al . 1995a ; van dyk et al . 2000 , and references therein ) .",
+        "species": "summarizer",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 128,
+        "text": "l. 1979 , a&a , 72 , 287 becker , a. , et al .\n\n2001 , baas , 199.1101.14 ; see also http://dls.bell-labs.com/team.html bessell , m.  s. , & brett , j.  m. 1988 , , 100 , 1134 brighenti , f. , & mathews , w. g. 1998 , apj , 515 , 542 brighenti , f. , & mathews , w. g. 2001 , apj , 553 , 103 brunner , r.  j. , djorgovski , s.  g. , & szalay , a.  s.  2001 , eds .",
+        "species": "herald",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 129,
+        "text": ", djorgovski , s. g. , & szalay , a. s. 2001 , eds .\n\n, virtual observatories of the future ( san francisco : asp , conf . ser .\n\n225 ) cappellaro , e. , et al .\n\n1997 , a&a , 322 , 431 cardelli , j. a. , clayton , g. c. , & mathis , j. s. 1989 , apj , 345 , 245 clocchiatti , a. , et al .\n\n2000 , , 529 , 661 coil , a. l. , et al . 2000 ,",
+        "species": "spore",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 130,
+        "text": ", , 529 , 661 coil , a. l. , et al . 2000 ,\n\napj , 544 , l111 cousins , a. w. j. 1976 ; see moro & munari 2000 for details dahln , t. , & fransson , c. 1999 , a&a , 350 , 349 dahln , t. , & goobar , a. 2002 , pasp , 114 , 284 ( dg2002 ) dimai , a. 2001 , iau circ .\n\n7719 doggett , j. b. , & branch , d. 1985 , aj , 90 , 2303 fassia , a. , et al .",
+        "species": "herald",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 135,
+        "text": "gal - yam , a. , & maoz , d. 2000 , iau circ .\n\n7405 gal - yam , a. , & maoz , d. 2002 , in preparation gal - yam , a. , maoz , d. , & sharon , k. 2002 , mnras , in press , astro - ph/0109089 gal - yam , a. , & shemmer , o. 2001 , iau circ .",
+        "species": "summarizer",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 136,
+        "text": "gal - yam , a. , & shemmer , o. 2001 , iau circ .\n\n7602 ; see http://wise-obs.tau.ac.il/$$avishay/local.html germany , l.  m. , reiss , d.  j. , sadler , e.  m. , schmidt , b.  p. , & stubbs , c.  w. 2000 , , 533 , 320 goobar , a. , & perlmutter , s. 1995 , apj , 450 , 14 hamuy , m. , & pinto , p. a. 2002 , apjl , 566 , l63 hamuy , m. , et al .",
+        "species": "spore",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 154,
+        "text": "j. , sawicki , m. , & brunner , r. 1999 , eds . ,\n\nphotometric redshifts and high - redshift galaxies ( san francisco : asp ) york , d. g. , et al .\n\n[table]",
+        "species": "anchor",
+        "classification": "pure"
+      }
+    ],
+    "mergerClusters": [
+      {
+        "originChunkSeqNo": 12,
+        "clusterSize": 13,
+        "depth1Count": 4,
+        "deepChainCount": 8,
+        "species": "herald",
+        "sampleText": "; lowenstein 2000 ; gal - yam , maoz , & sharon 2002 ) .\n\nonce discovered , the study of a particular sn , and its use as a tool for any of the applic"
+      },
+      {
+        "originChunkSeqNo": 154,
+        "clusterSize": 5,
+        "depth1Count": 1,
+        "deepChainCount": 3,
+        "species": "anchor",
+        "sampleText": "j. , sawicki , m. , & brunner , r. 1999 , eds . ,\n\nphotometric redshifts and high - redshift galaxies ( san francisco : asp ) york , d. g. , et al .\n\n"
+      },
+      {
+        "originChunkSeqNo": 136,
+        "clusterSize": 4,
+        "depth1Count": 1,
+        "deepChainCount": 2,
+        "species": "spore",
+        "sampleText": "gal - yam , a. , & shemmer , o. 2001 , iau circ .\n\n7602 ; see http://wise-obs.tau.ac.il/$$avishay/local.html germany , l.  m. , reiss , d.  j. , sadle"
+      },
+      {
+        "originChunkSeqNo": 95,
+        "clusterSize": 4,
+        "depth1Count": 2,
+        "deepChainCount": 1,
+        "species": "herald",
+        "sampleText": "prior to [x87] d ) can not be distinguished from core - collapse sne .\n\nlater in their evolution , these events acquire unique colors ( [x88] mag , [x"
+      }
+    ],
+    "deadBriefs": [
+      {
+        "chunkSeqNo": 1,
+        "classification": "dead",
+        "snippet": "et al . 1996 ; treffers et al . 1997 ; filippenko et al .\n\n2001 ; dimai 2001 ; q",
+        "cause": "merge",
+        "cosine": 0.7425143319603741,
+        "posRes": 0.2519984421465533
+      },
+      {
+        "chunkSeqNo": 2,
+        "classification": "loner",
+        "snippet": ". 1998 ) now combine to yield hundreds of new sn discoveries each year .\n\nambiti",
+        "cause": "merge",
+        "cosine": 0.6064824472677974,
+        "posRes": 0.01173104754052356
+      },
+      {
+        "chunkSeqNo": 3,
+        "classification": "dead",
+        "snippet": "also [x9] promise to increase these numbers by at least an order of magnitude .\n",
+        "cause": "spawn",
+        "posRes": 0.14308246274025677
+      },
+      {
+        "chunkSeqNo": 4,
+        "classification": "loner",
+        "snippet": "well as ii - p , ii - l , iin , and iib .\n\nsee filippenko ( 1997 ) for a thoroug"
+      },
+      {
+        "chunkSeqNo": 5,
+        "classification": "loner",
+        "snippet": "see filippenko ( 1997 ) for a thorough review and [x10] for more details .\n\nit i"
+      },
+      {
+        "chunkSeqNo": 6,
+        "classification": "loner",
+        "snippet": ", sne are also useful tools in the study of various other important problems .\n\n",
+        "cause": "merge",
+        "cosine": 0.6518773018660131,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 9,
+        "classification": "loner",
+        "snippet": ". ( 2001 ) and leonard et al . ( 2002a , b ) .\n\nleonard et al . ( 2002a ; see al",
+        "cause": "merge",
+        "cosine": 0.564133914855316,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 10,
+        "classification": "loner",
+        "snippet": "the need for a complete epm analysis unless a more accurate distance is desired "
+      },
+      {
+        "chunkSeqNo": 11,
+        "classification": "dead",
+        "snippet": "mechanisms leading to sne ia , and the cosmological parameters ( jorgensen et al",
+        "cause": "merge",
+        "cosine": 0.6121508132921453,
+        "posRes": 0.2788222228894406
+      },
+      {
+        "chunkSeqNo": 13,
+        "classification": "redundant",
+        "snippet": "or peak brightness ) . spectroscopic followup may not always be possible or prac",
+        "cause": "merge",
+        "cosine": 0.7893417254758808,
+        "posRes": 0.06255499004378408
+      },
+      {
+        "chunkSeqNo": 14,
+        "classification": "dead",
+        "snippet": "sdss southern strip ( miknaitis et al . 2001b ; see also [x18] ) .\n\nfinally , sp",
+        "cause": "merge",
+        "cosine": 0.6691390225925451,
+        "posRes": 0.576915161737966
+      },
+      {
+        "chunkSeqNo": 16,
+        "classification": "loner",
+        "snippet": "observations exist . the obvious alternative for spectroscopy is multi - color b",
+        "cause": "merge",
+        "cosine": 0.563518272244976,
+        "posRes": 0.234785430677863
+      },
+      {
+        "chunkSeqNo": 17,
+        "classification": "redundant",
+        "snippet": "al . 1999 ; richards et al . 2001 ) . applying a similar method\n\nto sne is not s",
+        "cause": "merge",
+        "cosine": 0.7650810796739361,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 18,
+        "classification": "dead",
+        "snippet": ". in a recent paper , dahln & goobar ( 2002 , hereafter dg2002 )\n\ntackle the iss",
+        "cause": "merge",
+        "cosine": 0.7941064823743383,
+        "posRes": 0.020378791377218167
+      },
+      {
+        "chunkSeqNo": 19,
+        "classification": "loner",
+        "snippet": "authors show , this setup is strongly biased toward the discovery of sne ia .\n\nt",
+        "cause": "merge",
+        "cosine": 0.7131660753017297,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 20,
+        "classification": "loner",
+        "snippet": "minimize the contamination of the sample by non - ia sne . to do this\n\n, they us",
+        "cause": "merge",
+        "cosine": 0.6120342697326003,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 21,
+        "classification": "redundant",
+        "snippet": "not precisely known even in the local universe , let alone at high redshift .\n\nw",
+        "cause": "merge",
+        "cosine": 0.6583817350479343,
+        "posRes": 0.02747618357324123
+      },
+      {
+        "chunkSeqNo": 22,
+        "classification": "redundant",
+        "snippet": "of sn surveys , including searches that are similar to those described by dg2002",
+        "cause": "spawn",
+        "posRes": 0.30861448179812384
+      },
+      {
+        "chunkSeqNo": 23,
+        "classification": "dead",
+        "snippet": "determined simultaneously . most sne are associated with host galaxies that are ",
+        "cause": "merge",
+        "cosine": 0.8435916197516782,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 24,
+        "classification": "dead",
+        "snippet": "al . ( 2002 ) recently demonstrated this with sne they discovered in archival _\n",
+        "cause": "merge",
+        "cosine": 0.5662796386985219,
+        "posRes": 0.3559930387489879
+      },
+      {
+        "chunkSeqNo": 25,
+        "classification": "dead",
+        "snippet": "as a known parameter . in the absence of a spectrum , the sn age\n\nmay sometimes "
+      },
+      {
+        "chunkSeqNo": 26,
+        "classification": "redundant",
+        "snippet": "the derivation of sn rates ) , the age of each event is immaterial .\n\ndeterminat",
+        "cause": "merge",
+        "cosine": 0.7475048889672181,
+        "posRes": 0.1732565120555843
+      },
+      {
+        "chunkSeqNo": 27,
+        "classification": "redundant",
+        "snippet": ", this information is limited and such reasoning may not hold at high redshifts ",
+        "cause": "merge",
+        "cosine": 0.8630921888299922,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 28,
+        "classification": "dead",
+        "snippet": "we have compiled a large spectral database of nearby , well - observed sne .\n\nth",
+        "cause": "spawn",
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 29,
+        "classification": "dead",
+        "snippet": "a single type of sn , or that are avoided by various sn types .\n\nthe observed ph"
+      },
+      {
+        "chunkSeqNo": 30,
+        "classification": "redundant",
+        "snippet": "show in [x20] , the type of a sn can sometimes be uniquely determined .\n\nwhen th",
+        "cause": "merge",
+        "cosine": 0.7784474402878967,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 31,
+        "classification": "loner",
+        "snippet": "determined by the spectral energy distribution ( sed ) of each event . by defini",
+        "cause": "merge",
+        "cosine": 0.7289590282741333,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 32,
+        "classification": "dead",
+        "snippet": "classification scheme we adopt needs , therefore , to rely only on spectral prop",
+        "cause": "merge",
+        "cosine": 0.7257675987284667,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 33,
+        "classification": "loner",
+        "snippet": "spectra , and type i sne , which do not ( minkowski 1941 ) .\n\ntype i sne are fur",
+        "cause": "merge",
+        "cosine": 0.6684491734094032,
+        "posRes": 0.10299515746099998
+      },
+      {
+        "chunkSeqNo": 34,
+        "classification": "redundant",
+        "snippet": "i ( e.g. , matheson et al . 2001 , and references therein ) .\n\ntype ii sne are d",
+        "cause": "spawn",
+        "posRes": 0.31407045392305866
+      },
+      {
+        "chunkSeqNo": 35,
+        "classification": "dead",
+        "snippet": "branch 1990 ) relative to other sne ii - l . during the 1990s ,\n\nthe focus in st",
+        "cause": "merge",
+        "cosine": 0.8034097182855094,
+        "posRes": 0.08673560196121197
+      },
+      {
+        "chunkSeqNo": 36,
+        "classification": "loner",
+        "snippet": "filippenko 1988 ; filippenko , matheson , & ho 1993 ; matheson et al .\n\n2001 , a",
+        "cause": "merge",
+        "cosine": 0.6852538047115762,
+        "posRes": 0.31643340382306745
+      },
+      {
+        "chunkSeqNo": 37,
+        "classification": "redundant",
+        "snippet": "- p , iin , and iib as subtypes of the sn ii population .\n\nsne  iin and iib are ",
+        "cause": "merge",
+        "cosine": 0.7779818177716359,
+        "posRes": 0.24295602398488575
+      },
+      {
+        "chunkSeqNo": 38,
+        "classification": "dead",
+        "snippet": "defined subtypes ii - p , iin , and iib ( see below ) .\n\nsne are a veritable zoo",
+        "cause": "merge",
+        "cosine": 0.6342021465874879,
+        "posRes": 0.24364784519375215
+      },
+      {
+        "chunkSeqNo": 40,
+        "classification": "redundant",
+        "snippet": ". 1995a ; van dyk et al . 2000 , and references therein ) .\n\ncurrently , we limi",
+        "cause": "merge",
+        "cosine": 0.7594447183366186,
+        "posRes": 0.012261541577475735
+      },
+      {
+        "chunkSeqNo": 41,
+        "classification": "dead",
+        "snippet": "the iau circulars are representative of the sn population that is discovered by ",
+        "cause": "merge",
+        "cosine": 0.6138149172550476,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 42,
+        "classification": "redundant",
+        "snippet": "alternatively could be constrained by data available to us . among 110 such even",
+        "cause": "merge",
+        "cosine": 0.7804521454413649,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 43,
+        "classification": "redundant",
+        "snippet": "ib , and 34 events which were reported just as `` type ii . ''\n\nusing available ",
+        "cause": "merge",
+        "cosine": 0.7735233704886717,
+        "posRes": 0.2481204717226592
+      },
+      {
+        "chunkSeqNo": 44,
+        "classification": "redundant",
+        "snippet": "3 events are definitely not ii - p , iin , or iib events .\n\nhence 91 events ( 83"
+      },
+      {
+        "chunkSeqNo": 45,
+        "classification": "dead",
+        "snippet": "( 5% ) are known to be of types not included in our database .\n\nit is therefore ",
+        "cause": "merge",
+        "cosine": 0.533722714847499,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 46,
+        "classification": "dead",
+        "snippet": "e.g. , sn 1987a - like ) may be underrepresented in current sn statistics .\n\nana"
+      },
+      {
+        "chunkSeqNo": 48,
+        "classification": "loner",
+        "snippet": "that spectral shape distortions due to wavelength - dependent atmospheric refrac"
+      },
+      {
+        "chunkSeqNo": 49,
+        "classification": "dead",
+        "snippet": "and the extinction curve of cardelli , clayton , & mathis ( 1989 ) .\n\nthe workin",
+        "cause": "merge",
+        "cosine": 0.7509080781871204,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 50,
+        "classification": "redundant",
+        "snippet": "order to verify consistency and fill gaps in the temporal evolution , when neede"
+      },
+      {
+        "chunkSeqNo": 51,
+        "classification": "dead",
+        "snippet": "known to either suffer considerable extinction , or to be otherwise peculiar . f",
+        "cause": "merge",
+        "cosine": 0.6987313888670194,
+        "posRes": 0.22146803572874338
+      },
+      {
+        "chunkSeqNo": 52,
+        "classification": "dead",
+        "snippet": "ia , but we examine the effects of peculiar sne ia in [x26] below .\n\nall spectra",
+        "cause": "merge",
+        "cosine": 0.7318953965546738,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 53,
+        "classification": "loner",
+        "snippet": "chosen redshift through the johnson - cousins [x4] ( johnson 1965 ; cousins 1976",
+        "cause": "merge",
+        "cosine": 0.5241070775504927,
+        "posRes": 0.00126602614868339
+      },
+      {
+        "chunkSeqNo": 54,
+        "classification": "loner",
+        "snippet": "the missing spectral region is extrapolated linearly using the median value of t"
+      },
+      {
+        "chunkSeqNo": 55,
+        "classification": "loner",
+        "snippet": "bands ( e.g. , [x28] vs. [x29] , [x29] vs. [x1] etc . ) .\n\nsince most of the spe",
+        "cause": "merge",
+        "cosine": 0.5203042700288565,
+        "posRes": 0.0028598662910168243
+      },
+      {
+        "chunkSeqNo": 56,
+        "classification": "redundant",
+        "snippet": "classification of sne discovered by various programs , and derive a few general ",
+        "cause": "merge",
+        "cosine": 0.6454144405901007,
+        "posRes": 0.0778584418202338
+      },
+      {
+        "chunkSeqNo": 57,
+        "classification": "loner",
+        "snippet": "limitations allow us to present below just a few representative examples of such"
+      },
+      {
+        "chunkSeqNo": 58,
+        "classification": "dead",
+        "snippet": "ia to template colors of normal sne ia compiled by leibundgut ( 1988 ) .\n\none ca",
+        "cause": "spawn",
+        "posRes": 0.2343721465972681
+      },
+      {
+        "chunkSeqNo": 59,
+        "classification": "redundant",
+        "snippet": "was somewhat bluer at early times than average sne ia ( richmond et al .\n\n1995 )",
+        "cause": "merge",
+        "cosine": 0.7553607161856417,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 60,
+        "classification": "redundant",
+        "snippet": "around point [x16] d after peak brightness . the underlying spectral evolution i",
+        "cause": "merge",
+        "cosine": 0.8154839341654886,
+        "posRes": 0.19653232029326256
+      },
+      {
+        "chunkSeqNo": 61,
+        "classification": "dead",
+        "snippet": "strong emission lines in the blue part of the spectrum ( restframe 40005500 ) .\n",
+        "cause": "spawn",
+        "posRes": 0.24190094971236256
+      },
+      {
+        "chunkSeqNo": 62,
+        "classification": "redundant",
+        "snippet": "d past maximum brightness , where a bifurcation appears in our calculated color ",
+        "cause": "merge",
+        "cosine": 0.7585950806586779,
+        "posRes": 0.03373519292091005
+      },
+      {
+        "chunkSeqNo": 63,
+        "classification": "redundant",
+        "snippet": "up to that age was consistent with the other sne ii - p used .\n\nthis demonstrate",
+        "cause": "merge",
+        "cosine": 0.8338014890088276,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 64,
+        "classification": "redundant",
+        "snippet": "treat the color space bounded by them as a possible location for such sne .\n\ncon"
+      },
+      {
+        "chunkSeqNo": 65,
+        "classification": "redundant",
+        "snippet": "at early ages , growing redder with time ( e.g. , filippenko 1997 ) .\n\nlate - ti",
+        "cause": "merge",
+        "cosine": 0.7740701530128598,
+        "posRes": 0.15279141837170604
+      },
+      {
+        "chunkSeqNo": 66,
+        "classification": "redundant",
+        "snippet": "color paths of all types of sne at zero redshift in [x28] vs. [x29] .\n\none sees ",
+        "cause": "merge",
+        "cosine": 0.7836980537806867,
+        "posRes": 0.0997229542464806
+      },
+      {
+        "chunkSeqNo": 67,
+        "classification": "loner",
+        "snippet": "[x29] colors ( [x34] mag ) but redder [x28] colors , around [x35] mag .\n\nit is a"
+      },
+      {
+        "chunkSeqNo": 68,
+        "classification": "redundant",
+        "snippet": "[x39] mag of extinction , assuming the galactic reddening curve of cardelli et a",
+        "cause": "merge",
+        "cosine": 0.661157467520899,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 69,
+        "classification": "dead",
+        "snippet": "and presented in riess et al . ( 1999 ) , have [x42] mag .\n\nconversely , because",
+        "cause": "merge",
+        "cosine": 0.6793902566377125,
+        "posRes": 0.10903949300907395
+      },
+      {
+        "chunkSeqNo": 70,
+        "classification": "loner",
+        "snippet": ", [x44] mag , would be impossible to classify based on these colors only .\n\nbut ",
+        "cause": "merge",
+        "cosine": 0.6227674262871254,
+        "posRes": 0.016849632285351
+      },
+      {
+        "chunkSeqNo": 71,
+        "classification": "redundant",
+        "snippet": "of the core - collapse types . addition of an [x2] measurement ( fig .\n\n3 , bott",
+        "cause": "merge",
+        "cosine": 0.7855495956506933,
+        "posRes": 0.4026760974619043
+      },
+      {
+        "chunkSeqNo": 73,
+        "classification": "dead",
+        "snippet": "the observation of the host galaxy , some data on the galaxy should exist .\n\nit ",
+        "cause": "spawn",
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 74,
+        "classification": "dead",
+        "snippet": ", respectively , calculated over the wavelength range of the spectrum of the sn ",
+        "cause": "merge",
+        "cosine": 0.5546782331530344,
+        "posRes": 0.12655904785498495
+      },
+      {
+        "chunkSeqNo": 75,
+        "classification": "redundant",
+        "snippet": "when it is not likely to make one type of sn look like another .\n\nfirst , we fin"
+      },
+      {
+        "chunkSeqNo": 76,
+        "classification": "redundant",
+        "snippet": "attain colors similar to those of the core - collapse population already at [x55",
+        "cause": "merge",
+        "cosine": 0.8096086310438382,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 77,
+        "classification": "loner",
+        "snippet": "[x52] color - color diagram . in redder bands ( e.g. , [x54] ) ,\n\neven this extr",
+        "cause": "merge",
+        "cosine": 0.7240621700689054,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 78,
+        "classification": "redundant",
+        "snippet": ", residual contamination has no significant implication . a large contribution f",
+        "cause": "merge",
+        "cosine": 0.6035338425560336,
+        "posRes": 0.43129187319090057
+      },
+      {
+        "chunkSeqNo": 79,
+        "classification": "dead",
+        "snippet": "with increasing redshift , the available spectral information shifts to longer -",
+        "cause": "merge",
+        "cosine": 0.6866963909304887,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 80,
+        "classification": "redundant",
+        "snippet": "smaller than 0.3 mag . during most of the temporal evolution of sne ia ,\n\ntheir ",
+        "cause": "merge",
+        "cosine": 0.7556630268937129,
+        "posRes": 0.09857156132992212
+      },
+      {
+        "chunkSeqNo": 81,
+        "classification": "loner",
+        "snippet": "4 shows a similar diagram computed at [x58] . classification is obviously more d",
+        "cause": "merge",
+        "cosine": 0.5919852988158807,
+        "posRes": 0.08686785997412187
+      },
+      {
+        "chunkSeqNo": 82,
+        "classification": "dead",
+        "snippet": "have [x2] values higher than sne of other types ( at all ages ) .\n\nclose to peak",
+        "cause": "merge",
+        "cosine": 0.6641442944429279,
+        "posRes": 0.7752959523365383
+      },
+      {
+        "chunkSeqNo": 83,
+        "classification": "dead",
+        "snippet": "a sn ii - p , the classification can become unique or nearly so .\n\nfor example ,",
+        "cause": "merge",
+        "cosine": 0.6345205995158687,
+        "posRes": 0.27649890420381174
+      },
+      {
+        "chunkSeqNo": 84,
+        "classification": "loner",
+        "snippet": "the [x62] band samples the restframe uv , not covered by our spectral database .",
+        "cause": "merge",
+        "cosine": 0.6664108781784266,
+        "posRes": 0.05546610309151148
+      },
+      {
+        "chunkSeqNo": 85,
+        "classification": "redundant",
+        "snippet": "this is demonstrated in the bottom panel of figure 4 for sne at [x7] .\n\nagain , "
+      },
+      {
+        "chunkSeqNo": 86,
+        "classification": "dead",
+        "snippet": "escape from the vicinity of other types and reach [x72] values above 1.2 mag .\n\n",
+        "cause": "merge",
+        "cosine": 0.5827205864104101,
+        "posRes": 0.012144142028206502
+      },
+      {
+        "chunkSeqNo": 87,
+        "classification": "redundant",
+        "snippet": "[x73] and [x74] , classification would require a combination of optical and ir p",
+        "cause": "merge",
+        "cosine": 0.6594899741570148,
+        "posRes": 0.5232144910925924
+      },
+      {
+        "chunkSeqNo": 88,
+        "classification": "dead",
+        "snippet": "are the only ones that have [x80] colors that are redder than [x81] mag .\n\nas be",
+        "cause": "merge",
+        "cosine": 0.6767434227754021,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 89,
+        "classification": "dead",
+        "snippet": "perhaps by very early type iin , ii - p , and ic events .\n\nsne  ib and ic are th",
+        "cause": "merge",
+        "cosine": 0.6862322620755744,
+        "posRes": 0.0036228274439494865
+      },
+      {
+        "chunkSeqNo": 90,
+        "classification": "redundant",
+        "snippet": "demonstrated ( riess et al . 1998 ; coil et al . 2000 ) .\n\nhowever , for all oth"
+      },
+      {
+        "chunkSeqNo": 91,
+        "classification": "redundant",
+        "snippet": "that must be addressed once spectra of distant core - collapse sne become availa",
+        "cause": "merge",
+        "cosine": 0.8374534330086555,
+        "posRes": 0.05092432200370539
+      },
+      {
+        "chunkSeqNo": 92,
+        "classification": "dead",
+        "snippet": ") and underluminous ( sn 1991bg - like ; e.g. , filippenko et al .\n\n1992b ) obje",
+        "cause": "merge",
+        "cosine": 0.6233024664372463,
+        "posRes": 0.005109253489915387
+      },
+      {
+        "chunkSeqNo": 93,
+        "classification": "redundant",
+        "snippet": "provides observational details for these objects . inspecting figure 6 ( top pan",
+        "cause": "spawn",
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 94,
+        "classification": "redundant",
+        "snippet": ", and are therefore liable to mix with the redder core - collapse population .\n\n"
+      },
+      {
+        "chunkSeqNo": 96,
+        "classification": "redundant",
+        "snippet": "from core - collapse sne , and pose no special problem in our analysis .\n\nsne  i",
+        "cause": "merge",
+        "cosine": 0.7877621948249466,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 97,
+        "classification": "redundant",
+        "snippet": "ia are rare ( [x90]% of the sn ia population ; li et al .\n\n2001a ) , and may be ",
+        "cause": "merge",
+        "cosine": 0.7897255944287597,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 98,
+        "classification": "dead",
+        "snippet": "ic ( riess et al . 1998 ; clocchiatti et al . 2000 ) .\n\nthe problem is two - fol",
+        "cause": "merge",
+        "cosine": 0.8621402146268623,
+        "posRes": 0.052599214536405065
+      },
+      {
+        "chunkSeqNo": 99,
+        "classification": "redundant",
+        "snippet": ", high-[x12] events are available , luminous sne ic may masquerade as sne ia .\n\n",
+        "cause": "merge",
+        "cosine": 0.6275467116720412,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 100,
+        "classification": "loner",
+        "snippet": "et al . 2000 ) , but these are time - consuming to obtain .\n\n> from figure 7 , o",
+        "cause": "merge",
+        "cosine": 0.6707446636995078,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 101,
+        "classification": "dead",
+        "snippet": ") : sne ic are red compared to sne ia at a similar redshift .\n\none can see that ",
+        "cause": "spawn",
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 102,
+        "classification": "dead",
+        "snippet": "( e.g. , whether the object is rising or declining ) breaks this degeneracy .\n\nf",
+        "cause": "merge",
+        "cosine": 0.6469756598146885,
+        "posRes": 0.3615294540583468
+      },
+      {
+        "chunkSeqNo": 103,
+        "classification": "redundant",
+        "snippet": "this event was discovered on 15 october 2001 ut by vanden berk et al .\n\n( 2001 )",
+        "cause": "merge",
+        "cosine": 0.7617261563661956,
+        "posRes": 0.05165188703937089
+      },
+      {
+        "chunkSeqNo": 104,
+        "classification": "loner",
+        "snippet": "the diagram clearly indicates this is a sn ia , around one month old .\n\nfollowup",
+        "cause": "merge",
+        "cosine": 0.5389491367207673,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 105,
+        "classification": "redundant",
+        "snippet": "an age around one month past maximum brightness at discovery , confirming our di",
+        "cause": "merge",
+        "cosine": 0.6108664816589652,
+        "posRes": 0.1378928239537136
+      },
+      {
+        "chunkSeqNo": 106,
+        "classification": "loner",
+        "snippet": "use these bands for classification , knowledge of the restframe uv spectrum is r",
+        "cause": "merge",
+        "cosine": 0.5640029902481533,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 107,
+        "classification": "dead",
+        "snippet": "discussed here require multi - epoch coverage of several objects for each sn sub",
+        "cause": "merge",
+        "cosine": 0.7769012811335042,
+        "posRes": 0.043742790366746644
+      },
+      {
+        "chunkSeqNo": 108,
+        "classification": "dead",
+        "snippet": "is bright enough to be observed , thus removing some degeneracy in the classific",
+        "cause": "merge",
+        "cosine": 0.6157392190904025,
+        "posRes": 0.0816679198624915
+      },
+      {
+        "chunkSeqNo": 109,
+        "classification": "dead",
+        "snippet": "region and deduce the likelihood that an observed event belongs to a particular ",
+        "cause": "merge",
+        "cosine": 0.646742978063224,
+        "posRes": 0.03791326690232184
+      },
+      {
+        "chunkSeqNo": 110,
+        "classification": "loner",
+        "snippet": "another kind of transient phenomenon gamma - ray burst afterglows ( rhoads 2001 "
+      },
+      {
+        "chunkSeqNo": 111,
+        "classification": "loner",
+        "snippet": "al . 2001 ; jannuzi et al . 2001 ; sdss york et al .\n\n2000 ) that are either pla",
+        "cause": "merge",
+        "cosine": 0.5821160944532796,
+        "posRes": 0.00015728526012340072
+      },
+      {
+        "chunkSeqNo": 112,
+        "classification": "dead",
+        "snippet": "quasars , as discussed by krisciunas , margon , & szkody ( 1998 ) .\n\nexcept for ",
+        "cause": "spawn",
+        "posRes": 0.9113860448067638
+      },
+      {
+        "chunkSeqNo": 113,
+        "classification": "redundant",
+        "snippet": "may emerge as an invaluable resource when applied to upcoming , large data sets ",
+        "cause": "merge",
+        "cosine": 0.7582641801642582,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 114,
+        "classification": "loner",
+        "snippet": ", the sdss telescope observes parts of the sky near the south galactic pole .\n\nt",
+        "cause": "merge",
+        "cosine": 0.5368696101252903,
+        "posRes": 0.1474148604828065
+      },
+      {
+        "chunkSeqNo": 115,
+        "classification": "dead",
+        "snippet": "five years , the total surveyed area is [x102] deg[x103]-months , or 337.5 deg[x",
+        "cause": "merge",
+        "cosine": 0.5406994959721283,
+        "posRes": 0.10473055585887059
+      },
+      {
+        "chunkSeqNo": 116,
+        "classification": "dead",
+        "snippet": "sne of all types ( not just ia ) will undoubtedly be even larger .\n\nmiknaitis et"
+      },
+      {
+        "chunkSeqNo": 117,
+        "classification": "dead",
+        "snippet": "; rest , miceli , & covarrubias 2001 ; miknaitis & krisciunas 2001 ) .\n\nthis hug",
+        "cause": "spawn",
+        "posRes": 0.05716588591282559
+      },
+      {
+        "chunkSeqNo": 118,
+        "classification": "redundant",
+        "snippet": "as a function of sn type , host - galaxy morphology , and redshift .\n\nhowever , ",
+        "cause": "merge",
+        "cosine": 0.7989257447102242,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 119,
+        "classification": "redundant",
+        "snippet": "for all host galaxies , and spectral identification for part of the brighter one",
+        "cause": "merge",
+        "cosine": 0.7540563321585293,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 120,
+        "classification": "redundant",
+        "snippet": "a method for the classification of sne , using multi - color broadband photometr",
+        "cause": "spawn",
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 122,
+        "classification": "redundant",
+        "snippet": "emerge from this and other programs that are already active or will begin soon .",
+        "cause": "merge",
+        "cosine": 0.7574139416208474,
+        "posRes": 0.15614113087628015
+      },
+      {
+        "chunkSeqNo": 123,
+        "classification": "redundant",
+        "snippet": "the exploitation of large sn samples for which such followup may not be possible",
+        "cause": "merge",
+        "cosine": 0.8352943230740817,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 124,
+        "classification": "redundant",
+        "snippet": "and calibrate the spectra that constitute much of the dataset used in this study"
+      },
+      {
+        "chunkSeqNo": 125,
+        "classification": "loner",
+        "snippet": ", e. o. ofek , g. richards , and o. shemmer for useful suggestions .\n\nwe acknowl",
+        "cause": "merge",
+        "cosine": 0.5011053177198918,
+        "posRes": 0.005040188179714447
+      },
+      {
+        "chunkSeqNo": 126,
+        "classification": "loner",
+        "snippet": "science foundation the jack adler foundation for space research , grant 63/01 - ",
+        "cause": "merge",
+        "cosine": 0.8388327160488445,
+        "posRes": 0.34362200430157464
+      },
+      {
+        "chunkSeqNo": 127,
+        "classification": "redundant",
+        "snippet": "aldering , g. , supernova cosmology project collaboration , & nearby supernova f",
+        "cause": "merge",
+        "cosine": 0.5787055379276546,
+        "posRes": 0.03397736839953899
+      },
+      {
+        "chunkSeqNo": 131,
+        "classification": "redundant",
+        "snippet": "d. 1985 , aj , 90 , 2303 fassia , a. , et al .\n\n2001 , mnras , 325 , 907 filippe",
+        "cause": "merge",
+        "cosine": 0.7619369714915951,
+        "posRes": 0.1995586920756766
+      },
+      {
+        "chunkSeqNo": 132,
+        "classification": "loner",
+        "snippet": "] filippenko , a. v. , & chornock , r. 2001 , iau circ .\n\n7754 filippenko , a. v",
+        "cause": "merge",
+        "cosine": 0.5059772393018818,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 133,
+        "classification": "dead",
+        "snippet": "1993 , apj , 415 , l103 filippenko , a. v. , et al .\n\n1992a , apj , 384 , l15 fi"
+      },
+      {
+        "chunkSeqNo": 137,
+        "classification": "loner",
+        "snippet": "a. 2002 , apjl , 566 , l63 hamuy , m. , et al .\n\n2001 , apj , 558 , 615 hamuy , "
+      },
+      {
+        "chunkSeqNo": 138,
+        "classification": "redundant",
+        "snippet": "- mexico conference on astrophysics : flows , blows , and glows , ed .\n\nw. lee &",
+        "cause": "merge",
+        "cosine": 0.8762523858522506,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 139,
+        "classification": "dead",
+        "snippet": "2000 , apj , 534 , 660 jannuzi , b. , et al . 2001\n\n; see http://www.noao.edu/no",
+        "cause": "merge",
+        "cosine": 0.6560405787558138,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 141,
+        "classification": "redundant",
+        "snippet": "2002a , pasp , 114 , 35 leonard , d. c. , et al .\n\n2002b , aj , submitted li , w",
+        "cause": "merge",
+        "cosine": 0.5903972388552985,
+        "posRes": 0.34278255186866147
+      },
+      {
+        "chunkSeqNo": 142,
+        "classification": "dead",
+        "snippet": "546 , 734 li , w. , et al . 1996 , iau circ .\n\n6379 li , w. , et al . 2001b , pa",
+        "cause": "merge",
+        "cosine": 0.7027685928147543,
+        "posRes": 0.38173663211539743
+      },
+      {
+        "chunkSeqNo": 143,
+        "classification": "loner",
+        "snippet": ", 279 miknaitis , g. , & krisciunas , k. 2001 , iau circ .\n\n7778 miknaitis , g. ",
+        "cause": "merge",
+        "cosine": 0.667724891066342,
+        "posRes": 0.0029126717415230707
+      },
+      {
+        "chunkSeqNo": 144,
+        "classification": "loner",
+        "snippet": ", a. , stubbs , c. , stoughton , c. , & sdss collaboration .\n\n2001b , baas , 199",
+        "cause": "spawn",
+        "posRes": 0.2977924288061164
+      },
+      {
+        "chunkSeqNo": 145,
+        "classification": "loner",
+        "snippet": "u. 2000 , a&as , 147 , 361 pain , r. , et al .\n\n1996 , , 473 , 356 parodi , b. r",
+        "cause": "spawn",
+        "posRes": 0.3514988428088211
+      },
+      {
+        "chunkSeqNo": 146,
+        "classification": "dead",
+        "snippet": "1999 , apj , 517 , 565 perlmutter , s. , & snap collaboration .\n\n2000 , baas , 1",
+        "cause": "merge",
+        "cosine": 0.7325195039880736,
+        "posRes": 0.16295378913757486
+      },
+      {
+        "chunkSeqNo": 147,
+        "classification": "dead",
+        "snippet": "1766 qiu , y. , & hu , j. y. 2001 , iau circ .\n\n7753 qiu , y. , li , w. , qiao ,",
+        "cause": "merge",
+        "cosine": 0.6371532489744801,
+        "posRes": 0.30211102946576546
+      },
+      {
+        "chunkSeqNo": 148,
+        "classification": "dead",
+        "snippet": "a. , miceli , a. , & covarrubias , r. 2001 , iau circ .\n\n7740 rhoads , j. e. 200",
+        "cause": "merge",
+        "cosine": 0.529362669182328,
+        "posRes": 0.5044180856262227
+      },
+      {
+        "chunkSeqNo": 149,
+        "classification": "dead",
+        "snippet": "1999 , aj , 117 , 707 riess , a. g. , et al .\n\n2001 , apj , 560 , 49 ruiz - lapu",
+        "cause": "merge",
+        "cosine": 0.5091866908994507,
+        "posRes": 0.3452079591917757
+      },
+      {
+        "chunkSeqNo": 150,
+        "classification": "dead",
+        "snippet": ", a&a , 331 , l69 schaefer , b. e. 2000 , iau circ .\n\n7387 schlegel , d. j. , fi"
+      },
+      {
+        "chunkSeqNo": 151,
+        "classification": "dead",
+        "snippet": ". 1994 , , 432 , 42 schmidt , b. p. , et al .\n\n1998 , apj , 507 , 46 stoughton ,",
+        "cause": "merge",
+        "cosine": 0.5149017560035266,
+        "posRes": 1.2282714114451792
+      },
+      {
+        "chunkSeqNo": 152,
+        "classification": "redundant",
+        "snippet": "filippenko , a. v. , & richmond , m. w. 1997 , iau circ .\n\n6627 tripp , r.  1998",
+        "cause": "merge",
+        "cosine": 0.7573164806047217,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 153,
+        "classification": "dead",
+        "snippet": ", apj , 534 , 57 vanden berk , d. e. , et al .\n\n2001 , baas , 199.84.05 van dyk ",
+        "cause": "merge",
+        "cosine": 0.5523242119857391,
+        "posRes": 0
+      }
+    ],
+    "consensusRate": 0.967741935483871,
+    "worldName": "shared"
+  },
+  {
+    "sourceId": "source_arxiv:17",
+    "collection": "source_arxiv",
+    "batchToken": "batch-13-mmorp606",
+    "totalChunks": 131,
+    "survivingChunks": 19,
+    "survivalRate": 0.1450381679389313,
+    "species": {
+      "summarizer": 6,
+      "sentinel": 6,
+      "herald": 15,
+      "anchor": 3,
+      "spore": 4
+    },
+    "survivingTexts": [
+      "by finding evolution equations for these quantities . the density function given in eq .\n\nis well - known and has been applied in many situations .\n\nit is a solution to the problem of approximating a nearly - gaussian distribution whose moments are known .\n\n( [ e : p1d ] ) is in fact the first two terms of the _ gram  charlier ` a ' series _ , also sometimes called the _",
+      "comoving hypersurfaces which coincide in the unperturbed universe . for any species [x27] , and\n\nto leading order in the slow - roll approximation , the number of e - folds [x6] between the flat hypersurface ` [x8] ' and a comoving hypersurface ` [x53] ' satisfies [x54] where [x55] and [x56] are the field values evaluated on ` [x8] ' and ` [x53] , ' respectively . under an infinitesimal shift of [x57]",
+      "expansion at a predetermined order both in cumulants and powers of the field fluctuation .\n\nthe order we have chosen is sufficient to generate evolution equations containing both the leading - order behavior of the moments  namely , the first terms in eqs .  , and  and the leading corrections , given by the latter terms in these equations .\n\nat this point we put our new method into practice .\n\nwe study two models for which the non - gaussian signal is already known , using the standard [x0] formula . for each case",
+      "the _ gram charlier ` a ' series _ , also sometimes called the _\n\nhermite series_. in recent years it has found multiple applications to cosmology , of which our method is closest to that of taylor & watts [ref] .\n\nother applications are discussed in refs .\n\n[ref] . for a review of the `\n\na ' series and related nearly - gaussian probability distributions from an astrophysical perspective , see [ref] . in this paper",
+      "has been used by lehners & renaux - petel to obtain numerical results [ref] .\n\nanother numerical scheme has been introduced by huston & malik [ref] .\n\nwhat properties do we require of a successful prediction ? consider a typical observer , drawn at random from an ensemble of realizations of inflation . in any of the formalisms\n\ndiscussed above , we aim to estimate the statistical properties of the curvature perturbation which would be measured by such an observer .",
+      "similar way to renormalization - group improved perturbation theory [ref] . in this interpretation ,\n\nderivatives of [x111] play the role of couplings . at a given order , [x177] , in the moment hierarchy\n\n, the equations for lower - order moments function as renormalization group equations for the couplings at level-[x177] , resumming potentially large terms before they spoil perturbation theory .\n\nthis property is shared with any formalism such as [x0] which is non - perturbative in time evolution , but may be an advantage in comparison with perturbative methods .",
+      "and skew [x42] , with all higher moments determined by [x81] and [x42] alone .\n\na distribution with suitable properties is [x82] , \\ ] ] where [x83]\\ ] ] is a pure gaussian and [x84] denotes the [x85] hermite polynomial , for which there are multiple normalization conventions .\n\nwe choose to normalize so that [x86] which implies that the leading term of [x87] is [x88] .\n\nthis is sometimes called the `` probabilist s convention . ''\n\nwe define expectation values [x89] by the usual rule , [x90] the probability density function in eq .",
+      "but only for very specific choices of the potential [ref] or hubble rate [ref] .\n\nthese formulas become increasingly cumbersome as the number of fields increases , or if one studies higher moments [ref] . in the future , it seems clear that studies of complex models with many fields will increasingly rely on numerical methods .\n\nthe numerical [x0] framework requires the solution to a number of ordinary differential equations which scales exponentially with the number of fields .\n\nsince some models include hundreds of fields , this may present a significant obstacle [ref] .",
+      ": astro - ph/0209156 ] ] . e. komatsu and d. n. spergel , _\n\nacoustic signatures in the primary microwave background bispectrum _ , _ phys .\n\n* d63 * ( 2001 ) 063002 , [ http://xxx.lanl.gov/abs/astro-ph/0005036 [ arxiv : astro - ph/0005036 ] ] .\n\nf.  r. bouchet and r.  juszkiewicz , _ perturbation theory confronts observations : implications for the ` initial ' conditions and [x181] _ , http://xxx.lanl.gov/abs/astro-ph/9312007 [ arxiv : astro - ph/9312007 ] .",
+      "- gaussianity of the primordial perturbation in the curvaton model _ , _ phys .\n\nrev . _ * d74 * ( 2006 ) 103003 , [ http://xxx.lanl.gov/abs/astro-ph/0607627 [ arxiv : astro - ph/0607627 ] ] .",
+      "case , yet still exhibits certain interesting features which recur there . among these features\n\nare the subtle difference between motion of the statistical mean and the background field value , and the hierarchy of moment evolution equations .\n\nmoreover , the structure of the moment mixing equations is similar to that which obtains in the two - field case .\n\nfor this reason , the one - field scenario provides an instructive example of the techniques we wish to employ .",
+      "- gaussian probability distributions from an astrophysical perspective , see [ref] . in this paper\n\n, we will refer to eq .  and its natural generalization to higher moments as the `` moment expansion . ''  in the slow - roll approximation\n\n, the field in each spacetime volume obeys a simple equation of motion [x92] where [x6] records the number of e - foldings of expansion .\n\nwe refer to [x93] as the velocity field .",
+      "has been to propose a new technique with which to predict the observable signal .\n\npresent data already give interesting constraints on the skewness parameter [x1] , and over the next several years we expect that the _ planck _ survey satellite will make these constraints very stringent . it is even possible that higher - order moments , such as the kurtosis parameter [x176] [ref] will become better constrained [ref] . to meet the need of the observational community for comparison with theory , reliable estimates of these non - linear quantities will be necessary for various models of early - universe physics .",
+      "integration , which is effective for quadratic potentials and constant slow - roll parameters .\n\nvernizzi & wands [ref] obtained expressions in a two - field model with an arbitrary sum - separable potential by introducing gaussian normal coordinates on the space of trajectories .\n\ntheir approach was generalized to many fields by battefeld & easther [ref] .\n\nproduct - separable potentials can be accommodated using the same technique [ref] .\n\nan alternative technique has been proposed by yokoyama _\n\n_ [ref] .",
+      "product of two measures under which the polynomials [x128] and [x129] are separately orthogonal .\n\nthe necessary redefinitions are [x130]\\ ] ] and [x131] .\\ ] ] a simple expression for [x116] can be given in terms of [x126] and [x127] , [x132] we now define the non - gaussian factor , which encodes the skewnesses , to be [x133] in these variables we find [x134] , but [x135] .\n\nin addition , we have [x136]  in order for eq .",
+      "values [x89] by the usual rule , [x90] the probability density function in eq .\n\nhas the properties , and do not depend on the approximation that [x42] is small .\n\nhowever , for large [x42] the density function  may become negative for some values of [x77] .\n\nit then ceases to be a probability density in the strict sense .\n\nthis does not present a problem in practice , since we are interested in distributions which are approximately gaussian , and for which [x42] will typically be small . moreover , our principal use of eq .",
+      "and [x154] represent the velocity field and its derivatives evaluated at the centroid [x118] .\n\nthe first term in expresses the non - anomalous  motion of the centroid , which coincides with the background velocity  field of eq .  .\n\nthe second term describes how the wings of the  probability distribution sample the velocity field at nearby points .\n\nnarrow probability distributions have small components of  [x119] and hence are only sensitive to the local value  of [x155] .",
+      "1998 ) 193205 , [ http://xxx.lanl.gov/abs/astro-ph/9711239 [ arxiv : astro - ph/9711239 ] ] .\n\ng.  i. rigopoulos , e.  p.  s. shellard , and b.  j.  w. van tent , _ quantitative bispectra from multifield inflation _\n\nrev . _ * d76 * ( 2007 ) 083512 , [ http://xxx.lanl.gov/abs/astro-ph/0511041 [ arxiv : astro - ph/0511041 ] ] .\n\nm.  sasaki , j.  valiviita , and d.  wands , _ non - gaussianity of the primordial perturbation in the curvaton model _ , _ phys .",
+      "distribution which is nearly gaussian , but has a small non - zero skewness .\n\nthat gives [x115] where [x116] is a pure gaussian distribution , defined by [x117] .\\ ] ] in this equation , [x118] defines the center of the distribution and [x119] describes the covariance between the fields .\n\nwe adopt a conventional parametrization in terms of variances [x120] and a correlation coefficient [x121] , [x122] the matrix [x81] defines two - point correlations of the fields , [x123]  all skewnesses are encoded in [x124] . before defining this explicitly ,",
+      "ultimately solve our equations numerically to determine the evolution of moments in specific models .\n\nour method requires the solution to a number of differential equations which scales at most polynomially ( or in certain cases perhaps even linearly ) with the number of fields .\n\nit does not rely on extracting finite differences , and therefore is much less susceptible to numerical noise .\n\nthese advantages may be shared with other schemes , such as the numerical method recently employed by lehners & renaux - petel [ref] .",
+      "spacetime volumes . in all but the simplest models it will vary in time .\n\nit is also necessary to account for intrinsic non - linearities among the [x31] , which are small at horizon crossing but may grow . we define [x39] likewise , [x40] should be regarded as a function of time and scale .\n\nthe permutation symmetries of an expectation value such as  guarantee that , for example , [x41] .",
+      "arises from a distortion of comoving hypersurfaces with respect to adjacent spatially flat hypersurfaces .\n\nour new method joins many well - established techniques for estimating non - gaussian properties of the curvature perturbation . in our experience , these techniques give comparable estimates of [x1] , but they do not exactly agree .\n\neach method invokes different assumptions , such as the neglect of gradients or the degree to which time dependence can be accommodated .\n\nthe mutual scatter between different methods can be attributed to the theory error inherent in any estimate of [x1] .",
+      "inflation generically predicts a primordial spectrum of density perturbations which is almost precisely gaussian [ref] . in recent years\n\nthe small non - gaussian component [ref] has emerged as an important observable [ref] , and will be measured with good precision by the _\n\nplanck surveyor _ satellite [ref] . in the near future ,",
+      "m. carroll , _ higher - order gravitational perturbations of the cosmic microwave background _\n\n* d53 * ( 1996 ) 29202929 , [ http://xxx.lanl.gov/abs/astro-ph/9510041 [ arxiv : astro - ph/9510041 ] ] .\n\nv.  acquaviva , n.  bartolo , s.  matarrese , and a.  riotto , _ second - order cosmological perturbations from inflation _ , _ nucl .\n\nphys . _ * b667 * ( 2003 ) 119148 , [ http://xxx.lanl.gov/abs/astro-ph/0209156 [ arxiv : astro - ph/0209156 ] ] .\n\ne.  komatsu and d.  n. spergel , _",
+      "nave attempt to generalize the method of refs . [ref] to an arbitrary potential .\n\nthis contribution vanishes in virtue of our supposition that ` [x8] ' and ` [x53] ' are infinitesimally separated .  to compute [x60] it is helpful to introduce a quantity [x61] , which in the sum - separable case coincides with the conserved quantity of vernizzi & wands [ref] . for our specific choice of a two - field model , this takes the form [x62] where the integrals are evaluated on a single spatial hypersurface . in an [x63]-field model , one would obtain [x64] conserved quantities which label the isocurvature fields .",
+      ". more generally , this follows from the definition of [x12] , eq . .\n\nin fourier space , either prescription is automatically enforced after dropping disconnected contributions , again leading to eq .  .  to proceed , we require estimates of the correlation functions [x24] and [x25] .\n\nwe first describe the conventional approach , in which ` [x8] ' denotes a flat hypersurface at a fixed initial time .",
+      "model beyond requiring a canonical kinetic term and applying the slow - roll approximation .\n\nwhile there are already numerous methods for computing the super - horizon contribution to [x1] , including the widely used [x0] formalism , we believe the one reported here has a number of advantages .\n\nfirst , this new technique is ideally suited to unraveling the various contributions to [x1] .\n\nthis is because we follow the moments of the inflaton distribution directly , which makes it straightforward to identify large contributions to the skewness or other moments .",
+      "we find [x72]^ ^2 + 2 ( v{v_{,1 } } )^{ 2 } ^2 \\\\\n\n-6 mm  { }  [  v_{,11}{v } ^2  - v_{,1  v_{,12}}{v v_{,2 } } ^4  -  (  v_{,11}{v } - v_{,22}{v }  + v_{,2  v_{,12}}{v v_{,1 } }  )  ^2  ^2  ]^c .\n\naligned\\ ] ] an analogous expression for [x73] can be obtained after the simultaneous exchange [x74] .",
+      "field - space covariant expressions they can be expressed in a surprisingly compact form .\n\n: :  the rank-0 coefficient [x148] is identically zero .\n\nthis  expresses the fact that the total probability is conserved as the  distribution evolves . : :  the rank-1 coefficients [x149] and [x150]  give evolution equations for the centroid [x118] .\n\nthese  equations can be written in the form [x151] we remind the  reader that here and below , terms like [x152] ,  [x153] and [x154] represent the velocity  field and its derivatives evaluated at the centroid  [x118] .",
+      "of a chapman kolmogorov process as the size of each hop goes to zero .\n\nit is well known  for example , from the study of starobinsky s diffusion equation which forms the basis of the stochastic approach to inflation [ref]  that the choice of time variable in this equation is significant , with different choices corresponding to the selection of a temporal gauge .\n\nwe have chosen to use the e - folding time , [x6] , which means that we are evolving the distribution on hypersurfaces of uniform expansion .",
+      "2000 ) 10 , [ http://xxx.lanl.gov/abs/astro-ph/0001366 [ arxiv : astro - ph/0001366 ] ] .\n\nl.  amendola , _ the dependence of cosmological parameters estimated from the microwave background on non - gaussianity _ , _ astrophys\n\n. j. _ * 569 * ( 2002 ) 595599 , [ http://xxx.lanl.gov/abs/astro-ph/0107527 [ arxiv : astro - ph/0107527 ] ] .",
+      "decomposes likewise into two contributions [x51] , which we shall discuss in more detail in\n\n[ sec : numerics ] .  to compute [x1] in concrete models ,\n\nwe require expressions for the derivatives [x52] and [x34] . for generic initial and final times , these are difficult to obtain .\n\nlyth & rodrguez [ref] used direct integration , which is effective for quadratic potentials and constant slow - roll parameters .",
+      "in which ` [x8] ' denotes a flat hypersurface at a fixed initial time .\n\nthe quantity [x26] denotes the number of e - foldings between this initial slice and a final comoving hypersurface , where [x27] indexes the species of light scalar fields .\n\nthe local variation in expansion can be written in the fiducial picture as [x28] where [x29] .",
+      "seek a distribution with non - zero third moment , as proposed in ref .\n\n[ref] , we will introduce higher moments as perturbative corrections to the gaussian .\n\nsuch a procedure is known as a _\n\ncumulant expansion_.  the construction of cumulant expansions is a classical problem in probability theory .\n\nwe seek a distribution with centroid [x79] , variance [x80] , and skew [x42] , with all higher moments determined by [x81] and [x42] alone ."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 9,
+      "merged": 10,
+      "loner": 38,
+      "redundant": 7,
+      "dead": 67
+    },
+    "sourceMetadata": {
+      "dataset": "ccdv/arxiv-summarization",
+      "config": "",
+      "chunkTotal": 131
+    },
+    "survivorTags": {
+      "abstract": 1,
+      "methodology": 2,
+      "fix": 1,
+      "definition": 1,
+      "findings": 1,
+      "summary": 1,
+      "error": 1,
+      "conclusion": 2
+    },
+    "chunkDetails": [
+      {
+        "chunkSeqNo": 0,
+        "text": "inflation generically predicts a primordial spectrum of density perturbations which is almost precisely gaussian [ref] . in recent years\n\nthe small non - gaussian component [ref] has emerged as an important observable [ref] , and will be measured with good precision by the _\n\nplanck surveyor _ satellite [ref] . in the near future ,",
+        "species": "anchor",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 4,
+        "text": "model beyond requiring a canonical kinetic term and applying the slow - roll approximation .\n\nwhile there are already numerous methods for computing the super - horizon contribution to [x1] , including the widely used [x0] formalism , we believe the one reported here has a number of advantages .\n\nfirst , this new technique is ideally suited to unraveling the various contributions to [x1] .\n\nthis is because we follow the moments of the inflaton distribution directly , which makes it straightforward to identify large contributions to the skewness or other moments .",
+        "species": "herald",
+        "classification": "merged"
+      },
+      {
+        "chunkSeqNo": 7,
+        "text": "but only for very specific choices of the potential [ref] or hubble rate [ref] .\n\nthese formulas become increasingly cumbersome as the number of fields increases , or if one studies higher moments [ref] . in the future , it seems clear that studies of complex models with many fields will increasingly rely on numerical methods .\n\nthe numerical [x0] framework requires the solution to a number of ordinary differential equations which scales exponentially with the number of fields .\n\nsince some models include hundreds of fields , this may present a significant obstacle [ref] .",
+        "species": "herald",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 32,
+        "text": ". more generally , this follows from the definition of [x12] , eq . .\n\nin fourier space , either prescription is automatically enforced after dropping disconnected contributions , again leading to eq .  .  to proceed , we require estimates of the correlation functions [x24] and [x25] .\n\nwe first describe the conventional approach , in which ` [x8] ' denotes a flat hypersurface at a fixed initial time .",
+        "species": "sentinel",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 45,
+        "text": "decomposes likewise into two contributions [x51] , which we shall discuss in more detail in\n\n[ sec : numerics ] .  to compute [x1] in concrete models ,\n\nwe require expressions for the derivatives [x52] and [x34] . for generic initial and final times , these are difficult to obtain .\n\nlyth & rodrguez [ref] used direct integration , which is effective for quadratic potentials and constant slow - roll parameters .",
+        "species": "herald",
+        "classification": "merged"
+      },
+      {
+        "chunkSeqNo": 48,
+        "text": "comoving hypersurfaces which coincide in the unperturbed universe . for any species [x27] , and\n\nto leading order in the slow - roll approximation , the number of e - folds [x6] between the flat hypersurface ` [x8] ' and a comoving hypersurface ` [x53] ' satisfies [x54] where [x55] and [x56] are the field values evaluated on ` [x8] ' and ` [x53] , ' respectively . under an infinitesimal shift of [x57]",
+        "species": "spore",
+        "classification": "merged"
+      },
+      {
+        "chunkSeqNo": 69,
+        "text": "of a chapman kolmogorov process as the size of each hop goes to zero .\n\nit is well known  for example , from the study of starobinsky s diffusion equation which forms the basis of the stochastic approach to inflation [ref]  that the choice of time variable in this equation is significant , with different choices corresponding to the selection of a temporal gauge .\n\nwe have chosen to use the e - folding time , [x6] , which means that we are evolving the distribution on hypersurfaces of uniform expansion .",
+        "species": "summarizer",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 84,
+        "text": "product of two measures under which the polynomials [x128] and [x129] are separately orthogonal .\n\nthe necessary redefinitions are [x130]\\ ] ] and [x131] .\\ ] ] a simple expression for [x116] can be given in terms of [x126] and [x127] , [x132] we now define the non - gaussian factor , which encodes the skewnesses , to be [x133] in these variables we find [x134] , but [x135] .\n\nin addition , we have [x136]  in order for eq .",
+        "species": "herald",
+        "classification": "merged"
+      },
+      {
+        "chunkSeqNo": 114,
+        "text": "arises from a distortion of comoving hypersurfaces with respect to adjacent spatially flat hypersurfaces .\n\nour new method joins many well - established techniques for estimating non - gaussian properties of the curvature perturbation . in our experience , these techniques give comparable estimates of [x1] , but they do not exactly agree .\n\neach method invokes different assumptions , such as the neglect of gradients or the degree to which time dependence can be accommodated .\n\nthe mutual scatter between different methods can be attributed to the theory error inherent in any estimate of [x1] .",
+        "species": "sentinel",
+        "classification": "merged"
+      },
+      {
+        "chunkSeqNo": 119,
+        "text": ": astro - ph/0209156 ] ] . e. komatsu and d. n. spergel , _\n\nacoustic signatures in the primary microwave background bispectrum _ , _ phys .\n\n* d63 * ( 2001 ) 063002 , [ http://xxx.lanl.gov/abs/astro-ph/0005036 [ arxiv : astro - ph/0005036 ] ] .\n\nf.  r. bouchet and r.  juszkiewicz , _ perturbation theory confronts observations : implications for the ` initial ' conditions and [x181] _ , http://xxx.lanl.gov/abs/astro-ph/9312007 [ arxiv : astro - ph/9312007 ] .",
+        "species": "herald",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 129,
+        "text": "1998 ) 193205 , [ http://xxx.lanl.gov/abs/astro-ph/9711239 [ arxiv : astro - ph/9711239 ] ] .\n\ng.  i. rigopoulos , e.  p.  s. shellard , and b.  j.  w. van tent , _ quantitative bispectra from multifield inflation _\n\nrev . _ * d76 * ( 2007 ) 083512 , [ http://xxx.lanl.gov/abs/astro-ph/0511041 [ arxiv : astro - ph/0511041 ] ] .\n\nm.  sasaki , j.  valiviita , and d.  wands , _ non - gaussianity of the primordial perturbation in the curvaton model _ , _ phys .",
+        "species": "anchor",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 130,
+        "text": "- gaussianity of the primordial perturbation in the curvaton model _ , _ phys .\n\nrev . _ * d74 * ( 2006 ) 103003 , [ http://xxx.lanl.gov/abs/astro-ph/0607627 [ arxiv : astro - ph/0607627 ] ] .",
+        "species": "anchor",
+        "classification": "pure"
+      }
+    ],
+    "pureSurvivors": [
+      {
+        "chunkSeqNo": 0,
+        "text": "inflation generically predicts a primordial spectrum of density perturbations which is almost precisely gaussian [ref] . in recent years\n\nthe small non - gaussian component [ref] has emerged as an important observable [ref] , and will be measured with good precision by the _\n\nplanck surveyor _ satellite [ref] . in the near future ,",
+        "species": "anchor",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 7,
+        "text": "but only for very specific choices of the potential [ref] or hubble rate [ref] .\n\nthese formulas become increasingly cumbersome as the number of fields increases , or if one studies higher moments [ref] . in the future , it seems clear that studies of complex models with many fields will increasingly rely on numerical methods .\n\nthe numerical [x0] framework requires the solution to a number of ordinary differential equations which scales exponentially with the number of fields .\n\nsince some models include hundreds of fields , this may present a significant obstacle [ref] .",
+        "species": "herald",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 32,
+        "text": ". more generally , this follows from the definition of [x12] , eq . .\n\nin fourier space , either prescription is automatically enforced after dropping disconnected contributions , again leading to eq .  .  to proceed , we require estimates of the correlation functions [x24] and [x25] .\n\nwe first describe the conventional approach , in which ` [x8] ' denotes a flat hypersurface at a fixed initial time .",
+        "species": "sentinel",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 69,
+        "text": "of a chapman kolmogorov process as the size of each hop goes to zero .\n\nit is well known  for example , from the study of starobinsky s diffusion equation which forms the basis of the stochastic approach to inflation [ref]  that the choice of time variable in this equation is significant , with different choices corresponding to the selection of a temporal gauge .\n\nwe have chosen to use the e - folding time , [x6] , which means that we are evolving the distribution on hypersurfaces of uniform expansion .",
+        "species": "summarizer",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 119,
+        "text": ": astro - ph/0209156 ] ] . e. komatsu and d. n. spergel , _\n\nacoustic signatures in the primary microwave background bispectrum _ , _ phys .\n\n* d63 * ( 2001 ) 063002 , [ http://xxx.lanl.gov/abs/astro-ph/0005036 [ arxiv : astro - ph/0005036 ] ] .\n\nf.  r. bouchet and r.  juszkiewicz , _ perturbation theory confronts observations : implications for the ` initial ' conditions and [x181] _ , http://xxx.lanl.gov/abs/astro-ph/9312007 [ arxiv : astro - ph/9312007 ] .",
+        "species": "herald",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 129,
+        "text": "1998 ) 193205 , [ http://xxx.lanl.gov/abs/astro-ph/9711239 [ arxiv : astro - ph/9711239 ] ] .\n\ng.  i. rigopoulos , e.  p.  s. shellard , and b.  j.  w. van tent , _ quantitative bispectra from multifield inflation _\n\nrev . _ * d76 * ( 2007 ) 083512 , [ http://xxx.lanl.gov/abs/astro-ph/0511041 [ arxiv : astro - ph/0511041 ] ] .\n\nm.  sasaki , j.  valiviita , and d.  wands , _ non - gaussianity of the primordial perturbation in the curvaton model _ , _ phys .",
+        "species": "anchor",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 130,
+        "text": "- gaussianity of the primordial perturbation in the curvaton model _ , _ phys .\n\nrev . _ * d74 * ( 2006 ) 103003 , [ http://xxx.lanl.gov/abs/astro-ph/0607627 [ arxiv : astro - ph/0607627 ] ] .",
+        "species": "anchor",
+        "classification": "pure"
+      }
+    ],
+    "mergerClusters": [
+      {
+        "originChunkSeqNo": 4,
+        "clusterSize": 10,
+        "depth1Count": 4,
+        "deepChainCount": 5,
+        "species": "herald",
+        "sampleText": "model beyond requiring a canonical kinetic term and applying the slow - roll approximation .\n\nwhile there are already numerous methods for computing t"
+      },
+      {
+        "originChunkSeqNo": 0,
+        "clusterSize": 6,
+        "depth1Count": 1,
+        "deepChainCount": 4,
+        "species": "anchor",
+        "sampleText": "inflation generically predicts a primordial spectrum of density perturbations which is almost precisely gaussian [ref] . in recent years\n\nthe small no"
+      },
+      {
+        "originChunkSeqNo": 48,
+        "clusterSize": 4,
+        "depth1Count": 2,
+        "deepChainCount": 1,
+        "species": "spore",
+        "sampleText": "comoving hypersurfaces which coincide in the unperturbed universe . for any species [x27] , and\n\nto leading order in the slow - roll approximation , t"
+      },
+      {
+        "originChunkSeqNo": 45,
+        "clusterSize": 4,
+        "depth1Count": 2,
+        "deepChainCount": 1,
+        "species": "herald",
+        "sampleText": "decomposes likewise into two contributions [x51] , which we shall discuss in more detail in\n\n[ sec : numerics ] .  to compute [x1] in concrete models "
+      },
+      {
+        "originChunkSeqNo": 84,
+        "clusterSize": 2,
+        "depth1Count": 1,
+        "deepChainCount": 0,
+        "species": "herald",
+        "sampleText": "product of two measures under which the polynomials [x128] and [x129] are separately orthogonal .\n\nthe necessary redefinitions are [x130]\\ ] ] and [x1"
+      },
+      {
+        "originChunkSeqNo": 114,
+        "clusterSize": 2,
+        "depth1Count": 1,
+        "deepChainCount": 0,
+        "species": "sentinel",
+        "sampleText": "arises from a distortion of comoving hypersurfaces with respect to adjacent spatially flat hypersurfaces .\n\nour new method joins many well - establish"
+      },
+      {
+        "originChunkSeqNo": 69,
+        "clusterSize": 2,
+        "depth1Count": 1,
+        "deepChainCount": 0,
+        "species": "summarizer",
+        "sampleText": "of a chapman kolmogorov process as the size of each hop goes to zero .\n\nit is well known  for example , from the study of starobinsky s diffusion equa"
+      }
+    ],
+    "deadBriefs": [
+      {
+        "chunkSeqNo": 1,
+        "classification": "dead",
+        "snippet": "precision by the _ planck surveyor _ satellite [ref] . in the near future ,\n\nas ",
+        "cause": "merge",
+        "cosine": 0.5830178482377076,
+        "posRes": 0.040577990241823333
+      },
+      {
+        "chunkSeqNo": 2,
+        "classification": "dead",
+        "snippet": "gaussianity produced by super - horizon evolution in two - field models of infla",
+        "cause": "merge",
+        "cosine": 0.5476160162461137,
+        "posRes": 0.23522635043450776
+      },
+      {
+        "chunkSeqNo": 3,
+        "classification": "dead",
+        "snippet": "gaussian , we derive ordinary differential equations which evolve the moments of",
+        "cause": "merge",
+        "cosine": 0.5172792059179606,
+        "posRes": 0.8966299658734707
+      },
+      {
+        "chunkSeqNo": 5,
+        "classification": "dead",
+        "snippet": "which makes it straightforward to identify large contributions to the skewness o",
+        "cause": "spawn",
+        "posRes": 0.10901898658773845
+      },
+      {
+        "chunkSeqNo": 6,
+        "classification": "dead",
+        "snippet": "other is a gauge transformation from field fluctuations to the curvature peturba",
+        "cause": "merge",
+        "cosine": 0.524058335894326,
+        "posRes": 0.14169555647563
+      },
+      {
+        "chunkSeqNo": 8,
+        "classification": "redundant",
+        "snippet": "some models include hundreds of fields , this may present a significant obstacle",
+        "cause": "merge",
+        "cosine": 0.5268219054847646,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 9,
+        "classification": "dead",
+        "snippet": "ultimately solve our equations numerically to determine the evolution of moments"
+      },
+      {
+        "chunkSeqNo": 10,
+        "classification": "dead",
+        "snippet": "such as the numerical method recently employed by lehners & renaux - petel [ref]",
+        "cause": "merge",
+        "cosine": 0.6150907071432886,
+        "posRes": 0.04631905341255341
+      },
+      {
+        "chunkSeqNo": 11,
+        "classification": "loner",
+        "snippet": "features of specific models which lead to the production of large non - gaussian",
+        "cause": "merge",
+        "cosine": 0.7879650917955433,
+        "posRes": 0.0879489350304727
+      },
+      {
+        "chunkSeqNo": 12,
+        "classification": "dead",
+        "snippet": "the relationship between [x1] and the multi - point functions of the inflaton fi",
+        "cause": "merge",
+        "cosine": 0.6186056933617343,
+        "posRes": 0.648654772645578
+      },
+      {
+        "chunkSeqNo": 13,
+        "classification": "dead",
+        "snippet": "field values , which is a moment expansion \" around a purely gaussian distributi",
+        "cause": "merge",
+        "cosine": 0.7075843320021339,
+        "posRes": 0.21828234842084443
+      },
+      {
+        "chunkSeqNo": 14,
+        "classification": "loner",
+        "snippet": "between techniques . we conclude in [ s : conclusions ] . throughout this paper\n",
+        "cause": "merge",
+        "cosine": 0.5772661989214111,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 15,
+        "classification": "dead",
+        "snippet": ", we introduce our new method for computing the non - gaussianity parameter [x1]",
+        "cause": "merge",
+        "cosine": 0.6794724622699787,
+        "posRes": 0.9394632499808954
+      },
+      {
+        "chunkSeqNo": 16,
+        "classification": "dead",
+        "snippet": "the statistical properties of [x2] . the first two ingredients are given in eqs ",
+        "cause": "merge",
+        "cosine": 0.5726435510102854,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 17,
+        "classification": "dead",
+        "snippet": "[ ss : sep_universe ] and [ sec : derivative - n ] respectively .\n\nthe final ing",
+        "cause": "spawn",
+        "posRes": 0.438358232785979
+      },
+      {
+        "chunkSeqNo": 18,
+        "classification": "loner",
+        "snippet": "correlation function were matched to the known limit of local non - gaussianity ",
+        "cause": "merge",
+        "cosine": 0.5207638410529601,
+        "posRes": 0.012978422224038944
+      },
+      {
+        "chunkSeqNo": 19,
+        "classification": "loner",
+        "snippet": "linear order . this method is simple and well - suited to analytical calculation",
+        "cause": "merge",
+        "cosine": 0.5636098791555977,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 20,
+        "classification": "dead",
+        "snippet": "has been used by lehners & renaux - petel to obtain numerical results [ref] .\n\na"
+      },
+      {
+        "chunkSeqNo": 21,
+        "classification": "dead",
+        "snippet": "statistical properties of the curvature perturbation which would be measured by ",
+        "cause": "merge",
+        "cosine": 0.6538776794628564,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 22,
+        "classification": "loner",
+        "snippet": "will follow a trajectory in field space which is slightly displaced from its nei",
+        "cause": "merge",
+        "cosine": 0.554767614067989,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 23,
+        "classification": "loner",
+        "snippet": "taken as a whole . one never makes a prediction for a single trajectory .\n\neach ",
+        "cause": "merge",
+        "cosine": 0.5169037664988763,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 25,
+        "classification": "loner",
+        "snippet": "observable quantities . . defines what we will call the exact separate universe ",
+        "cause": "merge",
+        "cosine": 0.638543514176395,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 26,
+        "classification": "dead",
+        "snippet": "in unfavorable cases , however , convergence may occur slowly or not at all .\n\nt",
+        "cause": "merge",
+        "cosine": 0.5141349101178313,
+        "posRes": 0.11463872627052239
+      },
+      {
+        "chunkSeqNo": 27,
+        "classification": "dead",
+        "snippet": ". . we briefly discuss the relation of our calculation to conventional perturbat",
+        "cause": "merge",
+        "cosine": 0.535496532206677,
+        "posRes": 0.39695184529045296
+      },
+      {
+        "chunkSeqNo": 28,
+        "classification": "dead",
+        "snippet": "set of gaussian fluctuations generated at horizon exit . in a single - field mod",
+        "cause": "merge",
+        "cosine": 0.7431911628418653,
+        "posRes": 0.3090315431286123
+      },
+      {
+        "chunkSeqNo": 29,
+        "classification": "loner",
+        "snippet": ". defines the so - called `` local '' form of non - gaussianity .\n\nit applies on",
+        "cause": "merge",
+        "cosine": 0.5335437097641018,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 30,
+        "classification": "loner",
+        "snippet": ", eq . strictly applies only in single - field inflation . in this case\n\none can",
+        "cause": "merge",
+        "cosine": 0.5831016608721556,
+        "posRes": 0.07268130818608762
+      },
+      {
+        "chunkSeqNo": 31,
+        "classification": "loner",
+        "snippet": "adjacent trajectories which sample the local distribution of isocurvature modes ",
+        "cause": "merge",
+        "cosine": 0.623376149029179,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 33,
+        "classification": "loner",
+        "snippet": "in which ` [x8] ' denotes a flat hypersurface at a fixed initial time .\n\nthe qua"
+      },
+      {
+        "chunkSeqNo": 34,
+        "classification": "loner",
+        "snippet": "variation in expansion can be written in the fiducial picture as [x28] where [x2",
+        "cause": "merge",
+        "cosine": 0.6126337339695186,
+        "posRes": 0.05849706791635464
+      },
+      {
+        "chunkSeqNo": 35,
+        "classification": "loner",
+        "snippet": "spacetime volumes passes outside the causal horizon [ref] . this choice has many",
+        "cause": "merge",
+        "cosine": 0.5977458706308731,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 36,
+        "classification": "dead",
+        "snippet": "the field variables [x30] to the observational variable [x2] . using eqs . , and",
+        "cause": "merge",
+        "cosine": 0.5491903806057236,
+        "posRes": 0.09539570589404532
+      },
+      {
+        "chunkSeqNo": 37,
+        "classification": "dead",
+        "snippet": "predicting [x1] it is pleasingly compact , and straightforward to evaluate in ma",
+        "cause": "merge",
+        "cosine": 0.6332899551175095,
+        "posRes": 0.042169261189268475
+      },
+      {
+        "chunkSeqNo": 38,
+        "classification": "dead",
+        "snippet": "' to lie around the time when we require the statistical properties of [x2] .\n\nt",
+        "cause": "spawn",
+        "posRes": 0.04301759358281701
+      },
+      {
+        "chunkSeqNo": 39,
+        "classification": "loner",
+        "snippet": "the appropriate gauge transformation is computed using the [x0] formula . in the",
+        "cause": "merge",
+        "cosine": 0.6350670874589905,
+        "posRes": 0.09439291268120265
+      },
+      {
+        "chunkSeqNo": 40,
+        "classification": "dead",
+        "snippet": "independent random variables at horizon exit , correlations can be induced by su",
+        "cause": "merge",
+        "cosine": 0.603443790352346,
+        "posRes": 0.11653009767727963
+      },
+      {
+        "chunkSeqNo": 41,
+        "classification": "loner",
+        "snippet": "spacetime volumes . in all but the simplest models it will vary in time .\n\nit is"
+      },
+      {
+        "chunkSeqNo": 42,
+        "classification": "dead",
+        "snippet": "symmetries of an expectation value such as guarantee that , for example , [x41] ",
+        "cause": "merge",
+        "cosine": 0.5490209453731446,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 43,
+        "classification": "dead",
+        "snippet": "two - field model , parametrized by fields [x45] and [x46] . using eqs .\n\n, and ",
+        "cause": "merge",
+        "cosine": 0.6712907553526939,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 44,
+        "classification": "dead",
+        "snippet": "have identified two separate contributions , labelled ` 1 ' and ` 2 ' .\n\nthe ` 1",
+        "cause": "spawn",
+        "posRes": 0.19937191685434535
+      },
+      {
+        "chunkSeqNo": 46,
+        "classification": "dead",
+        "snippet": "integration , which is effective for quadratic potentials and constant slow - ro"
+      },
+      {
+        "chunkSeqNo": 47,
+        "classification": "loner",
+        "snippet": "technique [ref] . an alternative technique has been proposed by yokoyama _ _ [re",
+        "cause": "merge",
+        "cosine": 0.6809906214019837,
+        "posRes": 0.017472935620169355
+      },
+      {
+        "chunkSeqNo": 49,
+        "classification": "loner",
+        "snippet": "[x8] ' and ` [x53] , ' respectively . under an infinitesimal shift of [x57]\n\n, w",
+        "cause": "merge",
+        "cosine": 0.5423268243335482,
+        "posRes": 0.29404179545656034
+      },
+      {
+        "chunkSeqNo": 50,
+        "classification": "dead",
+        "snippet": "nave attempt to generalize the method of refs . [ref] to an arbitrary potential "
+      },
+      {
+        "chunkSeqNo": 51,
+        "classification": "redundant",
+        "snippet": "[x63]-field model , one would obtain [x64] conserved quantities which label the ",
+        "cause": "merge",
+        "cosine": 0.7683766152089906,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 52,
+        "classification": "loner",
+        "snippet": "variation can be neglected for infinitesimally separated hypersurfaces . under a",
+        "cause": "merge",
+        "cosine": 0.5776981357883971,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 54,
+        "classification": "dead",
+        "snippet": "we find [x72]^ ^2 + 2 ( v{v_{,1 } } )^{ 2 } ^2 \\\\\n\n-6 mm  { }  [  v_{,11}{v } ^2"
+      },
+      {
+        "chunkSeqNo": 55,
+        "classification": "loner",
+        "snippet": "] an analogous expression for [x73] can be obtained after the simultaneous excha",
+        "cause": "merge",
+        "cosine": 0.7152010216715191,
+        "posRes": 0.09836332404166573
+      },
+      {
+        "chunkSeqNo": 57,
+        "classification": "loner",
+        "snippet": "case , yet still exhibits certain interesting features which recur there . among"
+      },
+      {
+        "chunkSeqNo": 58,
+        "classification": "loner",
+        "snippet": "- field scenario provides an instructive example of the techniques we wish to em",
+        "cause": "merge",
+        "cosine": 0.5773978683572099,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 59,
+        "classification": "loner",
+        "snippet": "we are dropping the superscript ` [x8] ' denoting evaluation of spatially flat h",
+        "cause": "merge",
+        "cosine": 0.6072922201830051,
+        "posRes": 0.386481745085217
+      },
+      {
+        "chunkSeqNo": 60,
+        "classification": "dead",
+        "snippet": "seek a distribution with non - zero third moment , as proposed in ref .\n\n[ref] ,"
+      },
+      {
+        "chunkSeqNo": 61,
+        "classification": "loner",
+        "snippet": "and skew [x42] , with all higher moments determined by [x81] and [x42] alone .\n\n"
+      },
+      {
+        "chunkSeqNo": 62,
+        "classification": "dead",
+        "snippet": "values [x89] by the usual rule , [x90] the probability density function in eq .\n"
+      },
+      {
+        "chunkSeqNo": 63,
+        "classification": "redundant",
+        "snippet": "which [x42] will typically be small . moreover , our principal use of eq .\n\nis a",
+        "cause": "merge",
+        "cosine": 0.7536172611604263,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 64,
+        "classification": "loner",
+        "snippet": "by finding evolution equations for these quantities . the density function given"
+      },
+      {
+        "chunkSeqNo": 65,
+        "classification": "loner",
+        "snippet": "the _ gram charlier ` a ' series _ , also sometimes called the _\n\nhermite series"
+      },
+      {
+        "chunkSeqNo": 66,
+        "classification": "dead",
+        "snippet": "- gaussian probability distributions from an astrophysical perspective , see [re"
+      },
+      {
+        "chunkSeqNo": 67,
+        "classification": "dead",
+        "snippet": "e - foldings of expansion . we refer to [x93] as the velocity field .\n\nexpanding",
+        "cause": "merge",
+        "cosine": 0.5586569264103111,
+        "posRes": 0.15223438674656825
+      },
+      {
+        "chunkSeqNo": 68,
+        "classification": "loner",
+        "snippet": "it is well - described as such in the neighborhood of the instantaneous centroid",
+        "cause": "merge",
+        "cosine": 0.5722455373131642,
+        "posRes": 0.18029218892882948
+      },
+      {
+        "chunkSeqNo": 70,
+        "classification": "dead",
+        "snippet": ", which means that we are evolving the distribution on hypersurfaces of uniform ",
+        "cause": "merge",
+        "cosine": 0.5763571061555476,
+        "posRes": 0.2062900926173708
+      },
+      {
+        "chunkSeqNo": 71,
+        "classification": "loner",
+        "snippet": "[x79] , [x81] and [x42] . to achieve this , one need only resolve eq\n\n.  into a ",
+        "cause": "merge",
+        "cosine": 0.5110832817561525,
+        "posRes": 0.003104782119998315
+      },
+      {
+        "chunkSeqNo": 72,
+        "classification": "dead",
+        "snippet": "of the hierarchy , the equation [x102] is empty and expresses conservation of pr",
+        "cause": "merge",
+        "cosine": 0.6021650871718366,
+        "posRes": 0.05716602800458884
+      },
+      {
+        "chunkSeqNo": 73,
+        "classification": "dead",
+        "snippet": "also influenced as the wings of the probability distribution probe the nearby ve",
+        "cause": "merge",
+        "cosine": 0.6582880731487768,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 74,
+        "classification": "loner",
+        "snippet": "mean fluctuation value is not following a solution to the background equations o",
+        "cause": "merge",
+        "cosine": 0.6916708850842284,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 75,
+        "classification": "loner",
+        "snippet": "force [x80] and [x42] to scale in proportion to the velocity field . specificall",
+        "cause": "merge",
+        "cosine": 0.5993252836187729,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 76,
+        "classification": "loner",
+        "snippet": "to inflationary non - gaussianity , the second terms in and are more relevant .\n",
+        "cause": "merge",
+        "cosine": 0.632977930831584,
+        "posRes": 0.1182368039074133
+      },
+      {
+        "chunkSeqNo": 77,
+        "classification": "dead",
+        "snippet": "opposite occurs when [x110] . these effects are measured by the second term in .",
+        "cause": "merge",
+        "cosine": 0.5227803886051381,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 78,
+        "classification": "dead",
+        "snippet": "from one field to two . the new features are mostly technical in nature .\n\nour p",
+        "cause": "decay",
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 79,
+        "classification": "dead",
+        "snippet": "we are using the number of e - folds [x6] as the time variable .\n\nthe index [x27",
+        "cause": "merge",
+        "cosine": 0.5602067915061211,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 80,
+        "classification": "loner",
+        "snippet": "hence we make no claims at present concerning examples with three or more fields",
+        "cause": "merge",
+        "cosine": 0.6390290483002955,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 81,
+        "classification": "dead",
+        "snippet": "distribution which is nearly gaussian , but has a small non - zero skewness .\n\nt"
+      },
+      {
+        "chunkSeqNo": 82,
+        "classification": "dead",
+        "snippet": "fields , [x123] all skewnesses are encoded in [x124] . before defining this expl",
+        "cause": "merge",
+        "cosine": 0.6514861160716146,
+        "posRes": 0.20340580785569762
+      },
+      {
+        "chunkSeqNo": 83,
+        "classification": "loner",
+        "snippet": "$ ] are _ not _ orthogonal under the gaussian measure of eq . .\n\nfollowing an ex",
+        "cause": "merge",
+        "cosine": 0.7407534081056895,
+        "posRes": 0.1363015987846408
+      },
+      {
+        "chunkSeqNo": 85,
+        "classification": "loner",
+        "snippet": ", but [x135] . in addition , we have [x136] in order for eq .\n\nto be useful , it",
+        "cause": "merge",
+        "cosine": 0.6391990129983531,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 86,
+        "classification": "redundant",
+        "snippet": "- dependent , but for clarity we will usually suppress this in our notation .\n\nn",
+        "cause": "merge",
+        "cosine": 0.7671591295430804,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 87,
+        "classification": "loner",
+        "snippet": "of the centroid . the expansion can be pursued to higher order if desired .\n\nour",
+        "cause": "merge",
+        "cosine": 0.6763198731893457,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 88,
+        "classification": "dead",
+        "snippet": "hierarchy [x144] we define the rank \" [x145] of each coefficient [x146] by [x147",
+        "cause": "merge",
+        "cosine": 0.5296969498955505,
+        "posRes": 0.06796027386298283
+      },
+      {
+        "chunkSeqNo": 89,
+        "classification": "dead",
+        "snippet": "the moment expansion , we would obtain non - trivial higher - rank coefficients ",
+        "cause": "merge",
+        "cosine": 0.5986989246483432,
+        "posRes": 0.07455569005555875
+      },
+      {
+        "chunkSeqNo": 90,
+        "classification": "dead",
+        "snippet": "field - space covariant expressions they can be expressed in a surprisingly comp"
+      },
+      {
+        "chunkSeqNo": 91,
+        "classification": "redundant",
+        "snippet": "and [x154] represent the velocity field and its derivatives evaluated at the cen"
+      },
+      {
+        "chunkSeqNo": 92,
+        "classification": "dead",
+        "snippet": "components of [x119] and hence are only sensitive to the local value of [x155] .",
+        "cause": "merge",
+        "cosine": 0.7827855183348635,
+        "posRes": 0.05230131168279886
+      },
+      {
+        "chunkSeqNo": 93,
+        "classification": "dead",
+        "snippet": "the stretching and rotation of [x119] as it is transported by the velocity field",
+        "cause": "merge",
+        "cosine": 0.6103467516634374,
+        "posRes": 0.16558278559091036
+      },
+      {
+        "chunkSeqNo": 94,
+        "classification": "dead",
+        "snippet": "coefficients [x160] , [x161] , [x162] and [x163] describe evolution of the momen",
+        "cause": "merge",
+        "cosine": 0.7112667131745275,
+        "posRes": 0.6424433005590648
+      },
+      {
+        "chunkSeqNo": 95,
+        "classification": "loner",
+        "snippet": "and five are also nonzero , but do not give any new evolution equations .\n\nthese",
+        "cause": "merge",
+        "cosine": 0.6733525182515403,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 96,
+        "classification": "dead",
+        "snippet": "expansion at a predetermined order both in cumulants and powers of the field flu"
+      },
+      {
+        "chunkSeqNo": 97,
+        "classification": "dead",
+        "snippet": "gaussian signal is already known , using the standard [x0] formula . for each ca",
+        "cause": "merge",
+        "cosine": 0.5232973331630097,
+        "posRes": 0.1554693206551371
+      },
+      {
+        "chunkSeqNo": 99,
+        "classification": "dead",
+        "snippet": "the [x0] algorithm using a finite difference method to calculate the derivatives",
+        "cause": "merge",
+        "cosine": 0.5868375402177504,
+        "posRes": 0.5997648591929281
+      },
+      {
+        "chunkSeqNo": 100,
+        "classification": "dead",
+        "snippet": ", and non - linearities of the gauge transformation to [x2] . as explained in\n\n[",
+        "cause": "merge",
+        "cosine": 0.6150245378775504,
+        "posRes": 0.07341889460356926
+      },
+      {
+        "chunkSeqNo": 101,
+        "classification": "dead",
+        "snippet": "and [x171] grow , but their sum remains small . the peak in fig .\n\n[ fig1 ] aris",
+        "cause": "merge",
+        "cosine": 0.588323151823099,
+        "posRes": 0.06520166445695666
+      },
+      {
+        "chunkSeqNo": 103,
+        "classification": "dead",
+        "snippet": ". * 5 ) when we choose [x173] and initial conditions [x174] , [x175] .\n\nit is cl",
+        "cause": "spawn",
+        "posRes": 0.4754498323292612
+      },
+      {
+        "chunkSeqNo": 104,
+        "classification": "dead",
+        "snippet": "make no claim that this is a general phenomenon . in conclusion , figs .\n\n[ fig1",
+        "cause": "spawn",
+        "posRes": 0.7020331032262452
+      },
+      {
+        "chunkSeqNo": 105,
+        "classification": "dead",
+        "snippet": "are now routinely extracted from all - sky observations of the microwave backgro",
+        "cause": "merge",
+        "cosine": 0.6506809274796909,
+        "posRes": 0.5230400283407828
+      },
+      {
+        "chunkSeqNo": 106,
+        "classification": "dead",
+        "snippet": "has been to propose a new technique with which to predict the observable signal "
+      },
+      {
+        "chunkSeqNo": 107,
+        "classification": "dead",
+        "snippet": "- linear quantities will be necessary for various models of early - universe phy",
+        "cause": "merge",
+        "cosine": 0.5397977641262595,
+        "posRes": 0.2729788877706927
+      },
+      {
+        "chunkSeqNo": 109,
+        "classification": "dead",
+        "snippet": "than the non - linear gauge transformation between field fluctuations and the cu",
+        "cause": "merge",
+        "cosine": 0.5285335164339988,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 110,
+        "classification": "loner",
+        "snippet": "similar way to renormalization - group improved perturbation theory [ref] . in t"
+      },
+      {
+        "chunkSeqNo": 111,
+        "classification": "dead",
+        "snippet": "in time evolution , but may be an advantage in comparison with perturbative meth",
+        "cause": "merge",
+        "cosine": 0.6116651994479451,
+        "posRes": 0.12127269586489063
+      },
+      {
+        "chunkSeqNo": 112,
+        "classification": "loner",
+        "snippet": "leading order in [x178] , and can lose accuracy after [x179] e - foldings .\n\nnum",
+        "cause": "merge",
+        "cosine": 0.5579245191085654,
+        "posRes": 0.41312959599310023
+      },
+      {
+        "chunkSeqNo": 113,
+        "classification": "dead",
+        "snippet": "from the second - order part of the gauge transformation from [x180] to [x2] .\n\n",
+        "cause": "spawn",
+        "posRes": 0.14133819564546907
+      },
+      {
+        "chunkSeqNo": 115,
+        "classification": "dead",
+        "snippet": "methods can be attributed to the theory error inherent in any estimate of [x1] .",
+        "cause": "merge",
+        "cosine": 0.5753073445409177,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 116,
+        "classification": "redundant",
+        "snippet": "like to thank chris byrnes , jim lidsey and karim malik for helpful conversation",
+        "cause": "merge",
+        "cosine": 0.8621041812510619,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 117,
+        "classification": "redundant",
+        "snippet": "1993 ) l1 , [ http://xxx.lanl.gov/abs/astro-ph/9208001 [ arxiv : astro - ph/9208",
+        "cause": "merge",
+        "cosine": 0.6531641928219365,
+        "posRes": 0.14689375278561825
+      },
+      {
+        "chunkSeqNo": 118,
+        "classification": "dead",
+        "snippet": "m. carroll , _ higher - order gravitational perturbations of the cosmic microwav"
+      },
+      {
+        "chunkSeqNo": 121,
+        "classification": "dead",
+        "snippet": "1996 ) 7178 , [ http://xxx.lanl.gov/abs/astro-ph/9507001 [ arxiv : astro - ph/95",
+        "cause": "merge",
+        "cosine": 0.714220801922417,
+        "posRes": 0.43060856904167505
+      },
+      {
+        "chunkSeqNo": 122,
+        "classification": "dead",
+        "snippet": "2006 ) 083521 , [ http://xxx.lanl.gov/abs/astro-ph/0504508 [ arxiv : astro - ph/",
+        "cause": "merge",
+        "cosine": 0.588982235495924,
+        "posRes": 0.19636425267072705
+      },
+      {
+        "chunkSeqNo": 123,
+        "classification": "dead",
+        "snippet": "jcap _ * 0808 * ( 2008 ) 029 , [ http://xxx.lanl.gov/abs/0806.1546[arxiv:0806.15",
+        "cause": "merge",
+        "cosine": 0.5599330735958272,
+        "posRes": 0.17384404882230525
+      },
+      {
+        "chunkSeqNo": 124,
+        "classification": "dead",
+        "snippet": "roll inflation . part ii : the trispectrum _ , http://xxx.lanl.gov/abs/0811.4092",
+        "cause": "merge",
+        "cosine": 0.7295106385774044,
+        "posRes": 0.2761199076330006
+      },
+      {
+        "chunkSeqNo": 125,
+        "classification": "dead",
+        "snippet": "r. maartens , _ adiabatic and entropy perturbations from inflation _ , _ phys .\n",
+        "cause": "merge",
+        "cosine": 0.710827981468135,
+        "posRes": 0.22479386151866182
+      },
+      {
+        "chunkSeqNo": 126,
+        "classification": "dead",
+        "snippet": "2000 ) 10 , [ http://xxx.lanl.gov/abs/astro-ph/0001366 [ arxiv : astro - ph/0001"
+      },
+      {
+        "chunkSeqNo": 127,
+        "classification": "loner",
+        "snippet": "2002 ) 595599 , [ http://xxx.lanl.gov/abs/astro-ph/0107527 [ arxiv : astro - ph/",
+        "cause": "merge",
+        "cosine": 0.620657122586358,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 128,
+        "classification": "dead",
+        "snippet": "* 0804 * ( 2008 ) 014 , [ http://xxx.lanl.gov/abs/0711.4126 [ arxiv:0711.4126 ] ",
+        "cause": "spawn",
+        "posRes": 0.5660544985234323
+      }
+    ],
+    "consensusRate": 0.916030534351145,
+    "worldName": "shared"
+  }
+]
