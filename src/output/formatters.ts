@@ -5,11 +5,12 @@
 // Transforms raw SurvivorReport[] into structured responses
 // suitable for agents, LLMs, or downstream services.
 //
-// Four output modes:
+// Five output modes:
 //   compact    — minimal text digest (token-efficient for LLM context)
 //   detailed   — full breakdown with per-source stats
 //   structured — typed JSON for programmatic consumption
-//   digest     — 4-tier per-source output (meta/pure/clusters/survivors/dead)
+//   digest     — 3-tier per-source output (meta/pure/clusters) + DigestQuery for progressive disclosure
+//   manifest   — lightweight source index (~50 tokens/source) for scan-then-drill pattern
 
 import type {
   SurvivorReport, ClassificationBreakdown,
@@ -197,6 +198,31 @@ export interface FormattedReport {
   };
 }
 
+// ---- AI-native role mapping ----
+
+/**
+ * Internal species → AI-facing functional role.
+ * Roles describe what the chunk DOES in the knowledge structure,
+ * not the mycelium metaphor it came from.
+ */
+const SPECIES_TO_ROLE: Record<string, string> = {
+  herald:     "claim",       // asserts findings, results, methodology
+  sentinel:   "constraint",  // formal rules, definitions, bounds
+  anchor:     "foundation",  // immutable structural elements (abstract, conclusion)
+  summarizer: "synthesis",   // consolidation, overview, caveats
+  spore:      "hypothesis",  // tentative, exploratory, experimental
+};
+
+/** Reverse mapping for query: role → species (for filtering internal data) */
+const ROLE_TO_SPECIES: Record<string, string> = {};
+for (const [sp, role] of Object.entries(SPECIES_TO_ROLE)) {
+  ROLE_TO_SPECIES[role] = sp;
+}
+
+function toRole(species: string): string {
+  return SPECIES_TO_ROLE[species] ?? species;
+}
+
 // ---- Digest types (3-tier: meta / pure / clusters) ----
 
 /** Per-source digest for AI consumption — keyword-context windowed */
@@ -211,21 +237,21 @@ export interface SourceDigest {
     consensusRate?: number;
     /** One-line summary derived from pure[0] or sourceMetadata.abstract */
     headline?: string;
-    /** Dominant species among survivors */
-    topSpecies?: string;
+    /** Dominant functional role among survivors */
+    topRole?: string;
     /** Post-filter tag frequency from surviving chunks */
     survivorTags?: Record<string, number>;
     sourceMetadata?: Record<string, unknown>;
   };
   /** Pure survivors — keyword-context extracted text */
-  pure: Array<{ seq: number; text: string; species: string }>;
+  pure: Array<{ seq: number; text: string; role: string }>;
   /** Merged survivors (clusters) — absorption info + keyword-context text */
   clusters: Array<{
     seq: number;
     size: number;
     depth1: number;
     deep: number;
-    species: string;
+    role: string;
     text: string;
   }>;
 }
@@ -253,7 +279,7 @@ export interface ManifestEntry {
   survivingChunks: number;
   survivalRate: number;
   headline?: string;
-  topSpecies?: string;
+  topRole?: string;
   survivorTags?: Record<string, number>;
   pureCount: number;
   mergedCount: number;
@@ -492,45 +518,109 @@ function deriveHeadline(
   return undefined;
 }
 
-/** Find the dominant species among survivors */
-function deriveTopSpecies(r: SurvivorReport): string | undefined {
+/** Find the dominant functional role among survivors */
+function deriveTopRole(r: SurvivorReport): string | undefined {
   const sp = r.species;
   let best: string | undefined;
   let bestN = 0;
   for (const [k, v] of Object.entries(sp)) {
     if (v > bestN) { best = k; bestN = v; }
   }
-  return best;
+  return best ? toRole(best) : undefined;
 }
 
-// ---- Digest builder (4-tier) ----
+// ---- Digest builder (3-tier, query-driven) ----
 
-function buildDigest(reports: SurvivorReport[]): DigestReport {
-  const totalChunks = reports.reduce((s, r) => s + r.totalChunks, 0);
-  const survivingChunks = reports.reduce((s, r) => s + r.survivingChunks, 0);
+function buildDigest(reports: SurvivorReport[], query?: DigestQuery): DigestReport {
+  // Filter by sourceIds if specified
+  let filtered = reports;
+  if (query?.sourceIds && query.sourceIds.length > 0) {
+    const ids = new Set(query.sourceIds);
+    filtered = reports.filter(r => ids.has(r.sourceId));
+  }
 
-  const sources: SourceDigest[] = reports.map(r => {
+  const totalChunks = filtered.reduce((s, r) => s + r.totalChunks, 0);
+  const survivingChunks = filtered.reduce((s, r) => s + r.survivingChunks, 0);
+
+  // Determine which tiers to include (meta is always present)
+  const tiers = new Set(query?.tiers ?? ["meta", "pure", "clusters"]);
+  const includePure = tiers.has("pure");
+  const includeClusters = tiers.has("clusters");
+
+  // Context radius override
+  const radius = query?.contextRadius ?? CONTEXT_RADIUS;
+
+  const sources: SourceDigest[] = filtered.map(r => {
     // Hint tags for keyword search scope (from source-level survivorTags)
     const hintTags = r.survivorTags ? Object.keys(r.survivorTags) : undefined;
 
-    const pure = (r.pureSurvivors ?? []).map(c => ({
-      seq: c.chunkSeqNo,
-      text: extractContext(c.text, hintTags),
-      species: c.species,
-    }));
+    // Context extractor with optional radius override
+    const extract = (text: string) =>
+      radius !== CONTEXT_RADIUS
+        ? extractContextWithRadius(text, radius, hintTags)
+        : extractContext(text, hintTags);
 
-    const clusters = (r.mergerClusters ?? []).map(c => ({
-      seq: c.originChunkSeqNo,
-      size: c.clusterSize,
-      depth1: c.depth1Count,
-      deep: c.deepChainCount,
-      species: c.species,
-      text: extractContext(c.sampleText, hintTags),
-    }));
+    // Resolve role filter → internal species names for matching
+    const roleFilter = query?.roles && query.roles.length > 0
+      ? new Set(query.roles.map(r => ROLE_TO_SPECIES[r] ?? r))
+      : undefined;
 
-    // Post-filter re-aggregation: headline, topSpecies, survivorTags
-    const headline = deriveHeadline(r, pure);
-    const topSpecies = deriveTopSpecies(r);
+    // Build pure tier
+    let pure: SourceDigest["pure"] = [];
+    if (includePure) {
+      pure = (r.pureSurvivors ?? []).map(c => ({
+        seq: c.chunkSeqNo,
+        text: extract(c.text),
+        role: toRole(c.species),
+      }));
+      // Role filter
+      if (roleFilter) {
+        pure = pure.filter(p => {
+          const sp = ROLE_TO_SPECIES[p.role] ?? p.role;
+          return roleFilter.has(sp);
+        });
+      }
+      // Limit
+      if (query?.maxPure != null) {
+        pure = pure.slice(0, query.maxPure);
+      }
+    }
+
+    // Build clusters tier
+    let clusters: SourceDigest["clusters"] = [];
+    if (includeClusters) {
+      clusters = (r.mergerClusters ?? []).map(c => ({
+        seq: c.originChunkSeqNo,
+        size: c.clusterSize,
+        depth1: c.depth1Count,
+        deep: c.deepChainCount,
+        role: toRole(c.species),
+        text: extract(c.sampleText),
+      }));
+      // Min cluster size filter
+      if (query?.minClusterSize != null) {
+        clusters = clusters.filter(c => c.size >= query.minClusterSize!);
+      }
+      // Role filter
+      if (roleFilter) {
+        clusters = clusters.filter(c => {
+          const sp = ROLE_TO_SPECIES[c.role] ?? c.role;
+          return roleFilter.has(sp);
+        });
+      }
+      // Limit
+      if (query?.maxClusters != null) {
+        clusters = clusters.slice(0, query.maxClusters);
+      }
+    }
+
+    // Post-filter re-aggregation: headline, topRole, survivorTags
+    // (always derived from full data, not filtered subset)
+    const fullPure = (r.pureSurvivors ?? []).map(c => ({
+      seq: c.chunkSeqNo, text: c.text, species: c.species,
+    }));
+    const headline = deriveHeadline(r, fullPure);
+    const topRole = deriveTopRole(r);
 
     return {
       meta: {
@@ -542,7 +632,7 @@ function buildDigest(reports: SurvivorReport[]): DigestReport {
         classification: { ...r.classificationBreakdown },
         consensusRate: r.consensusRate != null ? Math.round(r.consensusRate * 1000) / 1000 : undefined,
         headline,
-        topSpecies,
+        topRole,
         survivorTags: r.survivorTags,
         sourceMetadata: r.sourceMetadata,
       },
@@ -555,14 +645,52 @@ function buildDigest(reports: SurvivorReport[]): DigestReport {
     format: "digest",
     timestamp: new Date().toISOString(),
     summary: {
-      totalSources: reports.length,
+      totalSources: filtered.length,
       totalChunks,
       survivingChunks,
       survivalRate: totalChunks > 0 ? Math.round((survivingChunks / totalChunks) * 1000) / 1000 : 0,
-      classification: sumBreakdown(reports),
+      classification: sumBreakdown(filtered),
     },
     sources,
   };
+}
+
+/** extractContext variant with custom radius (for query-driven override) */
+function extractContextWithRadius(rawText: string, radius: number, hintTags?: string[]): string {
+  const cleaned = cleanText(rawText);
+  const flat = cleaned.replace(/[\n\r]+/g, " ").replace(/ {2,}/g, " ").trim();
+
+  if (flat.length <= FALLBACK_LENGTH) return flat;
+
+  const hits: Array<{ start: number; end: number }> = [];
+  const tagsToSearch = hintTags ?? Object.keys(TAG_CONTEXT_PATTERNS);
+  for (const tag of tagsToSearch) {
+    const re = TAG_CONTEXT_PATTERNS[tag];
+    if (!re) continue;
+    const m = re.exec(flat);
+    if (m) hits.push({ start: m.index, end: m.index + m[0].length });
+  }
+
+  if (hits.length === 0) return flat.slice(0, FALLBACK_LENGTH - 3) + "...";
+
+  hits.sort((a, b) => a.start - b.start);
+  const windows: Array<{ start: number; end: number }> = [];
+  for (const h of hits.slice(0, MAX_CONTEXT_WINDOWS)) {
+    const ws = Math.max(0, h.start - radius);
+    const we = Math.min(flat.length, h.end + radius);
+    if (windows.length > 0 && ws <= windows[windows.length - 1].end) {
+      windows[windows.length - 1].end = we;
+    } else {
+      windows.push({ start: ws, end: we });
+    }
+  }
+
+  return windows.map(w => {
+    let s = flat.slice(w.start, w.end).trim();
+    if (w.start > 0) s = "…" + s;
+    if (w.end < flat.length) s = s + "…";
+    return s;
+  }).join(" ");
 }
 
 // ---- Manifest builder (lightweight index) ----
@@ -578,7 +706,7 @@ function buildManifest(reports: SurvivorReport[]): ManifestReport {
       seq: c.chunkSeqNo, text: c.text, species: c.species,
     }));
     const headline = deriveHeadline(r, pureForHeadline);
-    const topSpecies = deriveTopSpecies(r);
+    const topRole = deriveTopRole(r);
     const bd = r.classificationBreakdown;
 
     return {
@@ -588,7 +716,7 @@ function buildManifest(reports: SurvivorReport[]): ManifestReport {
       survivingChunks: r.survivingChunks,
       survivalRate: Math.round(r.survivalRate * 1000) / 1000,
       headline,
-      topSpecies,
+      topRole,
       survivorTags: r.survivorTags,
       pureCount: bd.pure,
       mergedCount: bd.merged,
@@ -609,6 +737,38 @@ function buildManifest(reports: SurvivorReport[]): ManifestReport {
   };
 }
 
+// ---- Digest query (progressive disclosure) ----
+
+/**
+ * Query parameters for selective digest access.
+ *
+ * Progressive disclosure pattern:
+ *   1. manifest (no query) → scan all sources
+ *   2. digest + sourceIds only → meta for selected sources
+ *   3. digest + tiers/roles/minClusterSize → filtered detail
+ *
+ * AI reads sequentially — meta arrives first for routing decisions,
+ * detail tiers are included only when explicitly requested.
+ *
+ * Available roles: claim, constraint, foundation, synthesis, hypothesis
+ */
+export interface DigestQuery {
+  /** Filter to specific sourceIds (default: all) */
+  sourceIds?: string[];
+  /** Which tiers to include (default: all). "meta" is always included. */
+  tiers?: Array<"meta" | "pure" | "clusters">;
+  /** Filter entries by functional role: claim|constraint|foundation|synthesis|hypothesis */
+  roles?: string[];
+  /** Only include clusters with size >= N (default: 0) */
+  minClusterSize?: number;
+  /** Override context extraction radius (default: 40) */
+  contextRadius?: number;
+  /** Max pure entries per source (default: unlimited) */
+  maxPure?: number;
+  /** Max cluster entries per source (default: unlimited) */
+  maxClusters?: number;
+}
+
 // ---- Public API ----
 
 export interface FormatOptions {
@@ -616,6 +776,8 @@ export interface FormatOptions {
   format?: ViewFormat;
   /** Max sample texts per source (default: 3) */
   sampleLimit?: number;
+  /** Progressive disclosure query for digest format */
+  query?: DigestQuery;
 }
 
 /**
@@ -624,8 +786,15 @@ export interface FormatOptions {
  * - structured: returns FormattedReport as JSON string
  * - compact: short text digest for LLM context
  * - detailed: full human-readable breakdown
- * - digest: 4-tier per-source output (meta/pure/clusters/merged/dead)
+ * - digest: 3-tier per-source output (meta/pure/clusters), supports DigestQuery
  * - manifest: lightweight meta-only index (~50 tokens/source)
+ *
+ * Progressive disclosure (digest + query):
+ *   formatReports(r, { format: "digest", query: { sourceIds: ["arxiv:17"], tiers: ["meta"] } })
+ *   → meta only for routing decision
+ *
+ *   formatReports(r, { format: "digest", query: { sourceIds: ["arxiv:17"], tiers: ["clusters"], roles: ["claim"], minClusterSize: 3 } })
+ *   → filtered clusters for deep dive
  */
 export function formatReports(
   reports: SurvivorReport[],
@@ -636,7 +805,7 @@ export function formatReports(
 
   switch (format) {
     case "digest":
-      return JSON.stringify(buildDigest(reports), null, 2);
+      return JSON.stringify(buildDigest(reports, opts.query), null, 2);
     case "manifest":
       return JSON.stringify(buildManifest(reports), null, 2);
     case "compact": {
@@ -669,8 +838,9 @@ export function buildReport(
  */
 export function buildDigestReport(
   reports: SurvivorReport[],
+  query?: DigestQuery,
 ): DigestReport {
-  return buildDigest(reports);
+  return buildDigest(reports, query);
 }
 
 /**

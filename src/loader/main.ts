@@ -31,6 +31,14 @@
 //   CONSENSUS_JITTER      — Per-run initial w/h perturbation (0-1, default: 0.1 = ±10%)
 //   FILTER_SOURCE_IDS     — Comma-separated source IDs to process (e.g. "8,14" or "source_arxiv:8")
 //   VIEW_FORMAT           — Output format: "digest" | "manifest" | "compact" | "detailed" | "structured" (default: raw JSON)
+//
+//   Digest query (progressive disclosure — only applied when VIEW_FORMAT=digest):
+//   DIGEST_TIERS          — Comma-separated tiers: "meta", "pure", "clusters" (default: all)
+//   DIGEST_ROLES          — Comma-separated role filter: "claim", "constraint", "foundation", "synthesis", "hypothesis"
+//   DIGEST_MIN_CLUSTER    — Min cluster size to include (default: 0)
+//   DIGEST_CONTEXT_RADIUS — Override context extraction radius (default: 40)
+//   DIGEST_MAX_PURE       — Max pure entries per source
+//   DIGEST_MAX_CLUSTERS   — Max cluster entries per source
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -46,7 +54,7 @@ import { parseIsolationMode, buildWorldDefinitions } from "./world-config.js";
 import { resolveHardness } from "./hardness.js";
 import { IsolatedRunner, pLimit } from "./isolated-runner.js";
 import { formatReports } from "../output/formatters.js";
-import type { ViewFormat } from "../output/formatters.js";
+import type { ViewFormat, DigestQuery } from "../output/formatters.js";
 
 // ---- Config from environment ----
 
@@ -70,6 +78,28 @@ const filterSourceIds = (process.env.FILTER_SOURCE_IDS ?? "")
   .split(",")
   .map(s => s.trim())
   .filter(s => s.length > 0);
+
+// Digest query (progressive disclosure)
+function buildDigestQuery(): DigestQuery | undefined {
+  const tiers = (process.env.DIGEST_TIERS ?? "").split(",").map(s => s.trim()).filter(s => s.length > 0);
+  const roles = (process.env.DIGEST_ROLES ?? "").split(",").map(s => s.trim()).filter(s => s.length > 0);
+  const minCluster = process.env.DIGEST_MIN_CLUSTER;
+  const ctxRadius = process.env.DIGEST_CONTEXT_RADIUS;
+  const maxPure = process.env.DIGEST_MAX_PURE;
+  const maxClusters = process.env.DIGEST_MAX_CLUSTERS;
+
+  const hasAny = tiers.length > 0 || roles.length > 0 || minCluster || ctxRadius || maxPure || maxClusters;
+  if (!hasAny) return undefined;
+
+  return {
+    tiers: tiers.length > 0 ? tiers as Array<"meta" | "pure" | "clusters"> : undefined,
+    roles: roles.length > 0 ? roles : undefined,
+    minClusterSize: minCluster ? parseInt(minCluster, 10) : undefined,
+    contextRadius: ctxRadius ? parseInt(ctxRadius, 10) : undefined,
+    maxPure: maxPure ? parseInt(maxPure, 10) : undefined,
+    maxClusters: maxClusters ? parseInt(maxClusters, 10) : undefined,
+  };
+}
 
 const myceliumConfig: MyceliumConfig = {
   ...DEFAULT_CONFIG,
@@ -331,7 +361,7 @@ function printReports(reports: SurvivorReport[]): void {
 
   // Stdout for programmatic consumption
   if (viewFormat) {
-    console.log(formatReports(reports, { format: viewFormat }));
+    console.log(formatReports(reports, { format: viewFormat, query: buildDigestQuery() }));
   } else {
     console.log(JSON.stringify(reports, null, 2));
   }
