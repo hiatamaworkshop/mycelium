@@ -27,7 +27,10 @@
 //   FILTER_HARDNESS       — "soft" | "mid" | "hard" (default: mid)
 //   CONSENSUS_RUNS        — Number of runs for majority-vote consensus (default: 10)
 //   CONSENSUS_THRESHOLD   — Min vote ratio to consider a chunk's classification stable (default: 0.4)
+//   CONSENSUS_JITTER      — Per-run initial w/h perturbation (0-1, default: 0.1 = ±10%)
 
+import { mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { DEFAULT_CONFIG } from "../types.js";
 import type { MyceliumConfig } from "../types.js";
 import { checkQdrantHealth, deleteCollection } from "../qdrant.js";
@@ -54,6 +57,7 @@ const slotCapacity = parseInt(process.env.SLOT_CAPACITY ?? "100", 10);
 const cleanWorlds = (process.env.CLEAN_WORLDS ?? "").toLowerCase() === "true";
 const consensusRuns = Math.max(1, parseInt(process.env.CONSENSUS_RUNS ?? "10", 10));
 const consensusThreshold = parseFloat(process.env.CONSENSUS_THRESHOLD ?? "0.4");
+const consensusJitter = parseFloat(process.env.CONSENSUS_JITTER ?? "0.1");
 
 const myceliumConfig: MyceliumConfig = {
   ...DEFAULT_CONFIG,
@@ -109,7 +113,7 @@ async function main(): Promise<void> {
   console.error(`  ticks:         ${dispatchConfig.targetTicks}`);
   console.error(`  interval:      ${dispatchConfig.tickIntervalMs}ms`);
   console.error(`  cascade:       adaptive (min=${dispatchConfig.cascadeMinDelay}, max=${dispatchConfig.cascadeDelayTicks}, ratio=${dispatchConfig.absorptionRatio})`);
-  if (consensusRuns > 1) console.error(`  consensus:     ${consensusRuns} runs (threshold=${(consensusThreshold * 100).toFixed(0)}%)`);
+  if (consensusRuns > 1) console.error(`  consensus:     ${consensusRuns} runs (threshold=${(consensusThreshold * 100).toFixed(0)}%, jitter=${(consensusJitter * 100).toFixed(0)}%)`);
   if (cleanWorlds) console.error(`  clean:         enabled (world collections will be recreated)`);
   for (const w of worlds) {
     console.error(`  world "${w.name}": ${w.collection} ← [${w.sourceCollections.map(s => s.collection).join(", ")}]`);
@@ -145,7 +149,7 @@ async function main(): Promise<void> {
         collection: myceliumConfig.collection,
         sourceCollections: sourceConfigs,
       };
-      const reports = await dispatcher.runWorldConsensus(syntheticWorld, slots, consensusRuns, consensusThreshold);
+      const reports = await dispatcher.runWorldConsensus(syntheticWorld, slots, consensusRuns, consensusThreshold, consensusJitter);
       allReports.push(...reports);
     } else {
       const reports = await dispatcher.run(slots);
@@ -186,7 +190,7 @@ async function main(): Promise<void> {
 
       let reports: SurvivorReport[];
       if (consensusRuns > 1) {
-        reports = await dispatcher.runWorldConsensus(world, slots, consensusRuns, consensusThreshold);
+        reports = await dispatcher.runWorldConsensus(world, slots, consensusRuns, consensusThreshold, consensusJitter);
       } else {
         reports = await dispatcher.runWorld(world, slots);
       }
@@ -286,6 +290,30 @@ function printReports(reports: SurvivorReport[]): void {
 
   // JSON to stdout for programmatic consumption
   console.log(JSON.stringify(reports, null, 2));
+
+  // Save to file
+  saveReports(reports);
+}
+
+// ---- Report file persistence ----
+
+function saveReports(reports: SurvivorReport[]): void {
+  const reportDir = process.env.REPORT_DIR ?? join("data", "reports");
+  mkdirSync(reportDir, { recursive: true });
+
+  const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+
+  // Determine world names for filename
+  const worldNames = [...new Set(reports.map(r => r.worldName ?? "shared"))];
+  const worldLabel = worldNames.length <= 3
+    ? worldNames.join("+")
+    : `${worldNames.length}worlds`;
+
+  const filename = `${worldLabel}_${ts}.json`;
+  const filepath = join(reportDir, filename);
+
+  writeFileSync(filepath, JSON.stringify(reports, null, 2), "utf-8");
+  console.error(`[loader] Report saved: ${filepath}`);
 }
 
 // ---- Run ----

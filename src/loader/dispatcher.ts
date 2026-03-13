@@ -188,6 +188,7 @@ export class Dispatcher {
   private async _runInternal(
     config: MyceliumConfig,
     slots: SlotAssignment[],
+    jitter = 0,
   ): Promise<SurvivorReport[]> {
     // Create FeedInstances from slot assignments
     this.instances = slots.map(
@@ -200,6 +201,11 @@ export class Dispatcher {
         this.dispatchConfig.harvestPct,
       ),
     );
+
+    // Apply initial-condition jitter for consensus perturbation
+    if (jitter > 0) {
+      for (const inst of this.instances) inst.jitter = jitter;
+    }
 
     const totalPoints = slots.reduce((sum, s) => sum + s.points.length, 0);
     console.error(
@@ -299,6 +305,7 @@ export class Dispatcher {
     slots: SlotAssignment[],
     runs: number,
     threshold = 0.4,
+    jitter = 0,
   ): Promise<SurvivorReport[]> {
     // Collect per-chunk votes across N runs.
     // Key = global sourcePoint index (slot offset + local index).
@@ -341,7 +348,7 @@ export class Dispatcher {
       this.allReports = [];
       this.lastTickResult = null;
 
-      const reports = await this._runInternal(worldConfig, slots);
+      const reports = await this._runInternal(worldConfig, slots, jitter);
 
       // Collect per-chunk votes from each instance
       for (let si = 0; si < this.instances.length; si++) {

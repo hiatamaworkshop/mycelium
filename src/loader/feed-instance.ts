@@ -97,6 +97,9 @@ export class FeedInstance {
   // Populated during harvest() for consensus aggregation
   private _chunkVotes: Map<number, ChunkClassification> = new Map();
 
+  // Initial-condition jitter for consensus perturbation (0 = none)
+  jitter = 0;
+
   // Death log: accumulated from global tick deaths, filtered to this instance's nodes
   private deathLog: Map<string, DeathRecord> = new Map();
 
@@ -164,13 +167,21 @@ export class FeedInstance {
       const inherited = getSpeciesMemory(species);
       const inheritedRes = getSpeciesResonanceDelta(species);
 
+      // Per-node jitter: ±jitter uniform noise on w/h for consensus perturbation
+      const nutrition = this.jitter > 0
+        ? {
+            w: M.birth.initialW * (1 + (Math.random() * 2 - 1) * this.jitter),
+            h: M.birth.initialH * (1 + (Math.random() * 2 - 1) * this.jitter),
+          }
+        : undefined;
+
       const { node } = createNode(
         sp.payload.text,
         undefined,  // no secondary content
         trigger,
         inherited,
         inheritedRes,
-        undefined,   // no nutrition override
+        nutrition,
         tags,
         this.forceSpore ? "spore"
           : tags.length === 0 ? species  // lock rotated species via override
