@@ -24,6 +24,11 @@ import metabolismRaw from "../config/metabolism.json" with { type: "json" };
 
 const M = metabolismRaw as unknown as MetabolismSchema;
 
+/** Species → single-char tag for merge content tracking */
+const SPECIES_SHORT: Record<string, string> = {
+  summarizer: "s", sentinel: "t", herald: "h", anchor: "a", spore: "p",
+};
+
 // ---- Emit ActionSignal (active receptor) ----
 
 export function emitSignal(
@@ -171,12 +176,14 @@ function resolveMergeInteraction(
     case "accept":
       // merge proceeds: transfer scaled by intensity × similarity (close = efficient, distant = lossy)
       // Contents carry merge depth prefix: » = absorbed once, »» = twice, etc.
-      // Each merge appends |cosine at the end for quality filtering.
-      // Format: »content|0.91  »»content|0.91|0.82 (depth = leading », cosines = trailing |values)
+      // Each merge appends species tag + |cosine at the end for quality filtering.
+      // Format: »[h]content|0.91  »»[h]content|0.91|0.82 (depth = leading », species = [x], cosines = trailing |values)
+      // Species tag: [s]=summarizer [t]=sentinel [h]=herald [a]=anchor [p]=spore
       const sim2 = similarity.toFixed(2);
+      const spTag = `[${SPECIES_SHORT[initiator.species] ?? "?"}]`;
       target.contents = [
         ...target.contents,
-        ...initiator.contents.map(c => "»" + c + "|" + sim2),
+        ...initiator.contents.map(c => "»" + spTag + c + "|" + sim2),
       ];
       target.w += initiator.w * rc.mergeWeightTransfer * intensity * similarity;
       target.ttl += Math.floor(initiator.ttl * rc.mergeTtlTransfer * intensity * similarity);

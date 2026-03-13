@@ -39,6 +39,8 @@ export interface MergerCluster {
   clusterSize: number;         // total members including origin
   depth1Count: number;         // direct absorptions (» not »»)
   deepChainCount: number;      // chain absorptions (»»+)
+  /** Species composition of absorbed members (excludes origin) */
+  composition?: Partial<Record<Species, number>>;
 }
 
 export interface PushbackResult {
@@ -140,6 +142,22 @@ export function extractLonerIds(
  * Extract absorber nodes as cluster candidates.
  * Called at ~clusterPct ticks (60%) — after early-death phase.
  */
+/** Reverse map: single-char tag → Species (mirrors receptor.ts SPECIES_SHORT) */
+const SHORT_TO_SPECIES: Record<string, Species> = {
+  s: "summarizer", t: "sentinel", h: "herald", a: "anchor", p: "spore",
+};
+
+/** Extract species tag from absorbed content: »[h]content|0.91 → "h" */
+function parseSpeciesTag(entry: string): Species | undefined {
+  // Strip leading » characters
+  const stripped = entry.replace(/^»+/, "");
+  // Check for [x] pattern
+  if (stripped.length >= 3 && stripped[0] === "[" && stripped[2] === "]") {
+    return SHORT_TO_SPECIES[stripped[1]];
+  }
+  return undefined; // legacy format without species tag
+}
+
 export function extractMergerClusters(
   nodes: MyceliumNode[],
 ): MergerCluster[] {
@@ -153,6 +171,7 @@ export function extractMergerClusters(
 
     let validD1 = 0;
     let validDeep = 0;
+    const comp: Partial<Record<Species, number>> = {};
     for (const c of absorbed) {
       const lastPipe = c.lastIndexOf("|");
       if (lastPipe < 0) continue;
@@ -161,6 +180,9 @@ export function extractMergerClusters(
       if (cos < minCos || cos >= maxCos) continue;
       if (!c.startsWith("»»")) validD1++;
       else validDeep++;
+      // Accumulate species composition
+      const sp = parseSpeciesTag(c);
+      if (sp) comp[sp] = (comp[sp] ?? 0) + 1;
     }
 
     if (validD1 + validDeep === 0) continue;
@@ -173,6 +195,7 @@ export function extractMergerClusters(
       clusterSize: 1 + validD1 + validDeep,
       depth1Count: validD1,
       deepChainCount: validDeep,
+      composition: Object.keys(comp).length > 0 ? comp : undefined,
     });
   }
 

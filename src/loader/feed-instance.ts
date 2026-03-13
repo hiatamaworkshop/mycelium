@@ -60,6 +60,8 @@ export interface ClusterDetail {
   deepChainCount: number;
   species: Species;
   sampleText: string;
+  /** Species composition of absorbed members (excludes origin) */
+  composition?: Partial<Record<Species, number>>;
 }
 
 // ---- Survivor report (per sourceId) ----

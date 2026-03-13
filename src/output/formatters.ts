@@ -253,6 +253,8 @@ export interface SourceDigest {
     deep: number;
     role: string;
     text: string;
+    /** Species composition of absorbed members mapped to roles */
+    composition?: Record<string, number>;
   }>;
 }
 
@@ -589,14 +591,29 @@ function buildDigest(reports: SurvivorReport[], query?: DigestQuery): DigestRepo
     // Build clusters tier
     let clusters: SourceDigest["clusters"] = [];
     if (includeClusters) {
-      clusters = (r.mergerClusters ?? []).map(c => ({
-        seq: c.originChunkSeqNo,
-        size: c.clusterSize,
-        depth1: c.depth1Count,
-        deep: c.deepChainCount,
-        role: toRole(c.species),
-        text: extract(c.sampleText),
-      }));
+      clusters = (r.mergerClusters ?? []).map(c => {
+        // Map species composition to role names
+        let roleComp: Record<string, number> | undefined;
+        if (c.composition) {
+          roleComp = {};
+          for (const [sp, count] of Object.entries(c.composition)) {
+            if (count != null && count > 0) {
+              const role = toRole(sp);
+              roleComp[role] = (roleComp[role] ?? 0) + count;
+            }
+          }
+          if (Object.keys(roleComp).length === 0) roleComp = undefined;
+        }
+        return {
+          seq: c.originChunkSeqNo,
+          size: c.clusterSize,
+          depth1: c.depth1Count,
+          deep: c.deepChainCount,
+          role: toRole(c.species),
+          text: extract(c.sampleText),
+          composition: roleComp,
+        };
+      });
       // Min cluster size filter
       if (query?.minClusterSize != null) {
         clusters = clusters.filter(c => c.size >= query.minClusterSize!);
