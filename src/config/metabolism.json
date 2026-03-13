@@ -173,14 +173,14 @@
     }
   },
   "pushback": {
-    "earlyPct": 0.25,
+    "earlyPct": 0.4,
     "lonerPct": 0.6,
     "minCosine": 0.75,
     "posResThreshold": 0.05,
     "redundantCosine": 0.75,
     "wThreshold": 0.5,
     "maxDepth1": 6,
-    "clusterPct": 0.6,
+    "clusterPct": 0.7,
     "clusterMinCos": 0.35,
     "clusterMaxCos": 0.75,
     "_tuning": {

@@ -191,8 +191,9 @@ export class FeedInstance {
 
     const myceliumPoints: Array<{ id: string; vector: number[]; payload: ReturnType<typeof nodeToPayload> }> = [];
 
-    // Body species rotation for tag-less chunks (avoids spore monoculture)
-    const BODY_ROTATION: Species[] = ["summarizer", "herald", "spore"];
+    // Body species rotation: herald+summarizer dominant for signal/merge cluster formation
+    // spore minority retained as absorbable material
+    const BODY_ROTATION: Species[] = ["summarizer", "herald", "summarizer", "herald", "spore"];
 
     for (let spIdx = 0; spIdx < this.sourcePoints.length; spIdx++) {
       const sp = this.sourcePoints[spIdx];
