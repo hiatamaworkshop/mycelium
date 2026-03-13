@@ -462,18 +462,103 @@ export class IsolatedRunner {
       if (passedThreshold.has(idx)) sc.passed++;
     }
 
-    // Patch template reports
+    // Build consensus classification lookup: spIdx → effective classification
+    const idxConsensus = new Map<number, ChunkClassification>();
+    for (const [idx, cls] of consensusVotes) {
+      idxConsensus.set(idx, passedThreshold.has(idx) ? cls : "dead" as ChunkClassification);
+    }
+
+    // Build seqNo → spIdx reverse map for detail filtering
+    const seqToIdx = new Map<number, number>();
+    for (let pi = 0; pi < slot.points.length; pi++) {
+      const seqNo = slot.points[pi]?.payload.chunkSeqNo ?? pi;
+      seqToIdx.set(seqNo, pi);
+    }
+
+    // Patch template reports — reconcile detail arrays with consensus
     return templateReports.map(r => {
       const bd = sourceBreakdowns.get(r.sourceId) ?? r.classificationBreakdown;
       const survivorCount = bd.pure + bd.merged;
       const sc = sourceConsensus.get(r.sourceId);
       const rate = sc && sc.total > 0 ? sc.passed / sc.total : 1;
+
+      // Re-classify detail arrays based on consensus votes
+      const consensusSurvivorCls = new Set<string>(["pure", "merged"]);
+
+      const chunkDetails = (r.chunkDetails ?? []).filter(c => {
+        const spIdx = seqToIdx.get(c.chunkSeqNo);
+        if (spIdx == null) return false;
+        const cls = idxConsensus.get(spIdx);
+        return cls != null && consensusSurvivorCls.has(cls);
+      }).map(c => {
+        const spIdx = seqToIdx.get(c.chunkSeqNo)!;
+        const cls = idxConsensus.get(spIdx)!;
+        return { ...c, classification: cls };
+      });
+
+      const pureSurvivors = chunkDetails.filter(c => c.classification === "pure");
+
+      // Keep merger clusters only if their origin is still a survivor
+      const survivorSeqs = new Set(chunkDetails.map(c => c.chunkSeqNo));
+      const mergerClusters = (r.mergerClusters ?? []).filter(c =>
+        survivorSeqs.has(c.originChunkSeqNo),
+      );
+
+      // Rebuild dead briefs from consensus (non-survivors from template)
+      const deadBriefs = (r.deadBriefs ?? []).filter(d => {
+        const spIdx = seqToIdx.get(d.chunkSeqNo);
+        if (spIdx == null) return true; // keep if unknown
+        const cls = idxConsensus.get(spIdx);
+        return cls != null && !consensusSurvivorCls.has(cls);
+      }).map(d => {
+        const spIdx = seqToIdx.get(d.chunkSeqNo);
+        const cls = spIdx != null ? idxConsensus.get(spIdx) : undefined;
+        if (cls && !consensusSurvivorCls.has(cls)) {
+          return { ...d, classification: cls as "redundant" | "loner" | "dead" };
+        }
+        return d;
+      });
+
+      // Also add template survivors that consensus demoted to dead
+      const templateSurvivorSeqs = new Set((r.chunkDetails ?? []).map(c => c.chunkSeqNo));
+      for (const [spIdx, cls] of idxConsensus) {
+        if (consensusSurvivorCls.has(cls)) continue;
+        const seqNo = slot.points[spIdx]?.payload.chunkSeqNo ?? spIdx;
+        const sid = idxToSourceId.get(spIdx);
+        if (sid !== r.sourceId) continue;
+        if (templateSurvivorSeqs.has(seqNo) && !deadBriefs.some(d => d.chunkSeqNo === seqNo)) {
+          const text = slot.points[spIdx]?.payload.text ?? "";
+          deadBriefs.push({
+            chunkSeqNo: seqNo,
+            classification: cls as "redundant" | "loner" | "dead",
+            snippet: text.slice(0, 80),
+          });
+        }
+      }
+      deadBriefs.sort((a, b) => a.chunkSeqNo - b.chunkSeqNo);
+
+      // Rebuild survivorTags from consensus survivors
+      const survivorTagCounts: Record<string, number> = {};
+      for (const c of chunkDetails) {
+        const spIdx = seqToIdx.get(c.chunkSeqNo);
+        if (spIdx == null) continue;
+        const tags: string[] = slot.points[spIdx]?.payload.tags ?? [];
+        for (const tag of tags) {
+          survivorTagCounts[tag] = (survivorTagCounts[tag] ?? 0) + 1;
+        }
+      }
+
       return {
         ...r,
         classificationBreakdown: bd,
         survivingChunks: survivorCount,
         survivalRate: r.totalChunks > 0 ? survivorCount / r.totalChunks : 0,
         consensusRate: rate,
+        chunkDetails,
+        pureSurvivors: pureSurvivors,
+        mergerClusters,
+        deadBriefs,
+        survivorTags: Object.keys(survivorTagCounts).length > 0 ? survivorTagCounts : undefined,
       };
     });
   }

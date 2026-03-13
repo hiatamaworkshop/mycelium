@@ -1,0 +1,251 @@
+{
+  "format": "digest",
+  "timestamp": "2026-03-13T09:45:32.185Z",
+  "summary": {
+    "totalSources": 1,
+    "totalChunks": 25,
+    "survivingChunks": 4,
+    "survivalRate": 0.16,
+    "classification": {
+      "pure": 4,
+      "merged": 0,
+      "loner": 5,
+      "redundant": 2,
+      "dead": 14
+    }
+  },
+  "sources": [
+    {
+      "meta": {
+        "sourceId": "source_arxiv:8",
+        "collection": "source_arxiv",
+        "totalChunks": 25,
+        "survivingChunks": 4,
+        "survivalRate": 0.16,
+        "classification": {
+          "pure": 4,
+          "merged": 0,
+          "loner": 5,
+          "redundant": 2,
+          "dead": 14
+        },
+        "consensusRate": 0.92,
+        "headline": "the segmentation process as a whole can be thought of as consisting of two tasks : recognition and delineation . reco...",
+        "topSpecies": "anchor",
+        "survivorTags": {
+          "abstract": 1,
+          "results": 1,
+          "conclusion": 2
+        },
+        "sourceMetadata": {
+          "dataset": "ccdv/arxiv-summarization",
+          "config": "",
+          "chunkTotal": 25
+        }
+      },
+      "pure": [
+        {
+          "seq": 0,
+          "text": "the segmentation process as a whole can be thought of as consisting of two tasks : recognition and delineation .\n\nrecognition is to determine roughly `` where '' the object is and to distinguish it from other object - like entities .\n\nalthough delineation is the final step for defining the spatial extent of the object region / boundary in the image , an efficient recognition strategy is a key for successful delineation . in this study ,\n\na novel , general method is introduced for object recognition to assist in segmentation ( delineation ) tasks .",
+          "species": "anchor"
+        },
+        {
+          "seq": 21,
+          "text": "specificity of recognition increases dramatically as the number of objects in the model increases .\n\n( 4 ) we emphasize that both modeling and testing procedures are carried out on the ct data sets that are part of the clinical pet / ct data routinely acquired in our hospital .\n\nthe ct data set are thus of relatively poor ( spatial and contrast ) resolution compared to other ct - alone studies with or without contrast .\n\nwe expect better performance if higher resolution ct data are employed in modeling or testing .",
+          "species": "herald"
+        },
+        {
+          "seq": 23,
+          "text": ", pp . 233260 . kokkinos , i. , maragos , p. , 2009 .\n\nsynergy between object recognition and image segmentation using the expectation - maximization algorithm .\n\nieee transactions on pattern analysis and machine intelligience , vol.31  ( 8) , pp.14861501 .\n\nbrejl , m. , sonka , m. , 2000 .\n\nobject localization and border detection criteria design in edge - based image segmentation : automated learning from examples .\n\nieee transactions on medical imaging , vol.19  ( 10 ) , pp.973985 .\n\nfripp , j. , crozier , s. , warfield , s.k . ,",
+          "species": "anchor"
+        },
+        {
+          "seq": 24,
+          "text": "pp.973985 . fripp , j. , crozier , s. , warfield , s.k . ,\n\nourselin , s. , 2005 .\n\nautomatic initialisation of 3d deformable models for cartilage segmentation . in proceedings of digital image computing : techniques and applications , pp .",
+          "species": "anchor"
+        }
+      ],
+      "clusters": [
+        {
+          "seq": 23,
+          "clusterSize": 2,
+          "depth1": 1,
+          "deep": 0,
+          "species": "anchor",
+          "sample": ", pp . 233260 . kokkinos , i. , maragos , p. , 2009 .\n\nsynergy between object recognition and image segmentation using the expectation - maximization"
+        },
+        {
+          "seq": 0,
+          "clusterSize": 2,
+          "depth1": 1,
+          "deep": 0,
+          "species": "anchor",
+          "sample": "the segmentation process as a whole can be thought of as consisting of two tasks : recognition and delineation .\n\nrecognition is to determine roughly"
+        }
+      ],
+      "merged": [],
+      "dead": [
+        {
+          "seq": 1,
+          "cls": "dead",
+          "snippet": "method is introduced for object recognition to assist in segmentation ( delineat",
+          "cause": "spawn",
+          "posRes": 0.076
+        },
+        {
+          "seq": 2,
+          "cls": "dead",
+          "snippet": "expert [ref] in the literature , model based methods can be employed for recogn",
+          "cause": "merge",
+          "cosine": 0.648,
+          "posRes": 0.078
+        },
+        {
+          "seq": 3,
+          "cls": "dead",
+          "snippet": "atlas to determine the initial position for a shape model of the knee cartilage",
+          "cause": "merge",
+          "cosine": 0.711,
+          "posRes": 0
+        },
+        {
+          "seq": 4,
+          "cls": "dead",
+          "snippet": "approach of automatically recognizing objects in 3d images without performing el",
+          "cause": "merge",
+          "cosine": 0.548,
+          "posRes": 0.007
+        },
+        {
+          "seq": 5,
+          "cls": "dead",
+          "snippet": "- wire algorithm [ref] is used to segment [x1] different objects from",
+          "cause": "merge",
+          "cosine": 0.602,
+          "posRes": 0
+        },
+        {
+          "seq": 6,
+          "cls": "dead",
+          "snippet": "objectness '' of a given image without doing explicit segmentation . for each vo",
+          "cause": "merge",
+          "cosine": 0.503,
+          "posRes": 0.166
+        },
+        {
+          "seq": 7,
+          "cls": "loner",
+          "snippet": "the b - scale image yields a few largest balls remaining in the image . these a",
+          "cause": "spawn",
+          "posRes": 0.137
+        },
+        {
+          "seq": 8,
+          "cls": "loner",
+          "snippet": "found over all training images . [x6] has an origin and three [x5] axes .",
+          "cause": "merge",
+          "cosine": 0.714,
+          "posRes": 0
+        },
+        {
+          "seq": 9,
+          "cls": "redundant",
+          "snippet": "[x2] in [x10] with a proper pose as indicated in step 4 below . * hierarc",
+          "cause": "merge",
+          "cosine": 0.789,
+          "posRes": 0.319
+        },
+        {
+          "seq": 10,
+          "cls": "dead",
+          "snippet": "we use transformation [x9] and [x11] to determine the pose of [x2] in",
+          "cause": "merge",
+          "cosine": 0.769,
+          "posRes": 0
+        },
+        {
+          "seq": 11,
+          "cls": "loner",
+          "snippet": "gives high recognition rates , there is no need to do any elaborate searches .",
+          "cause": "merge",
+          "cosine": 0.516,
+          "posRes": 0
+        },
+        {
+          "seq": 12,
+          "cls": "loner",
+          "snippet": "this delineation algorithm is presented in a companion paper submitted to this s",
+          "cause": "merge",
+          "cosine": 0.527,
+          "posRes": 0.045
+        },
+        {
+          "seq": 13,
+          "cls": "dead",
+          "snippet": "and _ position _ of objects in an image [ref] . among such information , _ sha",
+          "cause": "merge",
+          "cosine": 0.58,
+          "posRes": 0
+        },
+        {
+          "seq": 14,
+          "cls": "dead",
+          "snippet": "to noise , poor resolution , clutter , and occlusion in the images [ref] . the",
+          "cause": "merge",
+          "cosine": 0.585,
+          "posRes": 0.06
+        },
+        {
+          "seq": 15,
+          "cls": "dead",
+          "snippet": "way of specifying key points on the shapes starting from the same anatomical loc",
+          "cause": "merge",
+          "cosine": 0.661,
+          "posRes": 0.359
+        },
+        {
+          "seq": 16,
+          "cls": "redundant",
+          "snippet": "- consuming , prone to errors , and restricted to only 2d objects [ref] . beca",
+          "cause": "merge",
+          "cosine": 0.707,
+          "posRes": 0.112
+        },
+        {
+          "seq": 17,
+          "cls": "dead",
+          "snippet": "space landmarking technique in pseudo-3d manner where 3d object is annotated sli"
+        },
+        {
+          "seq": 18,
+          "cls": "loner",
+          "snippet": "a fixed number of points on each boundary automatically [ref] . selecting the s"
+        },
+        {
+          "seq": 19,
+          "cls": "dead",
+          "snippet": "landmarks are used for different objects considering their size . [ cols=\"^ \" ,",
+          "cause": "merge",
+          "cosine": 0.594,
+          "posRes": 0
+        },
+        {
+          "seq": 20,
+          "cls": "dead",
+          "snippet": "- scale concept has been previously used in object delineation , filtering and r",
+          "cause": "merge",
+          "cosine": 0.571,
+          "posRes": 0.03
+        },
+        {
+          "seq": 22,
+          "cls": "dead",
+          "snippet": "expect better performance if higher resolution ct data are employed in modeling",
+          "cause": "merge",
+          "cosine": 0.511,
+          "posRes": 0.329
+        }
+      ]
+    }
+  ]
+}

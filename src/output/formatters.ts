@@ -39,6 +39,18 @@ export function cleanText(raw: string): string {
   return t.trim();
 }
 
+/** Clean a short snippet — applies cleanText, strips trailing truncation artifacts, limits to 80 chars */
+function cleanSnippet(raw: string): string {
+  let t = cleanText(raw);
+  // Remove trailing incomplete artifacts from truncation
+  t = t.replace(/@xmath\d*$/, "");
+  t = t.replace(/@$/, "");
+  t = t.replace(/\[x\d*$/, "");
+  // Flatten newlines for snippets
+  t = t.replace(/[\n\r]+/g, " ").replace(/ {2,}/g, " ").trim();
+  return t.slice(0, 80);
+}
+
 // ---- Output types ----
 
 export type ViewFormat = "compact" | "detailed" | "structured" | "digest" | "manifest";
@@ -359,21 +371,29 @@ function renderDetailed(report: FormattedReport): string {
 
 // ---- Post-filter re-aggregation helpers ----
 
+/** Collapse text to a single line, clean artifacts, and truncate to ~120 chars */
+function toHeadline(raw: string): string {
+  let t = cleanText(raw);
+  // Flatten all newlines/tabs to single space
+  t = t.replace(/[\n\r\t]+/g, " ");
+  // Collapse multiple spaces
+  t = t.replace(/ {2,}/g, " ").trim();
+  return t.length > 120 ? t.slice(0, 117) + "..." : t;
+}
+
 /** Derive a one-line headline (~120 chars) from pure[0] text or sourceMetadata.abstract */
 function deriveHeadline(
   r: SurvivorReport,
   pureEntries: Array<{ seq: number; text: string; species: string }>,
 ): string | undefined {
-  // Prefer pure[0] text (already cleaned)
+  // Prefer pure[0] text (already cleaned by buildDigest, but re-clean for headline)
   if (pureEntries.length > 0 && pureEntries[0].text.length > 0) {
-    const src = pureEntries[0].text;
-    return src.length > 120 ? src.slice(0, 117) + "..." : src;
+    return toHeadline(pureEntries[0].text);
   }
   // Fallback: sourceMetadata.abstract
   const abstract = r.sourceMetadata?.abstract;
   if (typeof abstract === "string" && abstract.length > 0) {
-    const cleaned = cleanText(abstract);
-    return cleaned.length > 120 ? cleaned.slice(0, 117) + "..." : cleaned;
+    return toHeadline(abstract);
   }
   return undefined;
 }
@@ -423,7 +443,7 @@ function buildDigest(reports: SurvivorReport[], deadLimit: number): DigestReport
     const dead = (r.deadBriefs ?? []).slice(0, deadLimit).map(d => ({
       seq: d.chunkSeqNo,
       cls: d.classification,
-      snippet: cleanText(d.snippet.slice(0, 80)),
+      snippet: cleanSnippet(d.snippet),
       cause: d.cause,
       cosine: d.cosine != null ? Math.round(d.cosine * 1000) / 1000 : undefined,
       posRes: d.posRes != null ? Math.round(d.posRes * 1000) / 1000 : undefined,
@@ -475,17 +495,12 @@ function buildManifest(reports: SurvivorReport[]): ManifestReport {
   const survivingChunks = reports.reduce((s, r) => s + r.survivingChunks, 0);
 
   const sources: ManifestEntry[] = reports.map(r => {
-    // Derive headline from pure[0] or abstract
+    // Reuse shared headline derivation
     const pureSurvivors = r.pureSurvivors ?? [];
-    const pureText = pureSurvivors.length > 0 ? cleanText(pureSurvivors[0].text) : undefined;
-    let headline: string | undefined;
-    if (pureText && pureText.length > 0) {
-      headline = pureText.length > 120 ? pureText.slice(0, 117) + "..." : pureText;
-    } else if (typeof r.sourceMetadata?.abstract === "string") {
-      const cleaned = cleanText(r.sourceMetadata.abstract as string);
-      headline = cleaned.length > 120 ? cleaned.slice(0, 117) + "..." : cleaned;
-    }
-
+    const pureForHeadline = pureSurvivors.map(c => ({
+      seq: c.chunkSeqNo, text: c.text, species: c.species,
+    }));
+    const headline = deriveHeadline(r, pureForHeadline);
     const topSpecies = deriveTopSpecies(r);
     const bd = r.classificationBreakdown;
 

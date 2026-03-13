@@ -93,6 +93,32 @@ def split_on_separator(raw_texts: list[str], raw_ids: list, pattern: str) -> tup
 
 
 # ===========================================================================
+# Text cleaning — remove dataset-specific artifacts before chunking/embedding
+# ===========================================================================
+
+def clean_academic_text(text: str) -> str:
+    """Remove LaTeX artifacts and noise from academic text.
+
+    Runs BEFORE chunking so embeddings and chunk boundaries are clean.
+    Mirror of cleanText() in src/output/formatters.ts — keep in sync.
+    """
+    t = text
+    # @xmath{N} → [x{N}]  (preserve variable identity for cross-reference)
+    t = re.sub(r"@xmath(\d+)", r"[x\1]", t)
+    # @xcite → [ref]
+    t = re.sub(r"@xcite", "[ref]", t)
+    # LaTeX commands: \command{...} → content, bare \command → remove
+    t = re.sub(r"\\[a-z]+\{([^}]*)\}", r"\1", t)
+    t = re.sub(r"\\[a-z]+", "", t)
+    # Strip table fragments (lines with ≥5 & characters)
+    t = re.sub(r"^.*(?:&.*){4,}&.*$", "[table]", t, flags=re.MULTILINE)
+    # Collapse excessive whitespace
+    t = re.sub(r"\n{3,}", "\n\n", t)
+    t = re.sub(r"[ \t]{3,}", "  ", t)
+    return t.strip()
+
+
+# ===========================================================================
 # Academic / structured-document header detection
 # ===========================================================================
 
@@ -345,9 +371,15 @@ def process(raw_texts: list[str], raw_ids: list, args,
     chunk_seq_nos: list[int] = []
     chunk_total_counts: list[int] = []
 
+    # ---- Clean academic artifacts (before chunking & embedding) ----
+    cleaned_texts = [clean_academic_text(t) for t in raw_texts]
+    dirty = sum(1 for a, b in zip(raw_texts, cleaned_texts) if a != b)
+    if dirty:
+        print(f"  → Cleaned {dirty}/{len(raw_texts)} docs (LaTeX artifacts removed)")
+
     if args.chunk_size > 0:
-        print(f"Chunking {len(raw_texts)} documents (chunk_size={args.chunk_size}, overlap={args.chunk_overlap}) ...")
-        for i, raw in enumerate(raw_texts):
+        print(f"Chunking {len(cleaned_texts)} documents (chunk_size={args.chunk_size}, overlap={args.chunk_overlap}) ...")
+        for i, raw in enumerate(cleaned_texts):
             chunks = chunk_text(raw, args.chunk_size, args.chunk_overlap)
             for seq, chunk in enumerate(chunks):
                 texts.append(chunk)
@@ -356,7 +388,7 @@ def process(raw_texts: list[str], raw_ids: list, args,
                 chunk_total_counts.append(len(chunks))
         print(f"  → {len(raw_texts)} docs → {len(texts)} chunks (avg {len(texts)/len(raw_texts):.1f} chunks/doc)")
     else:
-        texts = list(raw_texts)
+        texts = list(cleaned_texts)
         source_ids = [str(rid) for rid in raw_ids]
         chunk_seq_nos = [0] * len(texts)
         chunk_total_counts = [1] * len(texts)

@@ -29,6 +29,7 @@
 //   CONSENSUS_RUNS        — Number of runs for majority-vote consensus (default: 10)
 //   CONSENSUS_THRESHOLD   — Min vote ratio to consider a chunk's classification stable (default: 0.4)
 //   CONSENSUS_JITTER      — Per-run initial w/h perturbation (0-1, default: 0.1 = ±10%)
+//   FILTER_SOURCE_IDS     — Comma-separated source IDs to process (e.g. "8,14" or "source_arxiv:8")
 //   VIEW_FORMAT           — Output format: "digest" | "manifest" | "compact" | "detailed" | "structured" (default: raw JSON)
 
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -65,6 +66,10 @@ const consensusRuns = Math.max(1, parseInt(process.env.CONSENSUS_RUNS ?? "10", 1
 const consensusThreshold = parseFloat(process.env.CONSENSUS_THRESHOLD ?? "0.4");
 const consensusJitter = parseFloat(process.env.CONSENSUS_JITTER ?? "0.1");
 const viewFormat = (process.env.VIEW_FORMAT ?? "") as ViewFormat | "";
+const filterSourceIds = (process.env.FILTER_SOURCE_IDS ?? "")
+  .split(",")
+  .map(s => s.trim())
+  .filter(s => s.length > 0);
 
 const myceliumConfig: MyceliumConfig = {
   ...DEFAULT_CONFIG,
@@ -158,7 +163,20 @@ async function main(): Promise<void> {
     console.error(`[loader:${world.name}] ${worldSourcePoints.length} source points loaded`);
 
     // Allocate into slots (1 sourceId = 1 slot)
-    const slots = allocateSlots(worldSourcePoints, slotCapacity);
+    let slots = allocateSlots(worldSourcePoints, slotCapacity);
+
+    // Filter by FILTER_SOURCE_IDS if specified (matches raw id or qualified id)
+    if (filterSourceIds.length > 0) {
+      slots = slots.filter(s => {
+        const qualifiedIds = [...s.chunkRegistry.keys()];
+        return qualifiedIds.some(qid => {
+          const rawId = qid.includes(":") ? qid.split(":").slice(1).join(":") : qid;
+          return filterSourceIds.includes(rawId) || filterSourceIds.includes(qid);
+        });
+      });
+      console.error(`[loader:${world.name}] filtered to ${slots.length} slot(s) by FILTER_SOURCE_IDS`);
+    }
+
     console.error(
       `[loader:${world.name}] ${slots.length} slot(s): ` +
       `${slots.map(s => `${s.slotId}(${s.points.length})`).join(", ")}`,
