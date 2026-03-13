@@ -299,6 +299,7 @@ export class IsolatedRunner {
         summarizer: 0, sentinel: 0, herald: 0, anchor: 0, spore: 0,
       };
       const survivingTexts: string[] = [];
+      const survivorTagCounts: Record<string, number> = {};
 
       for (const node of survivors) {
         speciesCounts[node.species]++;
@@ -328,6 +329,12 @@ export class IsolatedRunner {
           const species = node?.species ?? "summarizer";
           const isPure = pureNodeIds.has(nid);
           const cls: ChunkClassification = isPure ? "pure" : "merged";
+
+          // Collect tags from surviving chunks
+          const chunkTags: string[] = slot.points[spIdx]?.payload.tags ?? [];
+          for (const tag of chunkTags) {
+            survivorTagCounts[tag] = (survivorTagCounts[tag] ?? 0) + 1;
+          }
 
           if (isPure) breakdown.pure++;
           else breakdown.merged++;
@@ -390,6 +397,7 @@ export class IsolatedRunner {
         partsComplete: survivors.length <= entry.totalChunks,
         classificationBreakdown: breakdown,
         sourceMetadata: entry.metadata,
+        survivorTags: Object.keys(survivorTagCounts).length > 0 ? survivorTagCounts : undefined,
         chunkDetails,
         pureSurvivors: pureDetails,
         mergerClusters: clusterDetails,

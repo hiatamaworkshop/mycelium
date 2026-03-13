@@ -3,6 +3,46 @@
 loner 判定は　初期メトリクスがない汎用ローダーでは不正確だった、自然と長く生き延びるから
 汎用ローダー利用時は60% ticks 時で判定する調整をした
 
+## 2026-03-13: Post-filter re-aggregation + Manifest mode
+
+### 概要
+digest 出力に post-filter メタデータ（headline / topSpecies / survivorTags）を追加。
+manifest モードを新設し、大量ソースのスキャン→詳細ドリルダウンの 2 段階アクセスを実現。
+
+### Post-filter re-aggregation
+フィルタ後の生存者データから再集計した 3 フィールドを digest meta に追加:
+
+| フィールド | 導出元 | 用途 |
+|-----------|--------|------|
+| `headline` | pure[0].text or sourceMetadata.abstract（~120 chars） | ソースの一行要約 |
+| `topSpecies` | survivors の species 頻度 max | 支配的な知識タイプ |
+| `survivorTags` | 生存チャンクの payload.tags 集計 | フィルタ後のテーマ分布 |
+
+pre-filter のメタデータ（sourceMetadata）は入力側の包括的な情報。
+post-filter のフィールドはフィルタを通過した知識の特性を反映する。
+
+### survivorTags パイプライン
+harvest() で生存チャンクの `slot.points[spIdx].payload.tags` を集計し、
+`SurvivorReport.survivorTags` として公開。タグなしチャンクのみの場合は undefined。
+
+### Manifest mode (`VIEW_FORMAT=manifest`)
+ソースごと ~50 tokens の軽量インデックス。AI エージェントが大量ソースをスキャンし、
+関心のある sourceId のみ digest で詳細取得する 2 段階パターン。
+
+含まれるフィールド:
+- sourceId, collection, totalChunks, survivingChunks, survivalRate
+- headline, topSpecies, survivorTags
+- pureCount, mergedCount, consensusRate
+
+### 変更ファイル
+- `src/loader/feed-instance.ts` — `survivorTags?: Record<string, number>` を SurvivorReport に追加
+- `src/loader/isolated-runner.ts` — harvest() で生存チャンクの tags を集計
+- `src/output/formatters.ts` — deriveHeadline(), deriveTopSpecies(), buildManifest(), ManifestReport 型追加
+- `src/loader/main.ts` — VIEW_FORMAT コメントに manifest 追加
+- `docs/DIGEST_FORMAT.md` — manifest 構造、post-filter フィールド、2段階アクセスパターン追記
+
+---
+
 ## 2026-03-12: Colony Store — per-tick Qdrant I/O 全廃
 
 ### 概要

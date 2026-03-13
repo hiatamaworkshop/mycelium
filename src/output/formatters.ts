@@ -41,7 +41,7 @@ export function cleanText(raw: string): string {
 
 // ---- Output types ----
 
-export type ViewFormat = "compact" | "detailed" | "structured" | "digest";
+export type ViewFormat = "compact" | "detailed" | "structured" | "digest" | "manifest";
 
 /** Per-source summary in structured mode */
 export interface SourceView {
@@ -95,6 +95,12 @@ export interface SourceDigest {
     survivalRate: number;
     classification: ClassificationBreakdown;
     consensusRate?: number;
+    /** One-line summary derived from pure[0] or sourceMetadata.abstract */
+    headline?: string;
+    /** Dominant species among survivors */
+    topSpecies?: string;
+    /** Post-filter tag frequency from surviving chunks */
+    survivorTags?: Record<string, number>;
     sourceMetadata?: Record<string, unknown>;
   };
   pure: Array<{ seq: number; text: string; species: string }>;
@@ -106,7 +112,8 @@ export interface SourceDigest {
     species: string;
     sample: string;
   }>;
-  survivors: Array<{ seq: number; text: string; species: string; cls: string }>;
+  /** Merged survivors only (pure excluded — use pure[] for those) */
+  merged: Array<{ seq: number; text: string; species: string }>;
   dead: Array<{
     seq: number;
     cls: string;
@@ -128,6 +135,35 @@ export interface DigestReport {
     classification: ClassificationBreakdown;
   };
   sources: SourceDigest[];
+}
+
+// ---- Manifest types (lightweight index) ----
+
+/** Per-source manifest entry — ~50 tokens, for scanning before detail drill-down */
+export interface ManifestEntry {
+  sourceId: string;
+  collection: string;
+  totalChunks: number;
+  survivingChunks: number;
+  survivalRate: number;
+  headline?: string;
+  topSpecies?: string;
+  survivorTags?: Record<string, number>;
+  pureCount: number;
+  mergedCount: number;
+  consensusRate?: number;
+}
+
+export interface ManifestReport {
+  format: "manifest";
+  timestamp: string;
+  summary: {
+    totalSources: number;
+    totalChunks: number;
+    survivingChunks: number;
+    survivalRate: number;
+  };
+  sources: ManifestEntry[];
 }
 
 // ---- Aggregation helpers ----
@@ -321,6 +357,38 @@ function renderDetailed(report: FormattedReport): string {
   return lines.join("\n");
 }
 
+// ---- Post-filter re-aggregation helpers ----
+
+/** Derive a one-line headline (~120 chars) from pure[0] text or sourceMetadata.abstract */
+function deriveHeadline(
+  r: SurvivorReport,
+  pureEntries: Array<{ seq: number; text: string; species: string }>,
+): string | undefined {
+  // Prefer pure[0] text (already cleaned)
+  if (pureEntries.length > 0 && pureEntries[0].text.length > 0) {
+    const src = pureEntries[0].text;
+    return src.length > 120 ? src.slice(0, 117) + "..." : src;
+  }
+  // Fallback: sourceMetadata.abstract
+  const abstract = r.sourceMetadata?.abstract;
+  if (typeof abstract === "string" && abstract.length > 0) {
+    const cleaned = cleanText(abstract);
+    return cleaned.length > 120 ? cleaned.slice(0, 117) + "..." : cleaned;
+  }
+  return undefined;
+}
+
+/** Find the dominant species among survivors */
+function deriveTopSpecies(r: SurvivorReport): string | undefined {
+  const sp = r.species;
+  let best: string | undefined;
+  let bestN = 0;
+  for (const [k, v] of Object.entries(sp)) {
+    if (v > bestN) { best = k; bestN = v; }
+  }
+  return best;
+}
+
 // ---- Digest builder (4-tier) ----
 
 function buildDigest(reports: SurvivorReport[], deadLimit: number): DigestReport {
@@ -343,21 +411,27 @@ function buildDigest(reports: SurvivorReport[], deadLimit: number): DigestReport
       sample: cleanText(c.sampleText),
     }));
 
-    const survivors = (r.chunkDetails ?? []).map(c => ({
-      seq: c.chunkSeqNo,
-      text: cleanText(c.text),
-      species: c.species,
-      cls: c.classification,
-    }));
+    // merged only — pure already covered in pure[]
+    const merged = (r.chunkDetails ?? [])
+      .filter(c => c.classification === "merged")
+      .map(c => ({
+        seq: c.chunkSeqNo,
+        text: cleanText(c.text),
+        species: c.species,
+      }));
 
     const dead = (r.deadBriefs ?? []).slice(0, deadLimit).map(d => ({
       seq: d.chunkSeqNo,
       cls: d.classification,
-      snippet: d.snippet.slice(0, 80),
+      snippet: cleanText(d.snippet.slice(0, 80)),
       cause: d.cause,
       cosine: d.cosine != null ? Math.round(d.cosine * 1000) / 1000 : undefined,
       posRes: d.posRes != null ? Math.round(d.posRes * 1000) / 1000 : undefined,
     }));
+
+    // Post-filter re-aggregation: headline, topSpecies, survivorTags
+    const headline = deriveHeadline(r, pure);
+    const topSpecies = deriveTopSpecies(r);
 
     return {
       meta: {
@@ -365,14 +439,17 @@ function buildDigest(reports: SurvivorReport[], deadLimit: number): DigestReport
         collection: r.collection,
         totalChunks: r.totalChunks,
         survivingChunks: r.survivingChunks,
-        survivalRate: r.survivalRate,
+        survivalRate: Math.round(r.survivalRate * 1000) / 1000,
         classification: { ...r.classificationBreakdown },
-        consensusRate: r.consensusRate,
+        consensusRate: r.consensusRate != null ? Math.round(r.consensusRate * 1000) / 1000 : undefined,
+        headline,
+        topSpecies,
+        survivorTags: r.survivorTags,
         sourceMetadata: r.sourceMetadata,
       },
       pure,
       clusters,
-      survivors,
+      merged,
       dead,
     };
   });
@@ -384,8 +461,57 @@ function buildDigest(reports: SurvivorReport[], deadLimit: number): DigestReport
       totalSources: reports.length,
       totalChunks,
       survivingChunks,
-      survivalRate: totalChunks > 0 ? survivingChunks / totalChunks : 0,
+      survivalRate: totalChunks > 0 ? Math.round((survivingChunks / totalChunks) * 1000) / 1000 : 0,
       classification: sumBreakdown(reports),
+    },
+    sources,
+  };
+}
+
+// ---- Manifest builder (lightweight index) ----
+
+function buildManifest(reports: SurvivorReport[]): ManifestReport {
+  const totalChunks = reports.reduce((s, r) => s + r.totalChunks, 0);
+  const survivingChunks = reports.reduce((s, r) => s + r.survivingChunks, 0);
+
+  const sources: ManifestEntry[] = reports.map(r => {
+    // Derive headline from pure[0] or abstract
+    const pureSurvivors = r.pureSurvivors ?? [];
+    const pureText = pureSurvivors.length > 0 ? cleanText(pureSurvivors[0].text) : undefined;
+    let headline: string | undefined;
+    if (pureText && pureText.length > 0) {
+      headline = pureText.length > 120 ? pureText.slice(0, 117) + "..." : pureText;
+    } else if (typeof r.sourceMetadata?.abstract === "string") {
+      const cleaned = cleanText(r.sourceMetadata.abstract as string);
+      headline = cleaned.length > 120 ? cleaned.slice(0, 117) + "..." : cleaned;
+    }
+
+    const topSpecies = deriveTopSpecies(r);
+    const bd = r.classificationBreakdown;
+
+    return {
+      sourceId: r.sourceId,
+      collection: r.collection,
+      totalChunks: r.totalChunks,
+      survivingChunks: r.survivingChunks,
+      survivalRate: Math.round(r.survivalRate * 1000) / 1000,
+      headline,
+      topSpecies,
+      survivorTags: r.survivorTags,
+      pureCount: bd.pure,
+      mergedCount: bd.merged,
+      consensusRate: r.consensusRate != null ? Math.round(r.consensusRate * 1000) / 1000 : undefined,
+    };
+  });
+
+  return {
+    format: "manifest",
+    timestamp: new Date().toISOString(),
+    summary: {
+      totalSources: reports.length,
+      totalChunks,
+      survivingChunks,
+      survivalRate: totalChunks > 0 ? Math.round((survivingChunks / totalChunks) * 1000) / 1000 : 0,
     },
     sources,
   };
@@ -408,7 +534,8 @@ export interface FormatOptions {
  * - structured: returns FormattedReport as JSON string
  * - compact: short text digest for LLM context
  * - detailed: full human-readable breakdown
- * - digest: 4-tier per-source output (meta/pure/clusters/survivors/dead)
+ * - digest: 4-tier per-source output (meta/pure/clusters/merged/dead)
+ * - manifest: lightweight meta-only index (~50 tokens/source)
  */
 export function formatReports(
   reports: SurvivorReport[],
@@ -421,6 +548,8 @@ export function formatReports(
   switch (format) {
     case "digest":
       return JSON.stringify(buildDigest(reports, deadLimit), null, 2);
+    case "manifest":
+      return JSON.stringify(buildManifest(reports), null, 2);
     case "compact": {
       const structured = buildStructured(reports, sampleLimit);
       return renderCompact(structured);
@@ -454,4 +583,13 @@ export function buildDigestReport(
   deadLimit = 50,
 ): DigestReport {
   return buildDigest(reports, deadLimit);
+}
+
+/**
+ * Build typed ManifestReport (for programmatic use without serialization).
+ */
+export function buildManifestReport(
+  reports: SurvivorReport[],
+): ManifestReport {
+  return buildManifest(reports);
 }

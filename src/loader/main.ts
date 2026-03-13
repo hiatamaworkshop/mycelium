@@ -29,7 +29,7 @@
 //   CONSENSUS_RUNS        — Number of runs for majority-vote consensus (default: 10)
 //   CONSENSUS_THRESHOLD   — Min vote ratio to consider a chunk's classification stable (default: 0.4)
 //   CONSENSUS_JITTER      — Per-run initial w/h perturbation (0-1, default: 0.1 = ±10%)
-//   VIEW_FORMAT           — Output format: "digest" | "compact" | "detailed" | "structured" (default: raw JSON)
+//   VIEW_FORMAT           — Output format: "digest" | "manifest" | "compact" | "detailed" | "structured" (default: raw JSON)
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

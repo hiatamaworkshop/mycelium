@@ -91,6 +91,8 @@ export interface SurvivorReport {
   consensusRate?: number;
   /** Doc-level metadata from sidecar (dataset, abstract, etc.) */
   sourceMetadata?: Record<string, unknown>;
+  /** Post-filter tag frequency among surviving chunks */
+  survivorTags?: Record<string, number>;
   /** Per-chunk detail for all survivors (pure + merged) with seqNo */
   chunkDetails?: ChunkDetail[];
   /** Pure survivor chunks only */
