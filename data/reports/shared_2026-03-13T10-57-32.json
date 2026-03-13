@@ -1,0 +1,1028 @@
+[
+  {
+    "sourceId": "source_arxiv:17",
+    "collection": "source_arxiv",
+    "batchToken": "batch-13-mmos8qlu",
+    "totalChunks": 131,
+    "survivingChunks": 18,
+    "survivalRate": 0.13740458015267176,
+    "species": {
+      "summarizer": 5,
+      "sentinel": 5,
+      "herald": 16,
+      "anchor": 3,
+      "spore": 3
+    },
+    "survivingTexts": [
+      "by finding evolution equations for these quantities . the density function given in eq .\n\nis well - known and has been applied in many situations .\n\nit is a solution to the problem of approximating a nearly - gaussian distribution whose moments are known .\n\n( [ e : p1d ] ) is in fact the first two terms of the _ gram  charlier ` a ' series _ , also sometimes called the _",
+      "than the non - linear gauge transformation between field fluctuations and the curvature perturbation .\n\nwe substitute the method of moment transport to evolve the distribution of field fluctuations between horizon exit and observation .\n\nsecond , in integrating the transport equation one uses an expansion of the velocity field such as the one given in eqs .\n\n. this expansion is refreshed at each step of integration , so the result is related to conventional perturbative calculations in a very similar way to renormalization - group improved perturbation theory [ref] . in this interpretation ,",
+      "expansion at a predetermined order both in cumulants and powers of the field fluctuation .\n\nthe order we have chosen is sufficient to generate evolution equations containing both the leading - order behavior of the moments  namely , the first terms in eqs .  , and  and the leading corrections , given by the latter terms in these equations .\n\nat this point we put our new method into practice .\n\nwe study two models for which the non - gaussian signal is already known , using the standard [x0] formula . for each case",
+      "in time evolution , but may be an advantage in comparison with perturbative methods .\n\nwe also note that although [x0] is non - perturbative as a point of principle , practical implementations are frequently perturbative .\n\nfor example , the method of vernizzi & wands [ref] and battefeld & easther [ref] depends on the existence of quantities which are conserved only to leading order in [x178] , and can lose accuracy after [x179] e - foldings .",
+      "the _ gram charlier ` a ' series _ , also sometimes called the _\n\nhermite series_. in recent years it has found multiple applications to cosmology , of which our method is closest to that of taylor & watts [ref] .\n\nother applications are discussed in refs .\n\n[ref] . for a review of the `\n\na ' series and related nearly - gaussian probability distributions from an astrophysical perspective , see [ref] . in this paper",
+      "has been used by lehners & renaux - petel to obtain numerical results [ref] .\n\nanother numerical scheme has been introduced by huston & malik [ref] .\n\nwhat properties do we require of a successful prediction ? consider a typical observer , drawn at random from an ensemble of realizations of inflation . in any of the formalisms\n\ndiscussed above , we aim to estimate the statistical properties of the curvature perturbation which would be measured by such an observer .",
+      "2006 ) 083521 , [ http://xxx.lanl.gov/abs/astro-ph/0504508 [ arxiv : astro - ph/0504508 ] ] .\n\nh.  r.  s. cogollo , y.  rodrguez , and c.  a. valenzuela - toledo , _ on the issue of the [x2] series convergence and loop corrections in the generation of observable primordial non - gaussianity in slow - roll inflation .\n\npart i : the bispectrum _ , _ jcap _ * 0808 * ( 2008 ) 029 , [ http://xxx.lanl.gov/abs/0806.1546[arxiv:0806.1546 ] ] .",
+      "variation in expansion can be written in the fiducial picture as [x28] where [x29] .\n\nsubject to the condition that the relevant scales are all outside the horizon , we are free to choose the initial time  set by the hypersurface ` [x8]'at our convenience . in the conventional approach , ` [x8] ' is taken to lie a few e - folds after our collection of spacetime volumes passes outside the causal horizon [ref] .\n\nthis choice has many virtues .",
+      "the moment expansion , we would obtain non - trivial higher - rank coefficients .\n\ninclusion of additional coefficients requires no qualitative modification of our analysis and can be incorporated in the scheme we describe below .  a useful feature of the expansion in eq .\n\nis that the rank-[x145] coefficients give evolution equations for the order-[x145] moments . written explicitly in components ,\n\nthe expressions that result from  are quite cumbersome .\n\nhowever , when written as field - space covariant expressions they can be expressed in a surprisingly compact form .",
+      "but only for very specific choices of the potential [ref] or hubble rate [ref] .\n\nthese formulas become increasingly cumbersome as the number of fields increases , or if one studies higher moments [ref] . in the future , it seems clear that studies of complex models with many fields will increasingly rely on numerical methods .\n\nthe numerical [x0] framework requires the solution to a number of ordinary differential equations which scales exponentially with the number of fields .\n\nsince some models include hundreds of fields , this may present a significant obstacle [ref] .",
+      "such as the numerical method recently employed by lehners & renaux - petel [ref] .\n\na third advantage , to which we hope to return in a future publication , is that our formalism yields explicit evolution equations with source terms . from an analysis of these source terms , we hope that it will be possible to identify those physical features of specific models which lead to the production of large non - gaussianities .",
+      "- gaussianity of the primordial perturbation in the curvaton model _ , _ phys .\n\nrev . _ * d74 * ( 2006 ) 103003 , [ http://xxx.lanl.gov/abs/astro-ph/0607627 [ arxiv : astro - ph/0607627 ] ] .",
+      ", eq . strictly applies only in single - field inflation . in this case\n\none can accurately determine [x1] by applying eq .  to a single trajectory with fixed initial conditions , as in the method of lehners & renaux - petel [ref] .\n\nwhere more than one field is present , [x1] may vary in space because it depends on the isocurvature modes . in this case\n\none must determine [x1] statistically on a bundle of adjacent trajectories which sample the local distribution of isocurvature modes .\n\nis then indispensible .",
+      "symmetries of an expectation value such as guarantee that , for example , [x41] .\n\nwhen written explicitly , we place the indices of symbols such as [x42] in numerical order . neglecting a small ( [x43] ) intrinsic four - point correlation , it follows that [x44]  now we specialize to a two - field model , parametrized by fields [x45] and [x46] . using eqs .",
+      "gaussian signal can be generated even when slow - roll is a good approximation [ref]\n\n. the conditions for this to occur are incompletely understood , but apparently require a specific choice of potential and strong tuning of initial conditions . in figs .\n\n[ fig3][fig4 ] we show the evolution of [x1] in a model with the potential [x172] which corresponds to example a of ref .\n\n*  5 ) when we choose [x173] and initial conditions [x174] , [x175] .",
+      "mean fluctuation value is not following a solution to the background equations of motion .\n\nevolution equations for the variance [x80] and skew [x42] are obtained after enforcing [x106] , yielding [x107] in both equations , the first term on the right - hand sides describes how [x81] and [x42] scale as the density function expands or contracts in response to the velocity field .\n\nthese terms force [x80] and [x42] to scale in proportion to the velocity field . specifically ,",
+      "verified that ( despite appearances ) eq . is invariant under the exchange [x76] .\n\nin this section we return to the problem of evolution between horizon exit and the time of observation , and supply the prescription which connects the distribution of field values at these two times .\n\nwe begin by discussing the single - field system , which lacks the technical complexity of the two - field case , yet still exhibits certain interesting features which recur there . among these features",
+      "' to lie around the time when we require the statistical properties of [x2] .\n\nthe role of the [x0] formula , eq .  , is then to encode _ only _ the gauge transformation between the [x36] and [x2] . in\n\n[ sec : derivative - n ] below , we show how the appropriate gauge transformation is computed using the [x0] formula . in the present section",
+      "1998 ) 193205 , [ http://xxx.lanl.gov/abs/astro-ph/9711239 [ arxiv : astro - ph/9711239 ] ] .\n\ng.  i. rigopoulos , e.  p.  s. shellard , and b.  j.  w. van tent , _ quantitative bispectra from multifield inflation _\n\nrev . _ * d76 * ( 2007 ) 083512 , [ http://xxx.lanl.gov/abs/astro-ph/0511041 [ arxiv : astro - ph/0511041 ] ] .\n\nm.  sasaki , j.  valiviita , and d.  wands , _ non - gaussianity of the primordial perturbation in the curvaton model _ , _ phys .",
+      "distribution which is nearly gaussian , but has a small non - zero skewness .\n\nthat gives [x115] where [x116] is a pure gaussian distribution , defined by [x117] .\\ ] ] in this equation , [x118] defines the center of the distribution and [x119] describes the covariance between the fields .\n\nwe adopt a conventional parametrization in terms of variances [x120] and a correlation coefficient [x121] , [x122] the matrix [x81] defines two - point correlations of the fields , [x123]  all skewnesses are encoded in [x124] . before defining this explicitly ,",
+      "spacetime volumes . in all but the simplest models it will vary in time .\n\nit is also necessary to account for intrinsic non - linearities among the [x31] , which are small at horizon crossing but may grow . we define [x39] likewise , [x40] should be regarded as a function of time and scale .\n\nthe permutation symmetries of an expectation value such as  guarantee that , for example , [x41] .",
+      "of the centroid . the expansion can be pursued to higher order if desired .\n\nour construction of [x126] and [x127] implies that the two - field transport equation can be arranged as a double gauss  hermite expansion , [x143]  =  p_g _{m , n  0 } c_{mn } h_m(x ) h_n(y )  =  0 .\\ ] ] because the hermite polynomials are orthogonal in the measure defined by [x116] , we deduce the moment hierarchy [x144]  we define the  rank \" [x145] of each coefficient [x146] by [x147] .",
+      "inflation generically predicts a primordial spectrum of density perturbations which is almost precisely gaussian [ref] . in recent years\n\nthe small non - gaussian component [ref] has emerged as an important observable [ref] , and will be measured with good precision by the _\n\nplanck surveyor _ satellite [ref] . in the near future ,",
+      "technique [ref] . an alternative technique has been proposed by yokoyama _ _ [ref] .\n\na considerable simplification occurs in the present case , because we only require the derivative evaluated between flat and comoving hypersurfaces which coincide in the unperturbed universe . for any species [x27] , and",
+      "the [x0] algorithm using a finite difference method to calculate the derivatives of [x6] .\n\na similar technique was used in ref .\n\nthis model yields a very modest non - gaussian signal , below unity even at its peak .\n\nif inflation ends away from the spike then [x1] is practically negligible .\n\nshows that the method of moment transport allows us to separate contributions to [x1] from the intrinsic non - gaussianity of the field fluctuations , and non - linearities of the gauge transformation to [x2] . as explained in",
+      "m. carroll , _ higher - order gravitational perturbations of the cosmic microwave background _\n\n* d53 * ( 1996 ) 29202929 , [ http://xxx.lanl.gov/abs/astro-ph/9510041 [ arxiv : astro - ph/9510041 ] ] .\n\nv.  acquaviva , n.  bartolo , s.  matarrese , and a.  riotto , _ second - order cosmological perturbations from inflation _ , _ nucl .\n\nphys . _ * b667 * ( 2003 ) 119148 , [ http://xxx.lanl.gov/abs/astro-ph/0209156 [ arxiv : astro - ph/0209156 ] ] .\n\ne.  komatsu and d.  n. spergel , _",
+      "independent random variables at horizon exit , correlations can be induced by subsequent evolution .\n\none must therefore allow for off - diagonal terms in the two - point function .\n\nremembering that we are working with a collection of spacetime volumes in real space , smoothed on some characteristic scale , we write [x37] [x38] does not vary in space , but it may be a function of the scale which characterizes our ensemble of spacetime volumes . in all but the simplest models it will vary in time .",
+      "gaussian signal is already known , using the standard [x0] formula . for each case\n\nwe employ our method and compare it with results obtained using [x0] . to ensure a fair comparison , we solve numerically in both cases .\n\nour new method employs the slow - roll approximation , as described above .\n\ntherefore , when using the [x0] approach we produce results both with and without slow - roll simplifications .\n\nfirst consider double quadratic inflation , which was studied by rigopoulos , shellard & van tent [ref] and later by vernizzi & wands [ref] .",
+      "[x63]-field model , one would obtain [x64] conserved quantities which label the isocurvature fields .\n\nthe construction of these quantities is discussed in refs .\n\n[ref] . for sum - separable potentials one can show using the equations of motion that [x61] is conserved under time evolution to leading order in slow - roll .\n\nit is not conserved for general potentials , but the variation can be neglected for infinitesimally separated hypersurfaces .  under a change of trajectory ,",
+      "model beyond requiring a canonical kinetic term and applying the slow - roll approximation .\n\nwhile there are already numerous methods for computing the super - horizon contribution to [x1] , including the widely used [x0] formalism , we believe the one reported here has a number of advantages .\n\nfirst , this new technique is ideally suited to unraveling the various contributions to [x1] .\n\nthis is because we follow the moments of the inflaton distribution directly , which makes it straightforward to identify large contributions to the skewness or other moments .",
+      "we find [x72]^ ^2 + 2 ( v{v_{,1 } } )^{ 2 } ^2 \\\\\n\n-6 mm  { }  [  v_{,11}{v } ^2  - v_{,1  v_{,12}}{v v_{,2 } } ^4  -  (  v_{,11}{v } - v_{,22}{v }  + v_{,2  v_{,12}}{v v_{,1 } }  )  ^2  ^2  ]^c .\n\naligned\\ ] ] an analogous expression for [x73] can be obtained after the simultaneous exchange [x74] .",
+      "opposite occurs when [x110] . these effects are measured by the second term in .\n\nhence , by expanding our pdf to the third moment , and our velocity field to quadratic order , we are able to construct a set of evolution equations which include the leading - order source terms for each moment .  there is little conceptually new as we move from one field to two .\n\nthe new features are mostly technical in nature ."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 7,
+      "merged": 11,
+      "loner": 51,
+      "redundant": 8,
+      "dead": 54
+    },
+    "sourceMetadata": {
+      "dataset": "ccdv/arxiv-summarization",
+      "config": "",
+      "chunkTotal": 131
+    },
+    "survivorTags": {
+      "abstract": 1,
+      "fix": 1,
+      "findings": 2,
+      "results": 2,
+      "methodology": 1,
+      "conclusion": 2
+    },
+    "chunkDetails": [
+      {
+        "chunkSeqNo": 0,
+        "text": "inflation generically predicts a primordial spectrum of density perturbations which is almost precisely gaussian [ref] . in recent years\n\nthe small non - gaussian component [ref] has emerged as an important observable [ref] , and will be measured with good precision by the _\n\nplanck surveyor _ satellite [ref] . in the near future ,",
+        "species": "anchor",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 30,
+        "text": ", eq . strictly applies only in single - field inflation . in this case\n\none can accurately determine [x1] by applying eq .  to a single trajectory with fixed initial conditions , as in the method of lehners & renaux - petel [ref] .\n\nwhere more than one field is present , [x1] may vary in space because it depends on the isocurvature modes . in this case\n\none must determine [x1] statistically on a bundle of adjacent trajectories which sample the local distribution of isocurvature modes .\n\nis then indispensible .",
+        "species": "sentinel",
+        "classification": "merged"
+      },
+      {
+        "chunkSeqNo": 38,
+        "text": "' to lie around the time when we require the statistical properties of [x2] .\n\nthe role of the [x0] formula , eq .  , is then to encode _ only _ the gauge transformation between the [x36] and [x2] . in\n\n[ sec : derivative - n ] below , we show how the appropriate gauge transformation is computed using the [x0] formula . in the present section",
+        "species": "herald",
+        "classification": "merged"
+      },
+      {
+        "chunkSeqNo": 40,
+        "text": "independent random variables at horizon exit , correlations can be induced by subsequent evolution .\n\none must therefore allow for off - diagonal terms in the two - point function .\n\nremembering that we are working with a collection of spacetime volumes in real space , smoothed on some characteristic scale , we write [x37] [x38] does not vary in space , but it may be a function of the scale which characterizes our ensemble of spacetime volumes . in all but the simplest models it will vary in time .",
+        "species": "herald",
+        "classification": "merged"
+      },
+      {
+        "chunkSeqNo": 77,
+        "text": "opposite occurs when [x110] . these effects are measured by the second term in .\n\nhence , by expanding our pdf to the third moment , and our velocity field to quadratic order , we are able to construct a set of evolution equations which include the leading - order source terms for each moment .  there is little conceptually new as we move from one field to two .\n\nthe new features are mostly technical in nature .",
+        "species": "herald",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 99,
+        "text": "the [x0] algorithm using a finite difference method to calculate the derivatives of [x6] .\n\na similar technique was used in ref .\n\nthis model yields a very modest non - gaussian signal , below unity even at its peak .\n\nif inflation ends away from the spike then [x1] is practically negligible .\n\nshows that the method of moment transport allows us to separate contributions to [x1] from the intrinsic non - gaussianity of the field fluctuations , and non - linearities of the gauge transformation to [x2] . as explained in",
+        "species": "herald",
+        "classification": "merged"
+      },
+      {
+        "chunkSeqNo": 102,
+        "text": "gaussian signal can be generated even when slow - roll is a good approximation [ref]\n\n. the conditions for this to occur are incompletely understood , but apparently require a specific choice of potential and strong tuning of initial conditions . in figs .\n\n[ fig3][fig4 ] we show the evolution of [x1] in a model with the potential [x172] which corresponds to example a of ref .\n\n*  5 ) when we choose [x173] and initial conditions [x174] , [x175] .",
+        "species": "herald",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 129,
+        "text": "1998 ) 193205 , [ http://xxx.lanl.gov/abs/astro-ph/9711239 [ arxiv : astro - ph/9711239 ] ] .\n\ng.  i. rigopoulos , e.  p.  s. shellard , and b.  j.  w. van tent , _ quantitative bispectra from multifield inflation _\n\nrev . _ * d76 * ( 2007 ) 083512 , [ http://xxx.lanl.gov/abs/astro-ph/0511041 [ arxiv : astro - ph/0511041 ] ] .\n\nm.  sasaki , j.  valiviita , and d.  wands , _ non - gaussianity of the primordial perturbation in the curvaton model _ , _ phys .",
+        "species": "anchor",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 130,
+        "text": "- gaussianity of the primordial perturbation in the curvaton model _ , _ phys .\n\nrev . _ * d74 * ( 2006 ) 103003 , [ http://xxx.lanl.gov/abs/astro-ph/0607627 [ arxiv : astro - ph/0607627 ] ] .",
+        "species": "anchor",
+        "classification": "pure"
+      }
+    ],
+    "pureSurvivors": [
+      {
+        "chunkSeqNo": 0,
+        "text": "inflation generically predicts a primordial spectrum of density perturbations which is almost precisely gaussian [ref] . in recent years\n\nthe small non - gaussian component [ref] has emerged as an important observable [ref] , and will be measured with good precision by the _\n\nplanck surveyor _ satellite [ref] . in the near future ,",
+        "species": "anchor",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 77,
+        "text": "opposite occurs when [x110] . these effects are measured by the second term in .\n\nhence , by expanding our pdf to the third moment , and our velocity field to quadratic order , we are able to construct a set of evolution equations which include the leading - order source terms for each moment .  there is little conceptually new as we move from one field to two .\n\nthe new features are mostly technical in nature .",
+        "species": "herald",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 102,
+        "text": "gaussian signal can be generated even when slow - roll is a good approximation [ref]\n\n. the conditions for this to occur are incompletely understood , but apparently require a specific choice of potential and strong tuning of initial conditions . in figs .\n\n[ fig3][fig4 ] we show the evolution of [x1] in a model with the potential [x172] which corresponds to example a of ref .\n\n*  5 ) when we choose [x173] and initial conditions [x174] , [x175] .",
+        "species": "herald",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 129,
+        "text": "1998 ) 193205 , [ http://xxx.lanl.gov/abs/astro-ph/9711239 [ arxiv : astro - ph/9711239 ] ] .\n\ng.  i. rigopoulos , e.  p.  s. shellard , and b.  j.  w. van tent , _ quantitative bispectra from multifield inflation _\n\nrev . _ * d76 * ( 2007 ) 083512 , [ http://xxx.lanl.gov/abs/astro-ph/0511041 [ arxiv : astro - ph/0511041 ] ] .\n\nm.  sasaki , j.  valiviita , and d.  wands , _ non - gaussianity of the primordial perturbation in the curvaton model _ , _ phys .",
+        "species": "anchor",
+        "classification": "pure"
+      },
+      {
+        "chunkSeqNo": 130,
+        "text": "- gaussianity of the primordial perturbation in the curvaton model _ , _ phys .\n\nrev . _ * d74 * ( 2006 ) 103003 , [ http://xxx.lanl.gov/abs/astro-ph/0607627 [ arxiv : astro - ph/0607627 ] ] .",
+        "species": "anchor",
+        "classification": "pure"
+      }
+    ],
+    "mergerClusters": [
+      {
+        "originChunkSeqNo": 38,
+        "clusterSize": 6,
+        "depth1Count": 4,
+        "deepChainCount": 1,
+        "species": "herald",
+        "sampleText": "' to lie around the time when we require the statistical properties of [x2] .\n\nthe role of the [x0] formula , eq .  , is then to encode _ only _ the g"
+      },
+      {
+        "originChunkSeqNo": 30,
+        "clusterSize": 5,
+        "depth1Count": 3,
+        "deepChainCount": 1,
+        "species": "sentinel",
+        "sampleText": ", eq . strictly applies only in single - field inflation . in this case\n\none can accurately determine [x1] by applying eq .  to a single trajectory wi"
+      },
+      {
+        "originChunkSeqNo": 0,
+        "clusterSize": 4,
+        "depth1Count": 2,
+        "deepChainCount": 1,
+        "species": "anchor",
+        "sampleText": "inflation generically predicts a primordial spectrum of density perturbations which is almost precisely gaussian [ref] . in recent years\n\nthe small no"
+      },
+      {
+        "originChunkSeqNo": 40,
+        "clusterSize": 3,
+        "depth1Count": 1,
+        "deepChainCount": 1,
+        "species": "herald",
+        "sampleText": "independent random variables at horizon exit , correlations can be induced by subsequent evolution .\n\none must therefore allow for off - diagonal term"
+      }
+    ],
+    "deadBriefs": [
+      {
+        "chunkSeqNo": 1,
+        "classification": "dead",
+        "snippet": "precision by the _ planck surveyor _ satellite [ref] . in the near future ,\n\nas ",
+        "cause": "merge",
+        "cosine": 0.5830178482377076,
+        "posRes": 0.01176406952906809
+      },
+      {
+        "chunkSeqNo": 2,
+        "classification": "dead",
+        "snippet": "gaussianity produced by super - horizon evolution in two - field models of infla",
+        "cause": "spawn",
+        "posRes": 0.44618583775399767
+      },
+      {
+        "chunkSeqNo": 4,
+        "classification": "loner",
+        "snippet": "model beyond requiring a canonical kinetic term and applying the slow - roll app"
+      },
+      {
+        "chunkSeqNo": 5,
+        "classification": "dead",
+        "snippet": "which makes it straightforward to identify large contributions to the skewness o",
+        "cause": "spawn",
+        "posRes": 0.39713984261405794
+      },
+      {
+        "chunkSeqNo": 7,
+        "classification": "dead",
+        "snippet": "but only for very specific choices of the potential [ref] or hubble rate [ref] ."
+      },
+      {
+        "chunkSeqNo": 8,
+        "classification": "loner",
+        "snippet": "some models include hundreds of fields , this may present a significant obstacle",
+        "cause": "merge",
+        "cosine": 0.7841073198603824,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 9,
+        "classification": "dead",
+        "snippet": "ultimately solve our equations numerically to determine the evolution of moments",
+        "cause": "merge",
+        "cosine": 0.5188057914654324,
+        "posRes": 0.1707775621229926
+      },
+      {
+        "chunkSeqNo": 10,
+        "classification": "loner",
+        "snippet": "such as the numerical method recently employed by lehners & renaux - petel [ref]"
+      },
+      {
+        "chunkSeqNo": 11,
+        "classification": "dead",
+        "snippet": "features of specific models which lead to the production of large non - gaussian",
+        "cause": "merge",
+        "cosine": 0.7879650917955433,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 12,
+        "classification": "redundant",
+        "snippet": "the relationship between [x1] and the multi - point functions of the inflaton fi",
+        "cause": "spawn",
+        "posRes": 0.27112212976212247
+      },
+      {
+        "chunkSeqNo": 13,
+        "classification": "dead",
+        "snippet": "field values , which is a moment expansion \" around a purely gaussian distributi",
+        "cause": "merge",
+        "cosine": 0.7075843320021339,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 14,
+        "classification": "loner",
+        "snippet": "between techniques . we conclude in [ s : conclusions ] . throughout this paper\n",
+        "cause": "merge",
+        "cosine": 0.5160403243931913,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 15,
+        "classification": "dead",
+        "snippet": ", we introduce our new method for computing the non - gaussianity parameter [x1]",
+        "cause": "spawn",
+        "posRes": 0.2807745588412995
+      },
+      {
+        "chunkSeqNo": 16,
+        "classification": "loner",
+        "snippet": "the statistical properties of [x2] . the first two ingredients are given in eqs ",
+        "cause": "merge",
+        "cosine": 0.5726435510102854,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 18,
+        "classification": "loner",
+        "snippet": "correlation function were matched to the known limit of local non - gaussianity ",
+        "cause": "merge",
+        "cosine": 0.5001145988643027,
+        "posRes": 0.031299375556474926
+      },
+      {
+        "chunkSeqNo": 19,
+        "classification": "loner",
+        "snippet": "linear order . this method is simple and well - suited to analytical calculation",
+        "cause": "merge",
+        "cosine": 0.5672995107042865,
+        "posRes": 0.038043596650112074
+      },
+      {
+        "chunkSeqNo": 20,
+        "classification": "dead",
+        "snippet": "has been used by lehners & renaux - petel to obtain numerical results [ref] .\n\na"
+      },
+      {
+        "chunkSeqNo": 21,
+        "classification": "loner",
+        "snippet": "statistical properties of the curvature perturbation which would be measured by ",
+        "cause": "merge",
+        "cosine": 0.5025363532795649,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 23,
+        "classification": "loner",
+        "snippet": "taken as a whole . one never makes a prediction for a single trajectory .\n\neach ",
+        "cause": "merge",
+        "cosine": 0.5169037664988763,
+        "posRes": 0.15395573344965835
+      },
+      {
+        "chunkSeqNo": 24,
+        "classification": "dead",
+        "snippet": "of some quantity of interest , [x9] , which is a function of trajectory .\n\nif we",
+        "cause": "merge",
+        "cosine": 0.545965442971043,
+        "posRes": 0.13748581494467946
+      },
+      {
+        "chunkSeqNo": 25,
+        "classification": "dead",
+        "snippet": "observable quantities . . defines what we will call the exact separate universe ",
+        "cause": "merge",
+        "cosine": 0.638543514176395,
+        "posRes": 0.08601389947100398
+      },
+      {
+        "chunkSeqNo": 26,
+        "classification": "dead",
+        "snippet": "in unfavorable cases , however , convergence may occur slowly or not at all .\n\nt",
+        "cause": "merge",
+        "cosine": 0.5785074852817961,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 27,
+        "classification": "dead",
+        "snippet": ". . we briefly discuss the relation of our calculation to conventional perturbat",
+        "cause": "merge",
+        "cosine": 0.737053608690899,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 28,
+        "classification": "dead",
+        "snippet": "set of gaussian fluctuations generated at horizon exit . in a single - field mod",
+        "cause": "merge",
+        "cosine": 0.7431911628418653,
+        "posRes": 0.5286421690856838
+      },
+      {
+        "chunkSeqNo": 29,
+        "classification": "loner",
+        "snippet": ". defines the so - called `` local '' form of non - gaussianity .\n\nit applies on",
+        "cause": "merge",
+        "cosine": 0.5831016608721556,
+        "posRes": 0.3225505461036471
+      },
+      {
+        "chunkSeqNo": 32,
+        "classification": "loner",
+        "snippet": ". more generally , this follows from the definition of [x12] , eq . .\n\nin fourie",
+        "cause": "merge",
+        "cosine": 0.5088665151281969,
+        "posRes": 0.03601769897468008
+      },
+      {
+        "chunkSeqNo": 33,
+        "classification": "loner",
+        "snippet": "in which ` [x8] ' denotes a flat hypersurface at a fixed initial time .\n\nthe qua",
+        "cause": "merge",
+        "cosine": 0.5057708742826531,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 34,
+        "classification": "loner",
+        "snippet": "variation in expansion can be written in the fiducial picture as [x28] where [x2"
+      },
+      {
+        "chunkSeqNo": 35,
+        "classification": "dead",
+        "snippet": "spacetime volumes passes outside the causal horizon [ref] . this choice has many",
+        "cause": "merge",
+        "cosine": 0.5977458706308731,
+        "posRes": 0.2609009472498819
+      },
+      {
+        "chunkSeqNo": 36,
+        "classification": "loner",
+        "snippet": "the field variables [x30] to the observational variable [x2] . using eqs . , and",
+        "cause": "merge",
+        "cosine": 0.5112374293299281,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 37,
+        "classification": "loner",
+        "snippet": "predicting [x1] it is pleasingly compact , and straightforward to evaluate in ma",
+        "cause": "merge",
+        "cosine": 0.5026337448677378,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 41,
+        "classification": "loner",
+        "snippet": "spacetime volumes . in all but the simplest models it will vary in time .\n\nit is"
+      },
+      {
+        "chunkSeqNo": 42,
+        "classification": "loner",
+        "snippet": "symmetries of an expectation value such as guarantee that , for example , [x41] "
+      },
+      {
+        "chunkSeqNo": 43,
+        "classification": "loner",
+        "snippet": "two - field model , parametrized by fields [x45] and [x46] . using eqs .\n\n, and ",
+        "cause": "merge",
+        "cosine": 0.6712907553526939,
+        "posRes": 0.11009108917270488
+      },
+      {
+        "chunkSeqNo": 44,
+        "classification": "dead",
+        "snippet": "have identified two separate contributions , labelled ` 1 ' and ` 2 ' .\n\nthe ` 1",
+        "cause": "merge",
+        "cosine": 0.599603866070162,
+        "posRes": 0.08269490549318168
+      },
+      {
+        "chunkSeqNo": 46,
+        "classification": "dead",
+        "snippet": "integration , which is effective for quadratic potentials and constant slow - ro",
+        "cause": "merge",
+        "cosine": 0.5065729708803222,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 47,
+        "classification": "loner",
+        "snippet": "technique [ref] . an alternative technique has been proposed by yokoyama _ _ [re"
+      },
+      {
+        "chunkSeqNo": 48,
+        "classification": "loner",
+        "snippet": "comoving hypersurfaces which coincide in the unperturbed universe . for any spec",
+        "cause": "decay",
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 49,
+        "classification": "loner",
+        "snippet": "[x8] ' and ` [x53] , ' respectively . under an infinitesimal shift of [x57]\n\n, w",
+        "cause": "merge",
+        "cosine": 0.5423268243335482,
+        "posRes": 0.004127233846123096
+      },
+      {
+        "chunkSeqNo": 50,
+        "classification": "loner",
+        "snippet": "nave attempt to generalize the method of refs . [ref] to an arbitrary potential ",
+        "cause": "merge",
+        "cosine": 0.7683766152089906,
+        "posRes": 0.12932405462812896
+      },
+      {
+        "chunkSeqNo": 51,
+        "classification": "redundant",
+        "snippet": "[x63]-field model , one would obtain [x64] conserved quantities which label the "
+      },
+      {
+        "chunkSeqNo": 52,
+        "classification": "loner",
+        "snippet": "variation can be neglected for infinitesimally separated hypersurfaces . under a",
+        "cause": "merge",
+        "cosine": 0.5187496757722226,
+        "posRes": 0.1401023883365365
+      },
+      {
+        "chunkSeqNo": 53,
+        "classification": "loner",
+        "snippet": "we obtain expressions for [x60] , namely [x69] where we have defined [x70] eqs .",
+        "cause": "merge",
+        "cosine": 0.6147606320991514,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 54,
+        "classification": "dead",
+        "snippet": "we find [x72]^ ^2 + 2 ( v{v_{,1 } } )^{ 2 } ^2 \\\\\n\n-6 mm  { }  [  v_{,11}{v } ^2"
+      },
+      {
+        "chunkSeqNo": 55,
+        "classification": "loner",
+        "snippet": "] an analogous expression for [x73] can be obtained after the simultaneous excha",
+        "cause": "merge",
+        "cosine": 0.7152010216715191,
+        "posRes": 0.044929294932077514
+      },
+      {
+        "chunkSeqNo": 56,
+        "classification": "dead",
+        "snippet": "verified that ( despite appearances ) eq . is invariant under the exchange [x76]"
+      },
+      {
+        "chunkSeqNo": 57,
+        "classification": "loner",
+        "snippet": "case , yet still exhibits certain interesting features which recur there . among",
+        "cause": "merge",
+        "cosine": 0.5969143141101345,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 58,
+        "classification": "dead",
+        "snippet": "- field scenario provides an instructive example of the techniques we wish to em",
+        "cause": "merge",
+        "cosine": 0.5304066989150297,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 59,
+        "classification": "dead",
+        "snippet": "we are dropping the superscript ` [x8] ' denoting evaluation of spatially flat h",
+        "cause": "merge",
+        "cosine": 0.5300900120981412,
+        "posRes": 0.001730168413203383
+      },
+      {
+        "chunkSeqNo": 60,
+        "classification": "loner",
+        "snippet": "seek a distribution with non - zero third moment , as proposed in ref .\n\n[ref] ,",
+        "cause": "merge",
+        "cosine": 0.552735020380998,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 61,
+        "classification": "loner",
+        "snippet": "and skew [x42] , with all higher moments determined by [x81] and [x42] alone .\n\n",
+        "cause": "merge",
+        "cosine": 0.5775945461116861,
+        "posRes": 0.02029433448091063
+      },
+      {
+        "chunkSeqNo": 62,
+        "classification": "loner",
+        "snippet": "values [x89] by the usual rule , [x90] the probability density function in eq .\n",
+        "cause": "merge",
+        "cosine": 0.6584085201328084,
+        "posRes": 0.45419864519488073
+      },
+      {
+        "chunkSeqNo": 63,
+        "classification": "redundant",
+        "snippet": "which [x42] will typically be small . moreover , our principal use of eq .\n\nis a",
+        "cause": "merge",
+        "cosine": 0.7536172611604263,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 64,
+        "classification": "dead",
+        "snippet": "by finding evolution equations for these quantities . the density function given"
+      },
+      {
+        "chunkSeqNo": 65,
+        "classification": "loner",
+        "snippet": "the _ gram charlier ` a ' series _ , also sometimes called the _\n\nhermite series"
+      },
+      {
+        "chunkSeqNo": 66,
+        "classification": "dead",
+        "snippet": "- gaussian probability distributions from an astrophysical perspective , see [re",
+        "cause": "merge",
+        "cosine": 0.5639920740998197,
+        "posRes": 0.2555118327877271
+      },
+      {
+        "chunkSeqNo": 67,
+        "classification": "loner",
+        "snippet": "e - foldings of expansion . we refer to [x93] as the velocity field .\n\nexpanding",
+        "cause": "merge",
+        "cosine": 0.5089929073086568,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 68,
+        "classification": "loner",
+        "snippet": "it is well - described as such in the neighborhood of the instantaneous centroid",
+        "cause": "merge",
+        "cosine": 0.5295239883459888,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 69,
+        "classification": "loner",
+        "snippet": "of a chapman kolmogorov process as the size of each hop goes to zero .\n\nit is we",
+        "cause": "merge",
+        "cosine": 0.5019696235208824,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 70,
+        "classification": "dead",
+        "snippet": ", which means that we are evolving the distribution on hypersurfaces of uniform ",
+        "cause": "merge",
+        "cosine": 0.6127090608399727,
+        "posRes": 0.21402587993537428
+      },
+      {
+        "chunkSeqNo": 71,
+        "classification": "loner",
+        "snippet": "[x79] , [x81] and [x42] . to achieve this , one need only resolve eq\n\n.  into a ",
+        "cause": "merge",
+        "cosine": 0.5568882997764186,
+        "posRes": 0.11535264310640822
+      },
+      {
+        "chunkSeqNo": 72,
+        "classification": "loner",
+        "snippet": "of the hierarchy , the equation [x102] is empty and expresses conservation of pr",
+        "cause": "merge",
+        "cosine": 0.7133679751241614,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 73,
+        "classification": "loner",
+        "snippet": "also influenced as the wings of the probability distribution probe the nearby ve",
+        "cause": "merge",
+        "cosine": 0.6916708850842284,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 74,
+        "classification": "loner",
+        "snippet": "mean fluctuation value is not following a solution to the background equations o"
+      },
+      {
+        "chunkSeqNo": 75,
+        "classification": "dead",
+        "snippet": "force [x80] and [x42] to scale in proportion to the velocity field . specificall",
+        "cause": "merge",
+        "cosine": 0.565704023711671,
+        "posRes": 0.21341862376870654
+      },
+      {
+        "chunkSeqNo": 78,
+        "classification": "dead",
+        "snippet": "from one field to two . the new features are mostly technical in nature .\n\nour p",
+        "cause": "merge",
+        "cosine": 0.5448182727562545,
+        "posRes": 0.07424500449385538
+      },
+      {
+        "chunkSeqNo": 79,
+        "classification": "dead",
+        "snippet": "we are using the number of e - folds [x6] as the time variable .\n\nthe index [x27",
+        "cause": "merge",
+        "cosine": 0.509261194344413,
+        "posRes": 0.3281987871977204
+      },
+      {
+        "chunkSeqNo": 80,
+        "classification": "loner",
+        "snippet": "hence we make no claims at present concerning examples with three or more fields",
+        "cause": "merge",
+        "cosine": 0.5515386159978556,
+        "posRes": 0.1492056977452846
+      },
+      {
+        "chunkSeqNo": 81,
+        "classification": "dead",
+        "snippet": "distribution which is nearly gaussian , but has a small non - zero skewness .\n\nt"
+      },
+      {
+        "chunkSeqNo": 82,
+        "classification": "dead",
+        "snippet": "fields , [x123] all skewnesses are encoded in [x124] . before defining this expl",
+        "cause": "merge",
+        "cosine": 0.5765500144700217,
+        "posRes": 0.009606612223646562
+      },
+      {
+        "chunkSeqNo": 83,
+        "classification": "loner",
+        "snippet": "$ ] are _ not _ orthogonal under the gaussian measure of eq . .\n\nfollowing an ex",
+        "cause": "merge",
+        "cosine": 0.6286241743501876,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 84,
+        "classification": "loner",
+        "snippet": "product of two measures under which the polynomials [x128] and [x129] are separa",
+        "cause": "merge",
+        "cosine": 0.5187601837352409,
+        "posRes": 0.05930371271081218
+      },
+      {
+        "chunkSeqNo": 85,
+        "classification": "loner",
+        "snippet": ", but [x135] . in addition , we have [x136] in order for eq .\n\nto be useful , it",
+        "cause": "merge",
+        "cosine": 0.5762136144070096,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 86,
+        "classification": "redundant",
+        "snippet": "- dependent , but for clarity we will usually suppress this in our notation .\n\nn",
+        "cause": "merge",
+        "cosine": 0.7376743446052781,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 87,
+        "classification": "loner",
+        "snippet": "of the centroid . the expansion can be pursued to higher order if desired .\n\nour"
+      },
+      {
+        "chunkSeqNo": 88,
+        "classification": "dead",
+        "snippet": "hierarchy [x144] we define the rank \" [x145] of each coefficient [x146] by [x147",
+        "cause": "merge",
+        "cosine": 0.5250219133266405,
+        "posRes": 0.07523980208724214
+      },
+      {
+        "chunkSeqNo": 89,
+        "classification": "dead",
+        "snippet": "the moment expansion , we would obtain non - trivial higher - rank coefficients "
+      },
+      {
+        "chunkSeqNo": 90,
+        "classification": "redundant",
+        "snippet": "field - space covariant expressions they can be expressed in a surprisingly comp",
+        "cause": "merge",
+        "cosine": 0.7513052820085425,
+        "posRes": 0.07622314046698059
+      },
+      {
+        "chunkSeqNo": 91,
+        "classification": "dead",
+        "snippet": "and [x154] represent the velocity field and its derivatives evaluated at the cen",
+        "cause": "merge",
+        "cosine": 0.6988257656842385,
+        "posRes": 0.0074835996242862786
+      },
+      {
+        "chunkSeqNo": 92,
+        "classification": "redundant",
+        "snippet": "components of [x119] and hence are only sensitive to the local value of [x155] .",
+        "cause": "merge",
+        "cosine": 0.6700729174916009,
+        "posRes": 0.16032147457827814
+      },
+      {
+        "chunkSeqNo": 93,
+        "classification": "dead",
+        "snippet": "the stretching and rotation of [x119] as it is transported by the velocity field",
+        "cause": "merge",
+        "cosine": 0.5995568643494906,
+        "posRes": 0.11193723423514663
+      },
+      {
+        "chunkSeqNo": 94,
+        "classification": "dead",
+        "snippet": "coefficients [x160] , [x161] , [x162] and [x163] describe evolution of the momen",
+        "cause": "merge",
+        "cosine": 0.6575103508148888,
+        "posRes": 0.07702840806488967
+      },
+      {
+        "chunkSeqNo": 95,
+        "classification": "loner",
+        "snippet": "and five are also nonzero , but do not give any new evolution equations .\n\nthese",
+        "cause": "merge",
+        "cosine": 0.6902050102896722,
+        "posRes": 0.1257977225787502
+      },
+      {
+        "chunkSeqNo": 96,
+        "classification": "dead",
+        "snippet": "expansion at a predetermined order both in cumulants and powers of the field flu"
+      },
+      {
+        "chunkSeqNo": 97,
+        "classification": "dead",
+        "snippet": "gaussian signal is already known , using the standard [x0] formula . for each ca"
+      },
+      {
+        "chunkSeqNo": 98,
+        "classification": "dead",
+        "snippet": "rigopoulos , shellard & van tent [ref] and later by vernizzi & wands [ref] .\n\nth",
+        "cause": "merge",
+        "cosine": 0.5636098791555977,
+        "posRes": 0.3769045104749494
+      },
+      {
+        "chunkSeqNo": 100,
+        "classification": "loner",
+        "snippet": ", and non - linearities of the gauge transformation to [x2] . as explained in\n\n[",
+        "cause": "merge",
+        "cosine": 0.7011969733621044,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 101,
+        "classification": "dead",
+        "snippet": "and [x171] grow , but their sum remains small . the peak in fig .\n\n[ fig1 ] aris",
+        "cause": "merge",
+        "cosine": 0.5885832733550895,
+        "posRes": 0.0228487658481422
+      },
+      {
+        "chunkSeqNo": 103,
+        "classification": "loner",
+        "snippet": ". * 5 ) when we choose [x173] and initial conditions [x174] , [x175] .\n\nit is cl",
+        "cause": "merge",
+        "cosine": 0.6051116454901752,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 105,
+        "classification": "dead",
+        "snippet": "are now routinely extracted from all - sky observations of the microwave backgro",
+        "cause": "merge",
+        "cosine": 0.6506809274796909,
+        "posRes": 0.30238978629089364
+      },
+      {
+        "chunkSeqNo": 106,
+        "classification": "loner",
+        "snippet": "has been to propose a new technique with which to predict the observable signal ",
+        "cause": "merge",
+        "cosine": 0.5729118902273834,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 107,
+        "classification": "dead",
+        "snippet": "- linear quantities will be necessary for various models of early - universe phy",
+        "cause": "merge",
+        "cosine": 0.5397977641262595,
+        "posRes": 0.512752077531866
+      },
+      {
+        "chunkSeqNo": 108,
+        "classification": "dead",
+        "snippet": "gaussianity . in comparison , our proposed moment transport method exhibits seve",
+        "cause": "merge",
+        "cosine": 0.6811428429194964,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 109,
+        "classification": "loner",
+        "snippet": "than the non - linear gauge transformation between field fluctuations and the cu"
+      },
+      {
+        "chunkSeqNo": 110,
+        "classification": "dead",
+        "snippet": "similar way to renormalization - group improved perturbation theory [ref] . in t",
+        "cause": "merge",
+        "cosine": 0.6116651994479451,
+        "posRes": 0.16787734995491285
+      },
+      {
+        "chunkSeqNo": 111,
+        "classification": "loner",
+        "snippet": "in time evolution , but may be an advantage in comparison with perturbative meth"
+      },
+      {
+        "chunkSeqNo": 112,
+        "classification": "loner",
+        "snippet": "leading order in [x178] , and can lose accuracy after [x179] e - foldings .\n\nnum",
+        "cause": "merge",
+        "cosine": 0.588323151823099,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 113,
+        "classification": "dead",
+        "snippet": "from the second - order part of the gauge transformation from [x180] to [x2] .\n\n",
+        "cause": "merge",
+        "cosine": 0.7585089760997463,
+        "posRes": 0.16863128540512493
+      },
+      {
+        "chunkSeqNo": 114,
+        "classification": "dead",
+        "snippet": "arises from a distortion of comoving hypersurfaces with respect to adjacent spat",
+        "cause": "merge",
+        "cosine": 0.5632590889239184,
+        "posRes": 0.07490185096705312
+      },
+      {
+        "chunkSeqNo": 115,
+        "classification": "loner",
+        "snippet": "methods can be attributed to the theory error inherent in any estimate of [x1] .",
+        "cause": "merge",
+        "cosine": 0.7054179121427313,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 116,
+        "classification": "dead",
+        "snippet": "like to thank chris byrnes , jim lidsey and karim malik for helpful conversation",
+        "cause": "merge",
+        "cosine": 0.8621041812510619,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 117,
+        "classification": "redundant",
+        "snippet": "1993 ) l1 , [ http://xxx.lanl.gov/abs/astro-ph/9208001 [ arxiv : astro - ph/9208",
+        "cause": "merge",
+        "cosine": 0.6323249163917399,
+        "posRes": 0.27054774510833923
+      },
+      {
+        "chunkSeqNo": 118,
+        "classification": "dead",
+        "snippet": "m. carroll , _ higher - order gravitational perturbations of the cosmic microwav"
+      },
+      {
+        "chunkSeqNo": 119,
+        "classification": "dead",
+        "snippet": ": astro - ph/0209156 ] ] . e. komatsu and d. n. spergel , _\n\nacoustic signatures",
+        "cause": "merge",
+        "cosine": 0.5800805902300511,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 120,
+        "classification": "dead",
+        "snippet": "' conditions and [x181] _ , http://xxx.lanl.gov/abs/astro-ph/9312007 [ arxiv : a",
+        "cause": "merge",
+        "cosine": 0.528103200493728,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 121,
+        "classification": "dead",
+        "snippet": "1996 ) 7178 , [ http://xxx.lanl.gov/abs/astro-ph/9507001 [ arxiv : astro - ph/95",
+        "cause": "merge",
+        "cosine": 0.621793455210593,
+        "posRes": 0.22188927100457984
+      },
+      {
+        "chunkSeqNo": 122,
+        "classification": "redundant",
+        "snippet": "2006 ) 083521 , [ http://xxx.lanl.gov/abs/astro-ph/0504508 [ arxiv : astro - ph/"
+      },
+      {
+        "chunkSeqNo": 123,
+        "classification": "dead",
+        "snippet": "jcap _ * 0808 * ( 2008 ) 029 , [ http://xxx.lanl.gov/abs/0806.1546[arxiv:0806.15",
+        "cause": "merge",
+        "cosine": 0.5026289690664524,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 124,
+        "classification": "dead",
+        "snippet": "roll inflation . part ii : the trispectrum _ , http://xxx.lanl.gov/abs/0811.4092",
+        "cause": "merge",
+        "cosine": 0.5869209789572539,
+        "posRes": 0.02272687081012868
+      },
+      {
+        "chunkSeqNo": 125,
+        "classification": "loner",
+        "snippet": "r. maartens , _ adiabatic and entropy perturbations from inflation _ , _ phys .\n",
+        "cause": "merge",
+        "cosine": 0.6620908815746074,
+        "posRes": 0
+      },
+      {
+        "chunkSeqNo": 126,
+        "classification": "dead",
+        "snippet": "2000 ) 10 , [ http://xxx.lanl.gov/abs/astro-ph/0001366 [ arxiv : astro - ph/0001",
+        "cause": "merge",
+        "cosine": 0.5258761522278759,
+        "posRes": 0.11257965929882446
+      },
+      {
+        "chunkSeqNo": 127,
+        "classification": "dead",
+        "snippet": "2002 ) 595599 , [ http://xxx.lanl.gov/abs/astro-ph/0107527 [ arxiv : astro - ph/",
+        "cause": "merge",
+        "cosine": 0.5490989267760207,
+        "posRes": 0.4565314121092326
+      },
+      {
+        "chunkSeqNo": 128,
+        "classification": "dead",
+        "snippet": "* 0804 * ( 2008 ) 014 , [ http://xxx.lanl.gov/abs/0711.4126 [ arxiv:0711.4126 ] ",
+        "cause": "merge",
+        "cosine": 0.6012113192843174,
+        "posRes": 0.5125307010487608
+      }
+    ],
+    "consensusRate": 0.9541984732824428,
+    "worldName": "shared"
+  }
+]

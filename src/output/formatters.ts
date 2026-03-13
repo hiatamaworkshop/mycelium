@@ -51,6 +51,108 @@ function cleanSnippet(raw: string): string {
   return t.slice(0, 80);
 }
 
+// ---- Context extraction (tag keyword windowing) ----
+
+/** Tag → combined regex for locating keyword hits in chunk text */
+const TAG_CONTEXT_PATTERNS: Record<string, RegExp> = {
+  // sentinel
+  definition: /\b(?:definition|defined (?:as|by)|denoted by|we define)\b/i,
+  theorem: /\b(?:theorem|lemma|corollary|proof|proposition)\b/i,
+  constraint: /\b(?:necessary condition|sufficient condition|if and only if|implies that|it follows that)\b/i,
+  bound: /\b(?:upper bound|lower bound|bounded by|asymptotic(?:ally)?|convergence)\b/i,
+  rule: /\b(?:rule|convention|policy)\b/i,
+  error: /\b(?:error|bug|fix(?:ed)?)\b/i,
+  // herald
+  methodology: /\b(?:our method|our approach|technique|algorithm|procedure|framework)\b/i,
+  comparison: /\b(?:compared (?:to|with)|outperforms?|baseline|state.of.the.art|prior work)\b/i,
+  performance: /\b(?:performance|optimi[sz]|benchmark|latency|throughput)\b/i,
+  results: /\b(?:therefore|thus|hence|consequently|as a result)\b/i,
+  findings: /\b(?:we demonstrate|we show|we observe|our results|we find)\b/i,
+  refactor: /\b(?:refactor(?:ing)?|restructur(?:e|ing))\b/i,
+  release: /\b(?:release|deploy|ship)\b/i,
+  commit: /\b(?:commit|changelog|migration)\b/i,
+  gotcha: /\bgotcha\b/i,
+  // summarizer
+  caveat: /\b(?:however|in contrast|nevertheless|limitation|assumption)\b/i,
+  summary: /\b(?:furthermore|moreover|in addition|overall)\b/i,
+  debug: /\b(?:debug(?:ging)?|logging|trace)\b/i,
+  monitoring: /\b(?:monitor(?:ing)?|metric|alert(?:ing)?)\b/i,
+  dependency: /\b(?:dependenc(?:y|ies)|library|package)\b/i,
+  config: /\b(?:config|env|infra|docker)\b/i,
+  // spore
+  experiment: /\b(?:experiment(?:al)?|measurement|dataset)\b/i,
+  hypothesis: /\b(?:hypothesis|we propose|we introduce|we present)\b/i,
+  idea: /\b(?:idea|concept)\b/i,
+  temporary: /\b(?:temporary|workaround|hack)\b/i,
+  obsolete: /\b(?:obsolete|deprecated)\b/i,
+  // anchor
+  abstract: /\babstract\b/i,
+  conclusion: /\bconclusion\b/i,
+  crash: /\b(?:crash|outage|fatal)\b/i,
+};
+
+const CONTEXT_RADIUS = 40;
+const MAX_CONTEXT_WINDOWS = 3;
+const FALLBACK_LENGTH = 80;
+
+/**
+ * Extract keyword-context windows from chunk text.
+ *
+ * For each tag keyword found, extracts ±40 chars around the match.
+ * Merges overlapping windows. Falls back to first ~80 chars if no hits.
+ *
+ * @param rawText - Raw chunk text (will be cleaned + flattened)
+ * @param hintTags - Source-level survivorTags keys to narrow keyword search
+ */
+function extractContext(rawText: string, hintTags?: string[]): string {
+  const cleaned = cleanText(rawText);
+  const flat = cleaned.replace(/[\n\r]+/g, " ").replace(/ {2,}/g, " ").trim();
+
+  if (flat.length <= FALLBACK_LENGTH) return flat;
+
+  // Collect keyword match positions
+  const hits: Array<{ start: number; end: number }> = [];
+
+  // Search all known patterns (or just hintTags if provided)
+  const tagsToSearch = hintTags ?? Object.keys(TAG_CONTEXT_PATTERNS);
+  for (const tag of tagsToSearch) {
+    const re = TAG_CONTEXT_PATTERNS[tag];
+    if (!re) continue;
+    const m = re.exec(flat);
+    if (m) {
+      hits.push({ start: m.index, end: m.index + m[0].length });
+    }
+  }
+
+  if (hits.length === 0) {
+    return flat.slice(0, FALLBACK_LENGTH - 3) + "...";
+  }
+
+  // Sort by position, take top N, merge overlapping windows
+  hits.sort((a, b) => a.start - b.start);
+
+  const windows: Array<{ start: number; end: number }> = [];
+  for (const h of hits.slice(0, MAX_CONTEXT_WINDOWS)) {
+    const ws = Math.max(0, h.start - CONTEXT_RADIUS);
+    const we = Math.min(flat.length, h.end + CONTEXT_RADIUS);
+
+    if (windows.length > 0 && ws <= windows[windows.length - 1].end) {
+      windows[windows.length - 1].end = we;
+    } else {
+      windows.push({ start: ws, end: we });
+    }
+  }
+
+  const parts = windows.map(w => {
+    let s = flat.slice(w.start, w.end).trim();
+    if (w.start > 0) s = "…" + s;
+    if (w.end < flat.length) s = s + "…";
+    return s;
+  });
+
+  return parts.join(" ");
+}
+
 // ---- Output types ----
 
 export type ViewFormat = "compact" | "detailed" | "structured" | "digest" | "manifest";
@@ -95,9 +197,9 @@ export interface FormattedReport {
   };
 }
 
-// ---- Digest types (4-tier) ----
+// ---- Digest types (3-tier: meta / pure / clusters) ----
 
-/** Per-source 4-tier digest for AI consumption */
+/** Per-source digest for AI consumption — keyword-context windowed */
 export interface SourceDigest {
   meta: {
     sourceId: string;
@@ -115,24 +217,16 @@ export interface SourceDigest {
     survivorTags?: Record<string, number>;
     sourceMetadata?: Record<string, unknown>;
   };
+  /** Pure survivors — keyword-context extracted text */
   pure: Array<{ seq: number; text: string; species: string }>;
+  /** Merged survivors (clusters) — absorption info + keyword-context text */
   clusters: Array<{
     seq: number;
-    clusterSize: number;
+    size: number;
     depth1: number;
     deep: number;
     species: string;
-    sample: string;
-  }>;
-  /** Merged survivors only (pure excluded — use pure[] for those) */
-  merged: Array<{ seq: number; text: string; species: string }>;
-  dead: Array<{
-    seq: number;
-    cls: string;
-    snippet: string;
-    cause?: string;
-    cosine?: number;
-    posRes?: number;
+    text: string;
   }>;
 }
 
@@ -411,42 +505,27 @@ function deriveTopSpecies(r: SurvivorReport): string | undefined {
 
 // ---- Digest builder (4-tier) ----
 
-function buildDigest(reports: SurvivorReport[], deadLimit: number): DigestReport {
+function buildDigest(reports: SurvivorReport[]): DigestReport {
   const totalChunks = reports.reduce((s, r) => s + r.totalChunks, 0);
   const survivingChunks = reports.reduce((s, r) => s + r.survivingChunks, 0);
 
   const sources: SourceDigest[] = reports.map(r => {
+    // Hint tags for keyword search scope (from source-level survivorTags)
+    const hintTags = r.survivorTags ? Object.keys(r.survivorTags) : undefined;
+
     const pure = (r.pureSurvivors ?? []).map(c => ({
       seq: c.chunkSeqNo,
-      text: cleanText(c.text),
+      text: extractContext(c.text, hintTags),
       species: c.species,
     }));
 
     const clusters = (r.mergerClusters ?? []).map(c => ({
       seq: c.originChunkSeqNo,
-      clusterSize: c.clusterSize,
+      size: c.clusterSize,
       depth1: c.depth1Count,
       deep: c.deepChainCount,
       species: c.species,
-      sample: cleanText(c.sampleText),
-    }));
-
-    // merged only — pure already covered in pure[]
-    const merged = (r.chunkDetails ?? [])
-      .filter(c => c.classification === "merged")
-      .map(c => ({
-        seq: c.chunkSeqNo,
-        text: cleanText(c.text),
-        species: c.species,
-      }));
-
-    const dead = (r.deadBriefs ?? []).slice(0, deadLimit).map(d => ({
-      seq: d.chunkSeqNo,
-      cls: d.classification,
-      snippet: cleanSnippet(d.snippet),
-      cause: d.cause,
-      cosine: d.cosine != null ? Math.round(d.cosine * 1000) / 1000 : undefined,
-      posRes: d.posRes != null ? Math.round(d.posRes * 1000) / 1000 : undefined,
+      text: extractContext(c.sampleText, hintTags),
     }));
 
     // Post-filter re-aggregation: headline, topSpecies, survivorTags
@@ -469,8 +548,6 @@ function buildDigest(reports: SurvivorReport[], deadLimit: number): DigestReport
       },
       pure,
       clusters,
-      merged,
-      dead,
     };
   });
 
@@ -539,8 +616,6 @@ export interface FormatOptions {
   format?: ViewFormat;
   /** Max sample texts per source (default: 3) */
   sampleLimit?: number;
-  /** Max dead briefs per source in digest mode (default: 50) */
-  deadLimit?: number;
 }
 
 /**
@@ -558,11 +633,10 @@ export function formatReports(
 ): string {
   const format = opts.format ?? "structured";
   const sampleLimit = opts.sampleLimit ?? 3;
-  const deadLimit = opts.deadLimit ?? 50;
 
   switch (format) {
     case "digest":
-      return JSON.stringify(buildDigest(reports, deadLimit), null, 2);
+      return JSON.stringify(buildDigest(reports), null, 2);
     case "manifest":
       return JSON.stringify(buildManifest(reports), null, 2);
     case "compact": {
@@ -595,9 +669,8 @@ export function buildReport(
  */
 export function buildDigestReport(
   reports: SurvivorReport[],
-  deadLimit = 50,
 ): DigestReport {
-  return buildDigest(reports, deadLimit);
+  return buildDigest(reports);
 }
 
 /**
