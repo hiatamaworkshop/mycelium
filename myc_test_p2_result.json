@@ -1,0 +1,37 @@
+[
+  {
+    "sourceId": "source_patent_2:2",
+    "collection": "source_patent_2",
+    "batchToken": "batch-0-mmo7r0ah",
+    "totalChunks": 55,
+    "survivingChunks": 5,
+    "survivalRate": 0.09090909090909091,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 1,
+      "herald": 0,
+      "anchor": 3,
+      "spore": 5
+    },
+    "survivingTexts": [
+      "or less overlap being possible and being dictated by the requirements of the finished fabric.\n\nAn overview of the placement of the bias laid yarns in accordance with the present invention is shown in FIG. 3. The system is similar to that described in my U.S. Pat. No. 4,556,440. Two endless conveyors 30 and 31 are shown, respectively, on the left and right hand sides. These conveyors 30 and 31, which are of the same length, are driven at the same speed by forward pulleys 32 and 33 and are suspended on rearward pulleys 34 and 35. Forward pulleys 32 and 33 are connected by axial member 36, while rearward pulleys 34 and 35 are connected by axial member 37. Each conveyor includes a plurality of blocks 40. Formed onto, or from, each block are a series of sharp needles 42 best illustrated in FIG. 4.",
+      "system; and FIG. 6 is a sectional view along the line 6--6 of FIG. 4.\n\nDETAILED DESCRIPTION OF THE INVENTION",
+      "function of holding the fabric in place up until that time, are no longer required.\n\nWhile the invention has been illustrated and described in accordance with the particular embodiments, it will be apparent to those skilled in the art that variations are possible within the spirit and scope of the invention. Accordingly, the invention is not to be considered as limited except as set forth in the appended claims.",
+      "moving in the same direction as the direction of travel of the fabric being formed.\n\nWhile the means for moving the various rake systems are not illustrated, any convenient means can be employed. Thus, the rakes may be moved pneumatically, mechanically, or by a solenoid movement.",
+      "by either or both of these steps, such apparatus and process have been ardently sought.\n\nBRIEF DESCRIPTION OF THE INVENTION",
+      "to provide for their reduced speed of motion near the ends of the travel paths.\n\nNo mention has yet been made in this specification of the loops which are obviously formed, either by the yarns wrapping around the various needles or by being impaled on them. As is apparent, these loops are at the extremities of the width of the fabric being formed. After stitching or other methods of bonding, so that the fabric is generally held together, the loops can be cut away by any known mechanism. Once the other bonding means have been put into place, the loops, which had served only the function of holding the fabric in place up until that time, are no longer required.",
+      "movement of the carrier 54 rearwardly as the yarns are caught on the rake system.\n\nWhile not illustrated, a device having means to hold the individual yarns in the fabric 60 together is placed at the end of the mechanism illustrated in FIG. 3, just before the pulleys 32, 33. This device can be a stitching machine; such as the previously described Liba Copcentr-HS, can be a different type of stitching machine, a knitting machine, or a device which applies an adhesive at selected points along the fabric length and width in order to hold the yarns together, prior to impregnation.",
+      "This is a division of application Ser. No. 922,344, filed Oct. 23, 1986 now U.S. Pat. No. 4,877,470.",
+      "that no variation is possible between the various operating systems, once a machine is constructed.\n\nFurther, Klaeui does not teach the possibility of impaling the yarns on either the rake or on the means formed on the conveyors for holding the yarns."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 5,
+      "merged": 0,
+      "loner": 6,
+      "redundant": 22,
+      "dead": 22
+    },
+    "consensusRate": 0.9636363636363636
+  }
+]

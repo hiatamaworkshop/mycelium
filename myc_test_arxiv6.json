@@ -1,0 +1,35 @@
+[
+  {
+    "sourceId": "source_arxiv_6:6",
+    "collection": "source_arxiv_6",
+    "batchToken": "batch-0-mmoedy8g",
+    "totalChunks": 39,
+    "survivingChunks": 2,
+    "survivalRate": 0.05128205128205128,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 1,
+      "spore": 6
+    },
+    "survivingTexts": [
+      "loss , extreme subdiffraction photon confinement via silicon carbide localized surface phonon polariton resonators .\n\n_ nano lett . _ * 2013 * , _ 13 _ , 36903697 chen ,  y. ; francescato ,  y. ; caldwell ,  j.  d. ; giannini ,  v. ; ma ,  t. w.  w. ; glembocki ,  o.  j. ; bezares ,  f.  j. ; taubner ,  t. ; kasica ,  r. ; hong ,  m. ; maier ,  s.  a. spectral tuning of localized surface phonon polariton resonators for low - loss mid - ir applications .",
+      "keilmann , f. phonon - enhanced light - matter interaction at the nanometre scale .\n\n_ nature ( london ) _ * 2002 * , _ 418 _ , 159162 ,  b. ; korobkin ,  d. ; fietz ,  c. ; carole ,  d. ; ferro ,  g. ; shvets ,  g. critically coupled surface phonon - polariton excitation in silicon carbide .",
+      "j. ; nordlander , p. plasmon - induced hot carrier science and technology . _\n\n* 2015 * , _ 10 _ , 2534 kauranen ,  m. ; zayats ,  a.  v. nonlinear plasmonics .",
+      "numerical analysis on the basis of the hydrodynamic drude model . _ j. phys .\n\nc _ * 2016 * , _ 120 _ , 11631169 bluet ,  j. ; chourou ,  k. ; anikin ,  m. ; madar ,  r. weak phonon modes observation using infrared reflectivity for 4h , 6h and 15r polytypes .\n\neng . _ * 1999 * , _ b6162 _ , 212216 patrick ,  l. infrared absorption in sic polytypes . _ phys .",
+      "s. et al . graphene on hexagonal boron nitride as a tunable hyperbolic metamaterial .\n\nnano . _ * 2015 * , _ 10 _ , 682687 caldwell ,  j.  d. ; vurgaftman ,  i. ; tischler ,  j.  g. ; glembocki ,  o.  j. ; owrutsky ,  j.  c. ; reinecke ,  t.  l. atomic - scale photonic hybrids for mid - infrared and terahertz nanophotonics .\n\nnano . _ * 2015 * , _ 11 _ , 915",
+      "k. a. resonant and nonresonant control over matter and light by intense terahertz transients .\n\nphoton . _ * 2013 * , _ 7 _ , 680690 schllkopf ,  w. ; gewinner ,  s. ; junkes ,  h. ; paarmann ,  a. ; von helden ,  g. ; bluem ,  h. ; todd ,  a. m.  m. the new ir and thz fel facility at the fritz haber institute in berlin .",
+      ", we calculated several shg spectra for samples with various periodicity of the pillars .\n\nwe note that in these calculations , the input power density at fundamental frequency was kept constant , and the shg output power was normalized to the area of the _ xy_-plane @xmath36 . the results of the simulations presented in fig\n\n.  [ analysis ] in the main manuscript demonstrate a single pronounced peak corresponding to the excitation of the sphp monopole mode .\n\nbarnes ,  w.  l. ; dereux ,  a. ; ebbesen ,  t.  w. surface plasmon subwavelength optics . _"
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 0,
+      "merged": 2,
+      "loner": 2,
+      "redundant": 14,
+      "dead": 21
+    },
+    "consensusRate": 0.8717948717948718
+  }
+]

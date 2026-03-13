@@ -1,0 +1,1080 @@
+=== Mycelium Universal Loader ===
+  qdrant:        http://localhost:6334
+  sources:       source_patent
+  isolation:     shared (1 world(s))
+  slot capacity: 100 nodes/slot
+  hardness:      mid (harvest at 60% of ticks)
+  ticks:         60
+  interval:      100ms
+  cascade:       adaptive (min=5, max=30, ratio=0.4)
+  consensus:     10 runs (majority vote)
+  clean:         enabled (world collections will be recreated)
+  world "shared": mycelium_loader ← [source_patent]
+
+[slot-allocator] scrolling source_patent from http://localhost:6334 ...
+[slot-allocator] loaded metadata sidecar: C:\Users\kazuh\Desktop\Various\programming\DockerFiles\mycelium_universal\data\meta\source_patent.json (10 docs)
+  → 408 points from source_patent
+[loader] 408 total source points loaded
+[slot-allocator] allocated 408 points → 5 slots:
+  slot-0: 83 points, 2 sourceIds [chunked: source_patent:2(55 chunks), source_patent:1(28 chunks)]
+  slot-1: 81 points, 2 sourceIds [chunked: source_patent:4(33 chunks), source_patent:6(48 chunks)]
+  slot-2: 96 points, 2 sourceIds [chunked: source_patent:8(61 chunks), source_patent:5(35 chunks)]
+  slot-3: 82 points, 2 sourceIds [chunked: source_patent:3(35 chunks), source_patent:7(47 chunks)]
+  slot-4: 66 points, 2 sourceIds [chunked: source_patent:0(30 chunks), source_patent:9(36 chunks)]
+[loader] 5 slot(s) allocated (inject order: 96 → 66 → 83 → 81 → 82)
+
+
+[consensus] run 1/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 5 slot(s), 408 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-2] injected 96 nodes (2 sourceIds) at tick 0 [batch: batch-2-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[dispatcher] tick 10: pending=4 running=1 done=0 interactions=36 actions={"signal":23,"survive":11,"bequeath":6,"merge":7}
+[dispatcher:absorb] absorbed at tick +12 (baseline=0, peak=76, current=28, threshold=30.4)
+[loader:slot-4] injected 66 nodes (2 sourceIds) at tick 12 [batch: batch-4-mmo5wxd4]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 20: pending=3 running=2 done=0 interactions=59 actions={"survive":21,"merge":6,"signal":34,"bequeath":19}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +12 (baseline=28, peak=85, current=47, threshold=50.8)
+[loader:slot-0] injected 83 nodes (2 sourceIds) at tick 24 [batch: batch-0-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 30: pending=2 running=3 done=0 interactions=95 actions={"signal":50,"survive":30,"bequeath":27,"merge":18}
+[dispatcher:absorb] absorbed at tick +11 (baseline=47, peak=111, current=66, threshold=72.6)
+[loader:slot-1] injected 81 nodes (2 sourceIds) at tick 35 [batch: batch-1-mmo5wxd3]
+[loader:slot-2] cluster snapshot at tick 36/60: 16 nodes
+[loader:slot-2] harvested: 16/96 survived (16.7%) pushback: merged=1 pure=1
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 40: pending=1 running=3 done=1 interactions=95 actions={"signal":54,"merge":17,"survive":26,"bequeath":26}
+[dispatcher:absorb] absorbed at tick +6 (baseline=66, peak=127, current=85, threshold=90.4)
+[loader:slot-3] injected 82 nodes (2 sourceIds) at tick 41 [batch: batch-3-mmo5wxd3]
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[loader:slot-4] cluster snapshot at tick 36/60: 15 nodes
+[loader:slot-4] harvested: 15/66 survived (22.7%) pushback: merged=1 pure=1
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[dispatcher] tick 50: pending=0 running=3 done=2 interactions=63 actions={"bequeath":15,"signal":36,"survive":27,"merge":13}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[loader:slot-0] cluster snapshot at tick 36/60: 17 nodes
+[loader:slot-0] harvested: 17/83 survived (20.5%) pushback: merged=2
+[dispatcher] tick 60: pending=0 running=2 done=3 interactions=36 actions={"survive":25,"signal":18,"merge":12,"bequeath":7}
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 70: pending=0 running=2 done=3 interactions=19 actions={"signal":12,"survive":9,"bequeath":6,"merge":2}
+[loader:slot-1] cluster snapshot at tick 36/60: 13 nodes
+[loader:slot-1] harvested: 13/81 survived (16.0%) pushback: pure=1 merged=1
+[loader:slot-3] cluster snapshot at tick 36/60: 6 nodes
+[loader:slot-3] harvested: 6/82 survived (7.3%) pushback: pure=1 merged=1
+[dispatcher] complete: 77 ticks, 10 source reports
+
+[consensus] run 2/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 5 slot(s), 408 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-2] injected 96 nodes (2 sourceIds) at tick 0 [batch: batch-2-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +9 (baseline=0, peak=78, current=31, threshold=31.2)
+[loader:slot-4] injected 66 nodes (2 sourceIds) at tick 9 [batch: batch-4-mmo5wxd4]
+[dispatcher] tick 10: pending=3 running=2 done=0 interactions=88 actions={"signal":50,"bequeath":25,"survive":25,"merge":13}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +9 (baseline=31, peak=88, current=45, threshold=53.8)
+[loader:slot-0] injected 83 nodes (2 sourceIds) at tick 18 [batch: batch-0-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 20: pending=2 running=3 done=0 interactions=102 actions={"merge":17,"signal":58,"survive":32,"bequeath":27}
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +8 (baseline=45, peak=119, current=73, threshold=74.6)
+[loader:slot-1] injected 81 nodes (2 sourceIds) at tick 26 [batch: batch-1-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 30: pending=1 running=4 done=0 interactions=106 actions={"survive":32,"merge":21,"signal":63,"bequeath":23}
+[mycelium:spawn] 4 children born from 2 pairs
+[dispatcher:absorb] absorbed at tick +5 (baseline=73, peak=127, current=89, threshold=94.6)
+[loader:slot-3] injected 82 nodes (2 sourceIds) at tick 31 [batch: batch-3-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 8 children born from 4 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 10 children born from 5 pairs
+[mycelium:spawn] 10 children born from 5 pairs
+[loader:slot-2] cluster snapshot at tick 36/60: 11 nodes
+[loader:slot-2] harvested: 11/96 survived (11.5%) pushback: merged=2
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 40: pending=0 running=4 done=1 interactions=84 actions={"signal":52,"survive":27,"bequeath":21,"merge":12}
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-4] cluster snapshot at tick 36/60: 14 nodes
+[loader:slot-4] harvested: 14/66 survived (21.2%) pushback: merged=2
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 50: pending=0 running=3 done=2 interactions=44 actions={"signal":27,"survive":17,"bequeath":13,"merge":4}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-0] cluster snapshot at tick 36/60: 14 nodes
+[loader:slot-0] harvested: 14/83 survived (16.9%) pushback: merged=2
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[dispatcher] tick 60: pending=0 running=2 done=3 interactions=21 actions={"bequeath":4,"signal":13,"survive":11,"merge":4}
+[loader:slot-1] cluster snapshot at tick 36/60: 7 nodes
+[loader:slot-1] harvested: 7/81 survived (8.6%) pushback: pure=1 merged=1
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-3] cluster snapshot at tick 36/60: 6 nodes
+[loader:slot-3] harvested: 6/82 survived (7.3%) pushback: merged=1 dead=1
+[dispatcher] complete: 67 ticks, 10 source reports
+
+[consensus] run 3/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 5 slot(s), 408 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-2] injected 96 nodes (2 sourceIds) at tick 0 [batch: batch-2-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +9 (baseline=0, peak=82, current=31, threshold=32.8)
+[loader:slot-4] injected 66 nodes (2 sourceIds) at tick 9 [batch: batch-4-mmo5wxd4]
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 10: pending=3 running=2 done=0 interactions=92 actions={"signal":54,"survive":15,"bequeath":24,"merge":14}
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +10 (baseline=31, peak=92, current=47, threshold=55.4)
+[loader:slot-0] injected 83 nodes (2 sourceIds) at tick 19 [batch: batch-0-mmo5wxd3]
+[dispatcher] tick 20: pending=2 running=3 done=0 interactions=104 actions={"signal":61,"survive":37,"bequeath":22,"merge":23}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 8 children born from 4 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +9 (baseline=47, peak=106, current=65, threshold=70.6)
+[loader:slot-1] injected 81 nodes (2 sourceIds) at tick 28 [batch: batch-1-mmo5wxd3]
+[dispatcher] tick 30: pending=1 running=4 done=0 interactions=122 actions={"signal":64,"survive":35,"bequeath":38,"merge":22}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[loader:slot-2] cluster snapshot at tick 36/60: 12 nodes
+[dispatcher:absorb] absorbed at tick +8 (baseline=65, peak=130, current=81, threshold=91.0)
+[loader:slot-2] harvested: 12/96 survived (12.5%) pushback: merged=2
+[loader:slot-3] injected 82 nodes (2 sourceIds) at tick 36 [batch: batch-3-mmo5wxd3]
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[dispatcher] tick 40: pending=0 running=4 done=1 interactions=87 actions={"signal":41,"survive":31,"bequeath":20,"merge":28}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-4] cluster snapshot at tick 36/60: 15 nodes
+[loader:slot-4] harvested: 15/66 survived (22.7%) pushback: merged=2
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 50: pending=0 running=3 done=2 interactions=39 actions={"merge":4,"signal":21,"bequeath":14,"survive":17}
+[loader:slot-0] cluster snapshot at tick 36/60: 11 nodes
+[loader:slot-0] harvested: 11/83 survived (13.3%) pushback: merged=2
+[dispatcher] tick 60: pending=0 running=2 done=3 interactions=22 actions={"bequeath":9,"signal":11,"survive":9,"merge":2}
+[loader:slot-1] cluster snapshot at tick 36/60: 13 nodes
+[loader:slot-1] harvested: 13/81 survived (16.0%) pushback: pure=1 merged=1
+[dispatcher] tick 70: pending=0 running=1 done=4 interactions=4 actions={"signal":3,"survive":7,"bequeath":1}
+[loader:slot-3] cluster snapshot at tick 36/60: 7 nodes
+[loader:slot-3] harvested: 7/82 survived (8.5%) pushback: merged=1 pure=1
+[dispatcher] complete: 72 ticks, 10 source reports
+
+[consensus] run 4/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 5 slot(s), 408 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-2] injected 96 nodes (2 sourceIds) at tick 0 [batch: batch-2-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 10: pending=4 running=1 done=0 interactions=38 actions={"signal":21,"survive":12,"bequeath":10,"merge":8}
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +16 (baseline=0, peak=76, current=27, threshold=30.4)
+[loader:slot-4] injected 66 nodes (2 sourceIds) at tick 16 [batch: batch-4-mmo5wxd4]
+[dispatcher] tick 20: pending=3 running=2 done=0 interactions=67 actions={"merge":8,"bequeath":23,"survive":21,"signal":36}
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +11 (baseline=27, peak=83, current=42, threshold=49.4)
+[loader:slot-0] injected 83 nodes (2 sourceIds) at tick 27 [batch: batch-0-mmo5wxd3]
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 30: pending=2 running=3 done=0 interactions=93 actions={"signal":54,"survive":25,"bequeath":22,"merge":17}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +8 (baseline=42, peak=103, current=66, threshold=66.4)
+[loader:slot-1] injected 81 nodes (2 sourceIds) at tick 35 [batch: batch-1-mmo5wxd3]
+[loader:slot-2] cluster snapshot at tick 36/60: 13 nodes
+[loader:slot-2] harvested: 13/96 survived (13.5%) pushback: merged=1 pure=1
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 40: pending=1 running=3 done=1 interactions=94 actions={"merge":17,"signal":58,"bequeath":20,"survive":27}
+[dispatcher:absorb] absorbed at tick +6 (baseline=66, peak=123, current=82, threshold=88.8)
+[loader:slot-3] injected 82 nodes (2 sourceIds) at tick 41 [batch: batch-3-mmo5wxd3]
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 50: pending=0 running=4 done=1 interactions=71 actions={"merge":12,"signal":45,"survive":28,"bequeath":16}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-4] cluster snapshot at tick 36/60: 15 nodes
+[loader:slot-4] harvested: 15/66 survived (22.7%) pushback: pure=1 merged=1
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 60: pending=0 running=3 done=2 interactions=35 actions={"survive":19,"signal":19,"bequeath":9,"merge":8}
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-0] cluster snapshot at tick 36/60: 12 nodes
+[loader:slot-0] harvested: 12/83 survived (14.5%) pushback: merged=2
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 70: pending=0 running=2 done=3 interactions=16 actions={"bequeath":7,"signal":7,"survive":10,"merge":3}
+[loader:slot-1] cluster snapshot at tick 36/60: 9 nodes
+[loader:slot-1] harvested: 9/81 survived (11.1%) pushback: merged=1 pure=1
+[loader:slot-3] cluster snapshot at tick 36/60: 6 nodes
+[loader:slot-3] harvested: 6/82 survived (7.3%) pushback: pure=1 dead=1
+[dispatcher] complete: 77 ticks, 10 source reports
+
+[consensus] run 5/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 5 slot(s), 408 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-2] injected 96 nodes (2 sourceIds) at tick 0 [batch: batch-2-mmo5wxd3]
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 10: pending=4 running=1 done=0 interactions=35 actions={"signal":22,"survive":6,"bequeath":11,"merge":2}
+[dispatcher:absorb] absorbed at tick +11 (baseline=0, peak=72, current=27, threshold=28.8)
+[loader:slot-4] injected 66 nodes (2 sourceIds) at tick 11 [batch: batch-4-mmo5wxd4]
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 20: pending=3 running=2 done=0 interactions=53 actions={"merge":4,"survive":17,"bequeath":19,"signal":30}
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +13 (baseline=27, peak=77, current=44, threshold=47.0)
+[loader:slot-0] injected 83 nodes (2 sourceIds) at tick 24 [batch: batch-0-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 30: pending=2 running=3 done=0 interactions=78 actions={"survive":26,"signal":43,"bequeath":21,"merge":14}
+[dispatcher:absorb] absorbed at tick +8 (baseline=44, peak=112, current=69, threshold=71.2)
+[loader:slot-1] injected 81 nodes (2 sourceIds) at tick 32 [batch: batch-1-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-2] cluster snapshot at tick 36/60: 15 nodes
+[loader:slot-2] harvested: 15/96 survived (15.6%) pushback: merged=2
+[dispatcher:absorb] absorbed at tick +6 (baseline=69, peak=133, current=82, threshold=94.6)
+[loader:slot-3] injected 82 nodes (2 sourceIds) at tick 38 [batch: batch-3-mmo5wxd3]
+[mycelium:spawn] 8 children born from 4 pairs
+[dispatcher] tick 40: pending=0 running=4 done=1 interactions=125 actions={"signal":64,"survive":44,"bequeath":27,"merge":34}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-4] cluster snapshot at tick 36/60: 11 nodes
+[loader:slot-4] harvested: 11/66 survived (16.7%) pushback: pure=1 merged=1
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 50: pending=0 running=3 done=2 interactions=53 actions={"bequeath":18,"survive":24,"signal":32,"merge":4}
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-0] cluster snapshot at tick 36/60: 14 nodes
+[loader:slot-0] harvested: 14/83 survived (16.9%) pushback: merged=1 pure=1
+[dispatcher] tick 60: pending=0 running=2 done=3 interactions=34 actions={"bequeath":7,"signal":22,"merge":6,"survive":22}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[loader:slot-1] cluster snapshot at tick 36/60: 15 nodes
+[loader:slot-1] harvested: 15/81 survived (18.5%) pushback: pure=1 merged=1
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 70: pending=0 running=1 done=4 interactions=12 actions={"bequeath":6,"survive":5,"signal":5,"merge":1}
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-3] cluster snapshot at tick 36/60: 4 nodes
+[loader:slot-3] harvested: 4/82 survived (4.9%) pushback: merged=1 dead=1
+[dispatcher] complete: 74 ticks, 10 source reports
+
+[consensus] run 6/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 5 slot(s), 408 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-2] injected 96 nodes (2 sourceIds) at tick 0 [batch: batch-2-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 10: pending=4 running=1 done=0 interactions=36 actions={"signal":24,"survive":7,"merge":6,"bequeath":6}
+[mycelium:spawn] 4 children born from 2 pairs
+[dispatcher:absorb] absorbed at tick +13 (baseline=0, peak=80, current=28, threshold=32.0)
+[loader:slot-4] injected 66 nodes (2 sourceIds) at tick 13 [batch: batch-4-mmo5wxd4]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 20: pending=3 running=2 done=0 interactions=58 actions={"survive":16,"signal":36,"merge":7,"bequeath":15}
+[dispatcher:absorb] absorbed at tick +10 (baseline=28, peak=84, current=47, threshold=50.4)
+[loader:slot-0] injected 83 nodes (2 sourceIds) at tick 23 [batch: batch-0-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +7 (baseline=47, peak=119, current=71, threshold=75.8)
+[dispatcher] tick 30: pending=2 running=3 done=0 interactions=71 actions={"survive":30,"merge":7,"signal":44,"bequeath":21}
+[loader:slot-1] injected 81 nodes (2 sourceIds) at tick 30 [batch: batch-1-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-2] cluster snapshot at tick 36/60: 11 nodes
+[loader:slot-2] harvested: 11/96 survived (11.5%) pushback: merged=2
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +7 (baseline=71, peak=136, current=89, threshold=97.0)
+[loader:slot-3] injected 82 nodes (2 sourceIds) at tick 37 [batch: batch-3-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 8 children born from 4 pairs
+[dispatcher] tick 40: pending=0 running=4 done=1 interactions=121 actions={"bequeath":30,"survive":29,"signal":61,"merge":31}
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-4] cluster snapshot at tick 36/60: 15 nodes
+[loader:slot-4] harvested: 15/66 survived (22.7%) pushback: merged=1 pure=1
+[dispatcher] tick 50: pending=0 running=3 done=2 interactions=36 actions={"signal":25,"survive":29,"bequeath":8,"merge":4}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-0] cluster snapshot at tick 36/60: 13 nodes
+[loader:slot-0] harvested: 13/83 survived (15.7%) pushback: merged=2
+[dispatcher] tick 60: pending=0 running=2 done=3 interactions=21 actions={"signal":11,"bequeath":6,"merge":6,"survive":8}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-1] cluster snapshot at tick 36/60: 8 nodes
+[loader:slot-1] harvested: 8/81 survived (9.9%) pushback: pure=1 merged=1
+[dispatcher] tick 70: pending=0 running=1 done=4 interactions=6 actions={"survive":8,"bequeath":3,"signal":3,"merge":2}
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-3] cluster snapshot at tick 36/60: 4 nodes
+[loader:slot-3] harvested: 4/82 survived (4.9%) pushback: pure=2
+[dispatcher] complete: 73 ticks, 10 source reports
+
+[consensus] run 7/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 5 slot(s), 408 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-2] injected 96 nodes (2 sourceIds) at tick 0 [batch: batch-2-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[dispatcher] tick 10: pending=4 running=1 done=0 interactions=36 actions={"merge":5,"bequeath":10,"survive":9,"signal":21}
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +12 (baseline=0, peak=80, current=31, threshold=32.0)
+[loader:slot-4] injected 66 nodes (2 sourceIds) at tick 12 [batch: batch-4-mmo5wxd4]
+[dispatcher:absorb] absorbed at tick +8 (baseline=31, peak=91, current=52, threshold=55.0)
+[dispatcher] tick 20: pending=3 running=2 done=0 interactions=52 actions={"bequeath":12,"survive":24,"signal":33,"merge":7}
+[loader:slot-0] injected 83 nodes (2 sourceIds) at tick 20 [batch: batch-0-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 30: pending=2 running=3 done=0 interactions=80 actions={"survive":23,"merge":10,"bequeath":24,"signal":46}
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +12 (baseline=52, peak=118, current=78, threshold=78.4)
+[loader:slot-1] injected 81 nodes (2 sourceIds) at tick 32 [batch: batch-1-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-2] cluster snapshot at tick 36/60: 14 nodes
+[loader:slot-2] harvested: 14/96 survived (14.6%) pushback: merged=2
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +5 (baseline=78, peak=137, current=96, threshold=101.6)
+[loader:slot-3] injected 82 nodes (2 sourceIds) at tick 37 [batch: batch-3-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[dispatcher] tick 40: pending=0 running=4 done=1 interactions=127 actions={"survive":34,"bequeath":35,"signal":59,"merge":34}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-4] cluster snapshot at tick 36/60: 12 nodes
+[loader:slot-4] harvested: 12/66 survived (18.2%) pushback: merged=2
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 50: pending=0 running=3 done=2 interactions=40 actions={"survive":36,"signal":25,"bequeath":9,"merge":6}
+[loader:slot-0] cluster snapshot at tick 36/60: 15 nodes
+[loader:slot-0] harvested: 15/83 survived (18.1%) pushback: merged=1 pure=1
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 60: pending=0 running=2 done=3 interactions=29 actions={"merge":5,"signal":15,"survive":13,"bequeath":10}
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-1] cluster snapshot at tick 36/60: 16 nodes
+[loader:slot-1] harvested: 16/81 survived (19.8%) pushback: merged=2
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 70: pending=0 running=1 done=4 interactions=5 actions={"survive":9,"signal":2,"bequeath":3}
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-3] cluster snapshot at tick 36/60: 5 nodes
+[loader:slot-3] harvested: 5/82 survived (6.1%) pushback: merged=2
+[dispatcher] complete: 73 ticks, 10 source reports
+
+[consensus] run 8/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 5 slot(s), 408 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-2] injected 96 nodes (2 sourceIds) at tick 0 [batch: batch-2-mmo5wxd3]
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 10: pending=4 running=1 done=0 interactions=38 actions={"bequeath":13,"survive":12,"signal":24,"merge":1}
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +12 (baseline=0, peak=79, current=31, threshold=31.6)
+[loader:slot-4] injected 66 nodes (2 sourceIds) at tick 12 [batch: batch-4-mmo5wxd4]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[dispatcher] tick 20: pending=3 running=2 done=0 interactions=59 actions={"survive":17,"signal":44,"merge":9,"bequeath":8}
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +10 (baseline=31, peak=81, current=51, threshold=51.0)
+[loader:slot-0] injected 83 nodes (2 sourceIds) at tick 22 [batch: batch-0-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +7 (baseline=51, peak=126, current=81, threshold=81.0)
+[loader:slot-1] injected 81 nodes (2 sourceIds) at tick 29 [batch: batch-1-mmo5wxd3]
+[mycelium:spawn] 4 children born from 2 pairs
+[dispatcher] tick 30: pending=1 running=4 done=0 interactions=140 actions={"survive":43,"merge":24,"bequeath":39,"signal":77}
+[mycelium:spawn] 8 children born from 4 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-2] cluster snapshot at tick 36/60: 17 nodes
+[loader:slot-2] harvested: 17/96 survived (17.7%) pushback: merged=1 pure=1
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +8 (baseline=81, peak=140, current=90, threshold=104.6)
+[loader:slot-3] injected 82 nodes (2 sourceIds) at tick 37 [batch: batch-3-mmo5wxd3]
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[dispatcher] tick 40: pending=0 running=4 done=1 interactions=125 actions={"bequeath":39,"survive":33,"signal":55,"merge":32}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 10 children born from 5 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-4] cluster snapshot at tick 36/60: 10 nodes
+[loader:slot-4] harvested: 10/66 survived (15.2%) pushback: merged=2
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 50: pending=0 running=3 done=2 interactions=50 actions={"signal":27,"bequeath":17,"survive":23,"merge":7}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-0] cluster snapshot at tick 36/60: 11 nodes
+[loader:slot-0] harvested: 11/83 survived (13.3%) pushback: pure=1 merged=1
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 60: pending=0 running=2 done=3 interactions=30 actions={"signal":18,"survive":12,"bequeath":6,"merge":6}
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-1] cluster snapshot at tick 36/60: 9 nodes
+[loader:slot-1] harvested: 9/81 survived (11.1%) pushback: pure=1 merged=1
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 70: pending=0 running=1 done=4 interactions=18 actions={"bequeath":7,"signal":10,"survive":4,"merge":1}
+[loader:slot-3] cluster snapshot at tick 36/60: 6 nodes
+[loader:slot-3] harvested: 6/82 survived (7.3%) pushback: merged=2
+[dispatcher] complete: 73 ticks, 10 source reports
+
+[consensus] run 9/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 5 slot(s), 408 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-2] injected 96 nodes (2 sourceIds) at tick 0 [batch: batch-2-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[dispatcher:absorb] absorbed at tick +10 (baseline=0, peak=76, current=26, threshold=30.4)
+[dispatcher] tick 10: pending=4 running=1 done=0 interactions=26 actions={"merge":3,"signal":17,"survive":17,"bequeath":6}
+[loader:slot-4] injected 66 nodes (2 sourceIds) at tick 10 [batch: batch-4-mmo5wxd4]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 20: pending=3 running=2 done=0 interactions=57 actions={"signal":34,"survive":15,"bequeath":14,"merge":10}
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +12 (baseline=26, peak=85, current=47, threshold=49.6)
+[loader:slot-0] injected 83 nodes (2 sourceIds) at tick 22 [batch: batch-0-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 30: pending=2 running=3 done=0 interactions=80 actions={"bequeath":18,"survive":24,"signal":50,"merge":13}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +10 (baseline=47, peak=108, current=68, threshold=71.4)
+[loader:slot-1] injected 81 nodes (2 sourceIds) at tick 32 [batch: batch-1-mmo5wxd3]
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[loader:slot-2] cluster snapshot at tick 36/60: 13 nodes
+[loader:slot-2] harvested: 13/96 survived (13.5%) pushback: pure=2
+[dispatcher:absorb] absorbed at tick +5 (baseline=68, peak=131, current=92, threshold=93.2)
+[loader:slot-3] injected 82 nodes (2 sourceIds) at tick 37 [batch: batch-3-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 40: pending=0 running=4 done=1 interactions=122 actions={"signal":66,"survive":37,"bequeath":34,"merge":22}
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-4] cluster snapshot at tick 36/60: 12 nodes
+[loader:slot-4] harvested: 12/66 survived (18.2%) pushback: pure=1 merged=1
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[dispatcher] tick 50: pending=0 running=3 done=2 interactions=62 actions={"bequeath":20,"signal":36,"merge":6,"survive":20}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-0] cluster snapshot at tick 36/60: 14 nodes
+[loader:slot-0] harvested: 14/83 survived (16.9%) pushback: merged=1 pure=1
+[dispatcher] tick 60: pending=0 running=2 done=3 interactions=27 actions={"signal":19,"bequeath":5,"survive":12,"merge":3}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-1] cluster snapshot at tick 36/60: 14 nodes
+[loader:slot-1] harvested: 14/81 survived (17.3%) pushback: merged=2
+[dispatcher] tick 70: pending=0 running=1 done=4 interactions=7 actions={"signal":4,"bequeath":3,"survive":5}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-3] cluster snapshot at tick 36/60: 3 nodes
+[loader:slot-3] harvested: 3/82 survived (3.7%) pushback: pure=1 dead=1
+[dispatcher] complete: 73 ticks, 10 source reports
+
+[consensus] run 10/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 5 slot(s), 408 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-2] injected 96 nodes (2 sourceIds) at tick 0 [batch: batch-2-mmo5wxd3]
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +9 (baseline=0, peak=79, current=30, threshold=31.6)
+[loader:slot-4] injected 66 nodes (2 sourceIds) at tick 9 [batch: batch-4-mmo5wxd4]
+[dispatcher] tick 10: pending=3 running=2 done=0 interactions=86 actions={"survive":22,"bequeath":16,"signal":56,"merge":14}
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +10 (baseline=30, peak=86, current=50, threshold=52.4)
+[loader:slot-0] injected 83 nodes (2 sourceIds) at tick 19 [batch: batch-0-mmo5wxd3]
+[dispatcher] tick 20: pending=2 running=3 done=0 interactions=116 actions={"survive":32,"signal":72,"bequeath":28,"merge":16}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +7 (baseline=50, peak=116, current=75, threshold=76.4)
+[loader:slot-1] injected 81 nodes (2 sourceIds) at tick 26 [batch: batch-1-mmo5wxd3]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 4 children born from 2 pairs
+[dispatcher] tick 30: pending=1 running=4 done=0 interactions=116 actions={"survive":35,"merge":18,"signal":67,"bequeath":31}
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher:absorb] absorbed at tick +6 (baseline=75, peak=136, current=98, threshold=99.4)
+[loader:slot-3] injected 82 nodes (2 sourceIds) at tick 32 [batch: batch-3-mmo5wxd3]
+[mycelium:spawn] 4 children born from 2 pairs
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 8 children born from 4 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-2] cluster snapshot at tick 36/60: 15 nodes
+[loader:slot-2] harvested: 15/96 survived (15.6%) pushback: merged=1 pure=1
+[mycelium:spawn] 6 children born from 3 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 40: pending=0 running=4 done=1 interactions=75 actions={"bequeath":24,"survive":33,"signal":41,"merge":10}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-4] cluster snapshot at tick 36/60: 10 nodes
+[loader:slot-4] harvested: 10/66 survived (15.2%) pushback: pure=1 merged=1
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 50: pending=0 running=3 done=2 interactions=37 actions={"signal":23,"survive":21,"bequeath":10,"merge":5}
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-0] cluster snapshot at tick 36/60: 9 nodes
+[loader:slot-0] harvested: 9/83 survived (10.8%) pushback: merged=2
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 60: pending=0 running=2 done=3 interactions=19 actions={"signal":14,"merge":3,"bequeath":5,"survive":11}
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-1] cluster snapshot at tick 36/60: 10 nodes
+[loader:slot-1] harvested: 10/81 survived (12.3%) pushback: pure=1 merged=1
+[loader:slot-3] cluster snapshot at tick 36/60: 5 nodes
+[loader:slot-3] harvested: 5/82 survived (6.1%) pushback: pure=1 dead=1
+[dispatcher] complete: 68 ticks, 10 source reports
+[consensus] 10 runs complete — 408 chunks, consensus rate: 23.0% (94/408 unanimous)
+[loader] consensus rate: 23.0%
+
+=== Survivor Reports ===
+
+  Slot [batch-2-mmo5wxd3]
+    sources: 2, survival: 7/96 (7.3%)
+    3-axis: pure:2 merged:5 loner:10 redundant:42 dead:37
+      source_patent:8: 3/61 survived (4.9%) [pure:1 merged:2 loner:7 redundant:36 dead:15]
+      source_patent:5: 4/35 survived (11.4%) [pure:1 merged:3 loner:3 redundant:6 dead:22]
+    species: sentinel:1, anchor:4, spore:10
+
+  Slot [batch-4-mmo5wxd4]
+    sources: 2, survival: 8/66 (12.1%)
+    3-axis: pure:4 merged:4 redundant:15 dead:41 loner:2
+      source_patent:0: 2/30 survived (6.7%) [pure:1 merged:1 redundant:7 dead:21]
+      source_patent:9: 6/36 survived (16.7%) [pure:3 merged:3 loner:2 redundant:8 dead:20]
+    species: anchor:4, spore:6
+
+  Slot [batch-0-mmo5wxd3]
+    sources: 2, survival: 5/83 (6.0%)
+    3-axis: merged:5 redundant:1 dead:77
+      source_patent:2: 3/55 survived (5.5%) [merged:3 redundant:1 dead:51]
+      source_patent:1: 2/28 survived (7.1%) [merged:2 dead:26]
+    species: summarizer:1, anchor:2, spore:6
+
+  Slot [batch-1-mmo5wxd3]
+    sources: 2, survival: 3/81 (3.7%)
+    3-axis: pure:2 dead:78 merged:1
+      source_patent:4: 1/33 survived (3.0%) [pure:1 dead:32]
+      source_patent:6: 2/48 survived (4.2%) [pure:1 merged:1 dead:46]
+    species: anchor:1, spore:9
+
+  Slot [batch-3-mmo5wxd3]
+    sources: 2, survival: 2/82 (2.4%)
+    3-axis: pure:2 dead:80
+      source_patent:3: 2/35 survived (5.7%) [pure:2 dead:33]
+      source_patent:7: 0/47 survived (0.0%) [dead:47]
+    species: sentinel:1, anchor:2, spore:2
+
+[
+  {
+    "sourceId": "source_patent:8",
+    "collection": "source_patent",
+    "batchToken": "batch-2-mmo5wxd3",
+    "totalChunks": 61,
+    "survivingChunks": 3,
+    "survivalRate": 0.04918032786885246,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 1,
+      "herald": 0,
+      "anchor": 1,
+      "spore": 3
+    },
+    "survivingTexts": [
+      "180°) show a significant difference in shape, especially in profile position 14 - 20 .\n\n[0068]    While there have been described herein what are considered to be preferred and exemplary embodiments of the present invention, other modifications of the invention shall be apparent to those skilled in the art from the teachings herein and, it is therefore, desired to be secured in the appended claims all such modifications as fall within the true spirit and scope of the invention. Thus, any modification of the shape, configuration and composition of the elements comprising the invention is within the scope of the present invention. Accordingly, what is desired to be secured by Letters Patent of the United States is the invention as defined and differentiated in the following claims.",
+      "shell are movable surfaces which can be actuated to compensate for uneven nip pressure distribution.\n\n[0006]    Previously known techniques for determining the presence of such discrepancies in the nip pressure required the operator to stop the roll and place a long piece of carbon paper or pressure sensitive film in the nip. This procedure is known as taking a “nip impression.” Later techniques for nip impressions involve using mylar with sensing elements to electronically record the pressures across the nip. These procedures, although useful, cannot be used while the nip press is in operation. Moreover, temperature, roll speed and other related changes which would affect the uniformity of nip pressure cannot be taken into account.",
+      "sensor array (180°) showing a helical pattern of out of phase variability over one cycle.\n\n[0042]      FIG. 14  is a graphical display showing a plot of normalized error versus profile position for a single sensor array, a two sensor array (180°) and three sensor array (120°) showing a helical pattern of out of phase variability over one cycle/rotation center and 2 cycles/rotation edges.\n\n[0043]      FIG. 15  is a graphical display showing a comparison of nip pressure versus profile position for 3 sensor arrays for array  1  (0°), array  2  (90°) and array  3  (180°).",
+      "in pounds per linear inch while the x-axis designates the cross-directional position on the roll.\n\n[0010]    While a single line of sensors on the sensing roll may provide a fairly good representation of nip pressure cross-directional variability, these same sensors may not properly take into account the variability of pressure across the nip region caused by the high speed rotation of the sensing roll. The dynamics of a cylinder/roll rotating at a high angular speed (high RPMs) can cause slight changes to the pressure produced by the cylinder/roll that are not necessarily detectable when the cylinder/roll is at rest or rotating at a low speed. Such dynamic changes could be the result of centrifugal forces acting on the cylinder/roll, roll flexing, roll balance, eccentric shaft mounting or out-or round rolls and could possibly be influenced by environmental factors. The dynamic behavior of a typical high speed rotating cylinder/roll is often characterized by a development of an unbalance and bending stiffness variation. Such variations along the cylinder/roll are often referred to as rotational variability. Unbalance can be observed as a vibration component at certain rotating frequencies and also can cause unwanted bending of the flexible cylinder/roll as a function of the rotating speed. Since the lengths of the sensing rolls used in paper manufacturing can be quite long, unbalance in the rotating rolls can pose a serious problem to the paper manufacturer since a less than even nip pressure profile may be created and displayed by the control equipment. Any unwanted bending of the sensing roll can, of course, change the amount of pressure being exerted on the web as it travels through the nip roller. Again, since even nip pressure is highly desired during paper manufacturing, it would be highly beneficial to correctly display the nip pressure profile since any corrects to be made to the rotating roll based on an inaccurate nip pressure profile could certainly exacerbate the problem. A single sensor located at an individual cross-directional position on the sensing roll may not be able to compensate for the effect of rotational variability at that sensor&#39;s position and may provide less than accurate pressure readings. There are three primary measurements of variability. The true nip pressure profile has variability that can be term cross-directional variability as it is the variability of average pressure per cross-direction position across the nip. Each sensor in a single line of sensors may have some variability associated with it that may be calculated as the data is collected at high speed. This particular variability profile represents the variability of the high speed measurements at each position in the single line of sensors. This variability contains the variability of other equipment in the paper making process including the rotational variability of the roll nipped to the sensing roll. The third variability profile is the nip profile variability of multiple sensors at each cross-directional position of the roll. This variability represents the “rotational variability” of the sensing roll as it rotates through its plurality or sensing positions.",
+      "above sensors are well known in the art and need not be discussed further herein.\n\n[0065]    The processor unit is typically a personal computer or similar data exchange device, such as the distributive control system of a paper mill that can process signals from the sensors into useful, easily understood information from a remote location. Suitable exemplary processing units are discussed in U.S. Pat. Nos. 5,562,027 and 6,568,285 to Moore, the disclosures of which are hereby incorporated herein in their entireties."
+    ],
+    "partsComplete": true,
+    "classification": "merged",
+    "classificationBreakdown": {
+      "pure": 1,
+      "merged": 2,
+      "loner": 7,
+      "redundant": 36,
+      "dead": 15
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 61
+    }
+  },
+  {
+    "sourceId": "source_patent:5",
+    "collection": "source_patent",
+    "batchToken": "batch-2-mmo5wxd3",
+    "totalChunks": 35,
+    "survivingChunks": 4,
+    "survivalRate": 0.11428571428571428,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 3,
+      "spore": 7
+    },
+    "survivingTexts": [
+      "deposited in a random manner onto a moving collector belt to form a nonwoven web.\n\nWith spunbond processes, continuous fibers are extruded through a spinneret. Air is directed at the extruded fibers to separate and orient them. The fibers are collected onto a moving collector belt. At a downstream location, the fibers are consolidated by passing the layer of fibers through compacting roller, for instance. The spunbond process frequently utilizes quenching air to cool the extruded before they contact the collector belt.",
+      "through the opening. The second interior space is in fluid communication with the exhaust opening.\n\nIn one aspect of the invention, the opening between the first interior space and the second interior space is an elongate slot and preferably includes a center portion having a wider dimension than the end portions thereof. The intake opening is positioned at the top of the outer housing, and the slot in the inner housing is disposed proximate to the bottom of the outer housing. The outer housing can further include a filter member for filtering particulates from the air discharged by the melt spinning apparatus.",
+      "process frequently utilizes quenching air to cool the extruded before they contact the collector belt.\n\nLarge volumes of air are used during both the meltblown and spunbond process. Moreover, much of the air is heated and moving at very high velocities, sometimes approaching the speed of sound. Without properly collecting and disposing of the process air, the air would likely disturb personnel working around the manufacturing apparatus and other nearby equipment. Further, the heated air would likely heat the surrounding area in which the nonwoven is being produced. Consequently, attention must be paid to collecting and disposing of this process air.",
+      "web 20 and the collector belt 34 and into the air management system 12 .\n\nSeveral cubic feet of air per minute per inch of die length flow through each station  14 ,  16  during the manufacture of the meltblown and spunbond webs  20 ,  22 . The air management system  12  of the invention efficiency collects and disposes of the air from through the stations  14 ,  16 . More importantly and as will be discussed in greater detail below, the air management system  12  collects the air such that the air has a substantially uniform flow velocity at least in the cross-machine direction as the air passes through the collector belt  34 . Ideally, the fibers  32 ,  38  are deposited on the collector belt  34  in a random fashion to form the meltblown and spunbond webs  20 ,  22  which are homogeneous. If the air flow velocity through the collector belt  34  is nonuniform, the resultant web will likely not be homogeneous.",
+      "fibers will not be deposited onto the collector belt uniformly, yielding a non-homogeneous nonwoven web.\n\nVarious air management systems have been used to collect and dispose of the process air. One particular air management system uses a collecting duct situated below a perforated collector belt to collect and dispose of the process air. An air moving device, such as a fan or vacuum pump, is connected to the collecting duct to actively draw the air into the collecting duct. The collecting duct is comprised of a plurality of a smaller air passageways arranged side-by-side in a rectangular grid. The grid includes a central row of air passageways extending across the machine width and upstream and downstream air passageways flanking either side of the central row. The central row of air passageways is disposed directly below the extrusion die in what is commonly referred to as the forming zone. Each air passageway includes an inlet and an outlet with a 90 degree elbow in between. An air moving device is operatively connected to each outlet to draw the process air into the individual inlets.",
+      ". The air flow path through air handler 174 is represented by arrows 224 .\n\nWhile the present invention has been illustrated by a description of various preferred embodiments and while these embodiments have been described in considerable detail in order to describe the best mode of practicing the invention, it is not the intention of applicants to restrict or in any way limit the scope of the appended claims to such detail. Additional advantages and modifications within the spirit and scope of the invention will readily appear to those skilled in the art.",
+      "FIG. 8 taken along lines 9 — 9 . DETAILED DESCRIPTION OF THE PREFERRED EMBODIMENTS\n\nWith reference to  FIG. 1 , a two-station production line  10  is schematically illustrated. The production line  10  incorporates an air management system  12  of the invention at both an upstream station  14  and a downstream station  16 . While the air management system  12  has been illustrated in conjunction with the two-station production line  10 , the air management system  12  is generally applicable to other production lines having a single station or a plurality of stations. In a single station production line, the nonwoven web can be manufactured using any one of a number of process, such as a meltblowing process or a spunbond process. In a multiple-station production line, a plurality of nonwoven webs can be manufactured to form a multiply laminate. Any combination of meltblowing and spunbonding processes may be used to manufacture the laminate. For instance, the laminate may include only nonwoven meltblown webs or only nonwoven spunbond webs. However, the laminate may include any combination of meltblown webs and spunbond webs.",
+      ", air handlers 52 , 56 do not include filter members 102 , 104 .\n\nThe inner box  138  includes a bottom panel  144  with a slot  146  which is configured similarly to slot  112 . Slot  146  includes ends  148 ,  150  and center portion  152 . Like slot  112 , the width at center portion  152  is greater than the width at ends  148 ,  150 .",
+      "may include a filter member having a perforated surface through which the incoming air flows.\n\nAir handlers  172 ,  174 ,  176  include inner boxes  192 ,  194 ,  196  and sidewalls  198 ,  200 ,  202 ,  204 . Spacing members  206 ,  208 ,  210  hold inner boxes  192 ,  194 ,  196  away from sidewalls  198 ,  200 ,  202 ,  204 . Inner boxes  192 ,  194 ,  196  include bottom panels  212 ,  214 ,  216  having slots  218 ,  220 ,  222 . The air flow path through air handlers  172 ,  174 ,  176  is similar to the air flow path in air handlers  52 ,  54 ,  56 . The air flow path through air handler  174  is represented by arrows  224 .",
+      "This application is a divisional of application Ser. No. 09/750,820, filed Dec. 28, 2000, now issued as U.S. Pat. No. 6,499,982, the disclosure of which is fully incorporated herein by reference."
+    ],
+    "partsComplete": true,
+    "classification": "merged",
+    "classificationBreakdown": {
+      "pure": 1,
+      "merged": 3,
+      "loner": 3,
+      "redundant": 6,
+      "dead": 22
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 35
+    }
+  },
+  {
+    "sourceId": "source_patent:0",
+    "collection": "source_patent",
+    "batchToken": "batch-4-mmo5wxd4",
+    "totalChunks": 30,
+    "survivingChunks": 2,
+    "survivalRate": 0.06666666666666667,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 2,
+      "spore": 1
+    },
+    "survivingTexts": [
+      "in 1 min. and from the fiber bale 1c not later than in 0.75 min.\n\nTABLE__________________________________________________________________________Fiber Bale No. 1             Fiber Bale No. 2 Total height   Total height                        Total height   Total height prior to         Partial                after removal                        prior to                                Partial                                       after removal removal of         quantity to be                of partial                        removal of                                quantity to be                                       of partial partial quantity,         removed,                quantity,                        partial quantity,                                removed,                                       quantity, in cm   in cm  in cm   in cm   in cm  in cm__________________________________________________________________________1st pass 190          ##STR1##                188.1   200                                 ##STR2##                                       1982nd pass 188.1          ##STR3##                186.2   198                                 ##STR4##                                       1963rd pass 186.2          ##STR5##                184.3   196                                 ##STR6##                                       1944th to99th pass100th pass           zero                   zero__________________________________________________________________________                   Fiber Bales                  No. 3 to 19                        Fiber Bale No. 20__________________________________________________________________________                        Total height   Total height                        prior to                                Partial                                       after removal                        removal of                                quantity to be                                       of partial                        partial quantity,                                removed,                                       quantity,                        in cm   in cm  in cm__________________________________________________________________________            1st pass    170                                 ##STR7##                                       168.3            2nd pass    168.3                                 ##STR8##                                       166.6            3rd pass    166.6                                 ##STR9##                                       164.9            4th to            99th pass            100th pass                 zero__________________________________________________________________________",
+      "in emitting appropriate instructions to the control device 10 for the motors 12 and 31.\n\nTurning now to FIG. 6, there is schematically shown the logic circuit for the inputs and outputs of the control device 10 which may be a commercially available programmable control. The control circuit includes a NOR gate 34, the two inputs of which receive signals from the respective limit switches 15a and 15b. The output of the NOR gate 34 is connected to an input of AND gates 32 and 33, whose other input, in turn, receives signals from the computer 9. The output of the AND gate 32 is connected to the motor 31 whereas the output of the AND gate 33 is connected to the motor 12.",
+      "168.3 ##STR8## 166.6 3rd pass 166.6 ##STR9## 164.9 4th to 99th pass 100th pass zero__________________________________________________________________________\n\nIt is to be understood that the above description of the present invention is susceptible to various modifications, changes and adaptations, and the same are intended to be comprehended within the meaning and range of equivalents of the appended claims."
+    ],
+    "partsComplete": true,
+    "classification": "pure",
+    "classificationBreakdown": {
+      "pure": 1,
+      "merged": 1,
+      "loner": 0,
+      "redundant": 7,
+      "dead": 21
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 30
+    }
+  },
+  {
+    "sourceId": "source_patent:9",
+    "collection": "source_patent",
+    "batchToken": "batch-4-mmo5wxd4",
+    "totalChunks": 36,
+    "survivingChunks": 6,
+    "survivalRate": 0.16666666666666666,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 2,
+      "spore": 5
+    },
+    "survivingTexts": [
+      "a . As indicated is this wash circulation complemented with a heating device 41 .\n\nAs indicated in this drawing could also the wash circulation be complemented with an addition of cooking chemicals WL OPT , which then modifies the washing zone to a cooking zone.",
+      "inclined surface of the cone diverter in a direction away from the dilution/wash liquid DL\n\nIn this context the leading edge is the edge that is initially exposing the drainage aperture  80  for a new pulp volume as the cone diverter is rotating and the trailing edge is the edge that is closing the drainage aperture  80  for the pulp volume having being exposed to drainage by said drainage aperture. The design reassembles a cheese grater, but with no cutting edges directed towards the pulp volume inside the digester as the cone diverter rotates.",
+      "the cellulose material heated to the necessary cooking temperature and cooking chemicals WL is added.\n\nThe cellulose material is thereafter moving down in a plug flow concurrent with the flow of cooking chemicals trough the digesting zone until it reaches an extraction circulation which terminates the cooking zone. The extraction circulation comprises a strainer section  62 , here with 2 screen rows, pump  32 , and a central pipe  22   a . A larger part of the withdrawn and used treatment liquor is extracted from the digester and sent to recovery REC, or alternatively sent to any black liquor impregnation vessel preceding the cooking vessel.",
+      "the cooking process and hence a low production capacity per volume unit of the digester.\n\nThe concept with central screen bodies was also shown in WO2005/116327 and WO2005/116328, but in these embodiments was the central screen body integrated with the stationary central pipe. As the screen body was implemented in the central pipe, having a relatively small diameter, a limited withdrawal capacity could be obtained.",
+      "keeping manufacturing costs low. Slots could preferably be made using water or laser cutting techniques.\n\nThe invention could also be combined with a dilution scraper, i.e. a scraper adding dilution liquid also via its arms. In such embodiment could preferably dilution liquid be added as well via the drive shaft of the bottom scraper, but in a separate supply channel, preferably in form of a coaxial outer channel. Such a supply of dilution liquid to the arms of the bottom scraper could also be used to back flush the apertures via any appropriate controllable valve means.",
+      "PRIOR APPLICATION\n\nThis application is a U.S. national phase application that is based on and claims priority from International Application No. PCT/SE2011/050075, filed 25 Jan. 2011.",
+      "advantageously be used when cooking hard wood and softwood chips, bagasse and other annual plants.\n\nThe characteristics of the invention are defined by the independent claims, and optional embodiments are defined in dependent claims in order of dependency of preceding claims. The invention is also disclosed in a preferred embodiment, but any specific feature of this embodiment could as such be included in the invention optionally, if not specifically defined as a necessary feature for the argued effect."
+    ],
+    "partsComplete": true,
+    "classification": "pure",
+    "classificationBreakdown": {
+      "pure": 3,
+      "merged": 3,
+      "loner": 2,
+      "redundant": 8,
+      "dead": 20
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 36
+    }
+  },
+  {
+    "sourceId": "source_patent:2",
+    "collection": "source_patent",
+    "batchToken": "batch-0-mmo5wxd3",
+    "totalChunks": 55,
+    "survivingChunks": 3,
+    "survivalRate": 0.05454545454545454,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 1,
+      "spore": 3
+    },
+    "survivingTexts": [
+      "a sectional view along the line 6--6 of FIG. 4. DETAILED DESCRIPTION OF THE INVENTION\n\nReferring to the drawings, FIG. 1 illustrates a layer of yarns laid with the process and apparatus of the present invention, including a first course C and a second course C&#39;. As will be apparent, each of the courses is laid at an angle of approximately 45° to the direction of the fabric forming mechanism shown by the arrow A. The apparatus and process of the present invention are so adjusted in forming the fabric of FIG. 1, that course C&#39; is laid adjacent course C, without any overlap; however, as will be apparent, the two courses are parallel to each other.",
+      "the fabric length and width in order to hold the yarns together, prior to impregnation.\n\nThrough a driving means the yarn carriers are moved back and forth across the short axis of the fabric being formed. Either the bonding mechanism contains a driving means, such as an oscillating crank mechanism, which causes the speed of the yarn carrier to be reduced near the end of its travel, or such an oscillating crank mechanism can be provided, separate and apart from the bonding unit, in order to accomplish the same results. While the slowing down of the carriers 54 near the end of travel, beyond the conveyors, can be omitted when the rake system is employed, this slowing down is an aid to attaining parallelism of the yarns, even with the rake system.",
+      "down is an aid to attaining parallelism of the yarns, even with the rake system.\n\nIn addition to being slowed down by this mechanism at either end of its travel, it is necessary to cause the yarn carrier to drop down below the level of the needles 42, when the carrier has passed beyond those needles and the associated conveyor. This dropping down is required in order to allow the yarns to be wrapped around the needles, or to be impaled by them. This is accomplished by mounting the yarn carrier on a guide pin which travels in a horizontal slot in a guide arm, that slot being angled downwardly beyond the conveyor and the rake system, so as to cam the yarn carrier downwardly, and move the yarns below the horizontal level of the needles. On the return stroke, the yarn carrier moves upwardly, completing the operation of wrapping the yarns around the needles, or impaling them; and then returns across the fabric being formed.",
+      "This is a division of application Ser. No. 922,344, filed Oct. 23, 1986 now U.S. Pat. No. 4,877,470."
+    ],
+    "partsComplete": true,
+    "classification": "merged",
+    "classificationBreakdown": {
+      "pure": 0,
+      "merged": 3,
+      "loner": 0,
+      "redundant": 1,
+      "dead": 51
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 55
+    }
+  },
+  {
+    "sourceId": "source_patent:1",
+    "collection": "source_patent",
+    "batchToken": "batch-0-mmo5wxd3",
+    "totalChunks": 28,
+    "survivingChunks": 2,
+    "survivalRate": 0.07142857142857142,
+    "species": {
+      "summarizer": 1,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 1,
+      "spore": 3
+    },
+    "survivingTexts": [
+      "will be understood that additional pieces can be attached to an existing screen if desired.\n\nIt will therefore be understood that the operation of the apparatus shown in FIGS. 3 and 4 is substantially the same as the operation of the device shown in FIGS. 1 and 2. The screen 35 will be substantially constantly rotated while the apparatus is in use. Rotation of the screen 35 will cause relative motion between the agitators 42 so the slurry in the passageway 40 will be in a highly turbulent flow. As is mentioned above, the turbulence will be sufficient to prevent fibers from collecting on either screen, and will be sufficient to prevent the agglomeration of fibers in the fluid stream. As a result, the wash water passing through the channel 41 and through the screens 34 and 35 will clean the fibers and carry the unwanted contaminants from the passageway 40, through the screen 34 or 35 and into the discharge 32.",
+      "ends of the device, communicating with the passageway 40 between the screens 34 and 35.\n\nIf the inlet and outlet are located at the ends of the device, those skilled in the art will understand that the screen 34 can then be made to rotate, preferably counter to the rotation of the screen 35, for better agitation.",
+      "CROSS-REFERENCE TO RELATED APPLICATION \n     This application is a continuation-in-part of the co-pending application of the same inventor, titled &#34;Method and Apparatus for Cleaning Fibers&#34;, filed May 15, 1989, under Ser. No. 351,384, issued on Dec. 11, 1990, as U.S. Pat. No. 4,976,822.",
+      "to those skilled in the art and no further showing is thought to be required.\n\nOn each side of the passageway 10 there are wash water channels 14 and 15. It will be noted that the channel 14 includes inlets/outlets 16 and 18, and channel 15 includes inlets/outlets 19 and 20. Each of the inlets/outlets 16-20 may be either an inlet or an outlet, or the wash water may be reversed periodically so the various inlets/outlets have different functions at different times. Pumps 17 and 23 are shown for moving the wash water through the channels 14 and 15. This will be discussed in more detail hereinafter.",
+      "connection with FIGS. 1 and 2, but the configuration of the apparatus is somewhat different.\n\nIn FIG. 3, there is a cylindrical container 30 having impermeable walls, and an inlet 31. At one end of the cylindrical container 30 there is an outlet designated at 32. Mounted within the container 30, and concentric therewith, there are two screens designated at 34 and 35. The screen 34 is stationarily mounted, and is provided with an inlet 36 and an outlet 38. While the inlet and outlet 36 and 38 are adjacent to each other, a wall 39 separates them for proper flow control."
+    ],
+    "partsComplete": true,
+    "classification": "merged",
+    "classificationBreakdown": {
+      "pure": 0,
+      "merged": 2,
+      "loner": 0,
+      "redundant": 0,
+      "dead": 26
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 28
+    }
+  },
+  {
+    "sourceId": "source_patent:4",
+    "collection": "source_patent",
+    "batchToken": "batch-1-mmo5wxd3",
+    "totalChunks": 33,
+    "survivingChunks": 1,
+    "survivalRate": 0.030303030303030304,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 0,
+      "spore": 1
+    },
+    "survivingTexts": [
+      "between the first and second unbalanced distribution levels is greater than a second predetermined value.\n\n[0017]     It is to be understood that both the foregoing general description and the following detailed description of the present invention are exemplary and explanatory and are intended to provide further explanation of the invention as claimed."
+    ],
+    "partsComplete": true,
+    "classification": "pure",
+    "classificationBreakdown": {
+      "pure": 1,
+      "merged": 0,
+      "loner": 0,
+      "redundant": 0,
+      "dead": 32
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 33
+    }
+  },
+  {
+    "sourceId": "source_patent:6",
+    "collection": "source_patent",
+    "batchToken": "batch-1-mmo5wxd3",
+    "totalChunks": 48,
+    "survivingChunks": 2,
+    "survivalRate": 0.041666666666666664,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 1,
+      "spore": 8
+    },
+    "survivingTexts": [
+      "break at a torque that is lower than a torque that will break the valve.\n\nFigure seven shows another approach in which the motor drive transfers torque to valve  707  (hidden) through gears  704  and  706 . Motor mount  708  is mounted to the water pipes using mounts  703  and  705 .",
+      "that will minimize the damage caused if a pipe or other water supply component breaks.\n\nIt is also the object of the invention to provide a method and apparatus that will control an outdoor water supply to prevent unauthorized use or minimize the water wasted when an outdoor hose breaks.",
+      "manually controlled valve into an automatic valve would provide a valuable solution to many applications.\n\nReal property damage occurs when water supply pipes and other components break. A break can be caused by a variety reasons including freezing. Hoses that supply washing machines, dishwashers, and other appliances are particularly susceptible to breakage. The appliances can also break causing water to leak or gush. Water heaters wear out over time and are prone to leak or break suddenly.",
+      "1101 drives worm gear 1104 . Mounting bracket 1102 secures motor 1101 to the pipe.\n\nFigure twelve is a block diagram representation of one possible embodiment of the motor control. For this embodiment, motor control  1201  consists of timer circuit  1203 , current sense circuit  1205 , voltage sense circuit  1211 , motor current control switch  1206 , logic driver  1204 , position sensor  1213  and user interface  1210 . Motor control  1201  provides voltage to motor  1208  through wires  1207  and  1212 . Motor  1208  can be of the type such that the motor turns in one direction (clockwise for purposes of this discussion) when wire  1207  is positive with respect to wire  1212  and the opposing direction (counter-clockwise) when wire  1212  is more positive than  1207 . In this example the clockwise direction turns the valve on and the counter-clockwise direction turns the valve off.",
+      "(This application claims the benefit of U.S. Provisional Application No. 60/159,583 filed on Oct. 18, 1999.)",
+      "time after occupancy is sensed. In a second embodiment, the method comprises the steps of:\n\n1. Sensing through a human user interface that the user wants to turn on the valve, and\n\n2. Turning on the valve for a period of time selected by the user or as required to serve a purpose such a watering a lawn.\n\nIn a third embodiment, the method comprises the steps of:",
+      "of U.S. Provisional Application No. 60/159,583 filed on Oct. 18, 1999.) FIELD OF THE INVENTION\n\nThe invention is related to the field of converting a standard manually controlled valve into an electronically controlled automatic valve. One application of the automatic valve is to protect real property against water damage that can occur when a water conduit breaks. Thus the invention is also related to the field of protecting property against water damage. Although not limited to, the invention is particularly useful towards minimizing the damage that can occur if a water supply pipe or other water supply component freezes or breaks, or an appliance, such as a washing machine, dishwasher, ice maker, boiler, and water heater breaks. The invention is also related to the field of protecting real property against damage or excess water usage when outdoor spigots (valves) are left on or hoses break. Among other advantages, when used this way, the invention will serve to conserve water.",
+      "wires 250 or does not flow when current passes through the power wires 250 .\n\nValves of the type in Figures one and two are available in many forms from a variety of manufactures. They cannot be used to convert an existing manually controlled valve into an electronic valve. To make such a conversion, the electronically controlled valve must be attached to the pipes servicing the valve. Attaching such a valve usually requires a plumbing expense that exceeds the cost of the valve. A preferred approach would be to have a valve control system that easily mounts to an installed valve. A secondary benefit of separating the motor drive from the valve is to provide a system that converts standard commercial high volume inexpensive valves into electronically controlled valves.",
+      "shows an alternative means to mount the invention to a multiple valve assembly. DETAILED DESCRIPTION\n\nFigure one and two show the current state of the art for electronically controlled valves. Figure one illustrates a solenoid actuated valve. Moving plunger  150  controls liquid flow from the inlet  110  to the outlet  130 . Current passing through wires  120  actuates solenoid coil  140 . Solenoid coil  140  moves plunger  150  such that plunger  150  either blocks the flow of water or does not block the flow of water. The valve can be constructed so that liquid flows when current passes through wires  120  or does not flow when current passes through wires  120 ."
+    ],
+    "partsComplete": true,
+    "classification": "pure",
+    "classificationBreakdown": {
+      "pure": 1,
+      "merged": 1,
+      "loner": 0,
+      "redundant": 0,
+      "dead": 46
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 48
+    }
+  },
+  {
+    "sourceId": "source_patent:3",
+    "collection": "source_patent",
+    "batchToken": "batch-3-mmo5wxd3",
+    "totalChunks": 35,
+    "survivingChunks": 2,
+    "survivalRate": 0.05714285714285714,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 1,
+      "herald": 0,
+      "anchor": 2,
+      "spore": 2
+    },
+    "survivingTexts": [
+      "to the warp shed, and different pressure under which air is supplied to the subnozzles.\n\nThe on-off valves 9, 10 may be selectively actuated by a mechanical cam device operable in synchronism with the rotation of a main shaft of the loom. For example, for selectively inserting two thicker weft threads of cotton and one strong thinner weft thread for weaving corduroy, such a mechanical cam device may comprise a control cam mounted on a valve control shaft which makes one third of a full rotation thereof when the main shaft of the loom makes one complete revolution, so that the subnozzles 11, 12 will be actuated for inserting one of the thicker weft threads and the subnozzles 12, 13 will be actuated for inserting the thinner weft thread.",
+      "the subnozzles, but it may alternatively be ejected sequentially from the successive groups of subnozzles.\n\nAlthough certain preferred embodiments have been shown and described, it should be understood that many changes and modifications may be made therein without departing from the scope of the appended claims.",
+      "be inserted, for thereby exerting an appropriate weft carrying force to the selected weft thread.\n\nWith the embodiment shown in FIGS. 4 and 5, the nozzles are supplied with air having a pressure suitable for a weft thread to be inserted. Where a weft thread is to be inserted which requires no larger weft carrying force, no undue consumption of pressurized air is assured for reduced total air consumption under pressure. Furthermore, since the nozzles for inserting and carrying weft threads are supplied with pressurized air at suitable ejection timings for the selected weft threads, respectively, the occurrence of weft insertion failures becomes less frequent, resulting in stabilized weft insertion.",
+      "block diagram of a control system for the weft insertion apparatus of the sixth embodiment.\n\nDETAILED DESCRIPTION\n\nLike or corresponding parts are denoted by like or corresponding reference characters throughout several views.\n\n1st embodiment (FIG. 1):",
+      "FIELD OF THE INVENTION\n\nThe present invention relates to weft insertion in a multiple-color air jet loom, and more particularly to a method of and an apparatus for inserting a selected weft thread with a weft carrying force appropriate for the selected weft thread."
+    ],
+    "partsComplete": true,
+    "classification": "pure",
+    "classificationBreakdown": {
+      "pure": 2,
+      "merged": 0,
+      "loner": 0,
+      "redundant": 0,
+      "dead": 33
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 35
+    }
+  },
+  {
+    "sourceId": "source_patent:7",
+    "collection": "source_patent",
+    "batchToken": "batch-3-mmo5wxd3",
+    "totalChunks": 47,
+    "survivingChunks": 0,
+    "survivalRate": 0,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 0,
+      "spore": 0
+    },
+    "survivingTexts": [],
+    "partsComplete": true,
+    "classification": "dead",
+    "classificationBreakdown": {
+      "pure": 0,
+      "merged": 0,
+      "loner": 0,
+      "redundant": 0,
+      "dead": 47
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 47
+    }
+  }
+]

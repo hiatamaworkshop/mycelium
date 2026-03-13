@@ -200,6 +200,17 @@ TAG_RULES: list[tuple[str, list[str]]] = [
     ("draft",      [r"\bdraft\b", r"\bwip\b", r"\bwork[- ]in[- ]progress\b"]),
     ("hypothesis", [r"\bhypothesis\b", r"\bprototyp(?:e|ing)\b",
                     r"\bpropos(?:al|ed|e)\b", r"\btodo\b"]),
+    # Academic discourse connectors (distribute species via tag mapping)
+    ("results",    [r"\btherefore\b", r"\bthus\b", r"\bhence\b", r"\bconsequently\b",
+                    r"\bas a result\b"]),
+    ("hypothesis", [r"\bwe propose\b", r"\bwe introduce\b", r"\bwe present\b",
+                    r"\bwe develop\b"]),
+    ("report",     [r"\bhowever\b", r"\bin contrast\b", r"\bwhereas\b",
+                    r"\bnevertheless\b", r"\bon the other hand\b"]),
+    ("findings",   [r"\bwe demonstrate\b", r"\bwe show\b", r"\bwe observe\b",
+                    r"\bour results\b", r"\bwe find\b"]),
+    ("summary",    [r"\bfurthermore\b", r"\bmoreover\b", r"\bin addition\b",
+                    r"\boverall\b"]),
 ]
 
 _COMPILED_RULES: list[tuple[str, list[re.Pattern]]] = [

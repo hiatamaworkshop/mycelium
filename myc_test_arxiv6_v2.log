@@ -1,0 +1,173 @@
+=== Mycelium Universal Loader ===
+  qdrant:        http://localhost:6334
+  sources:       source_arxiv_6
+  isolation:     shared (1 world(s))
+  slot capacity: 100 nodes/slot
+  hardness:      mid (harvest at 60% of ticks)
+  ticks:         60
+  interval:      0ms
+  cascade:       adaptive (min=5, max=30, ratio=0.4)
+  consensus:     10 runs (threshold=40%)
+  clean:         enabled (world collections will be recreated)
+  world "shared": mycelium_loader ← [source_arxiv_6]
+
+[slot-allocator] scrolling source_arxiv_6 from http://localhost:6334 ...
+  → 39 points from source_arxiv_6
+[loader] 39 total source points loaded
+[slot-allocator] allocated 39 points → 1 slots:
+  slot-0: 39 points, 1 sourceIds [chunked: source_arxiv_6:6(39 chunks)]
+[loader] 1 slot(s) allocated (inject order: 39)
+
+
+[consensus] run 1/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 1 slot(s), 39 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-0] injected 39 nodes (1 sourceIds) at tick 0 [batch: batch-0-mmoetzy5]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 10: pending=0 running=1 done=0 interactions=15 actions={"bequeath":5,"signal":8,"survive":7,"merge":2}
+[dispatcher] tick 20: pending=0 running=1 done=0 interactions=11 actions={"bequeath":2,"merge":4,"signal":5,"survive":3}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 30: pending=0 running=1 done=0 interactions=6 actions={"signal":2,"survive":3,"bequeath":3,"merge":1}
+[loader:slot-0] cluster snapshot at tick 36/60: 6 nodes
+[loader:slot-0] harvested: 6/39 survived (15.4%) pushback: pure=2 merged=4 loner=7 redundant=12 dead=14
+[dispatcher] complete: 36 ticks, 1 source reports
+
+[consensus] run 2/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 1 slot(s), 39 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-0] injected 39 nodes (1 sourceIds) at tick 0 [batch: batch-0-mmoetzy5]
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 10: pending=0 running=1 done=0 interactions=18 actions={"signal":11,"bequeath":4,"merge":3,"survive":4}
+[dispatcher] tick 20: pending=0 running=1 done=0 interactions=10 actions={"signal":6,"merge":2,"survive":8,"bequeath":2}
+[dispatcher] tick 30: pending=0 running=1 done=0 interactions=10 actions={"signal":6,"bequeath":3,"survive":4,"merge":2}
+[loader:slot-0] cluster snapshot at tick 36/60: 12 nodes
+[loader:slot-0] harvested: 12/39 survived (30.8%) pushback: pure=4 merged=8 loner=5 redundant=15 dead=7
+[dispatcher] complete: 36 ticks, 1 source reports
+
+[consensus] run 3/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 1 slot(s), 39 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-0] injected 39 nodes (1 sourceIds) at tick 0 [batch: batch-0-mmoetzy5]
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 10: pending=0 running=1 done=0 interactions=17 actions={"survive":4,"signal":8,"bequeath":5,"merge":4}
+[dispatcher] tick 20: pending=0 running=1 done=0 interactions=9 actions={"merge":2,"signal":5,"survive":4,"bequeath":3}
+[dispatcher] tick 30: pending=0 running=1 done=0 interactions=6 actions={"signal":5,"survive":3,"merge":1}
+[loader:slot-0] cluster snapshot at tick 36/60: 8 nodes
+[loader:slot-0] harvested: 8/39 survived (20.5%) pushback: pure=1 merged=7 loner=13 redundant=9 dead=9
+[dispatcher] complete: 36 ticks, 1 source reports
+
+[consensus] run 4/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 1 slot(s), 39 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-0] injected 39 nodes (1 sourceIds) at tick 0 [batch: batch-0-mmoetzy5]
+[dispatcher] tick 10: pending=0 running=1 done=0 interactions=17 actions={"bequeath":6,"signal":9,"survive":3,"merge":2}
+[dispatcher] tick 20: pending=0 running=1 done=0 interactions=11 actions={"bequeath":3,"merge":3,"survive":4,"signal":5}
+[dispatcher] tick 30: pending=0 running=1 done=0 interactions=9 actions={"bequeath":7,"signal":2,"survive":3}
+[loader:slot-0] cluster snapshot at tick 36/60: 6 nodes
+[loader:slot-0] harvested: 6/39 survived (15.4%) pushback: pure=3 merged=3 loner=4 redundant=14 dead=15
+[dispatcher] complete: 36 ticks, 1 source reports
+
+[consensus] run 5/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 1 slot(s), 39 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-0] injected 39 nodes (1 sourceIds) at tick 0 [batch: batch-0-mmoetzy5]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 10: pending=0 running=1 done=0 interactions=13 actions={"bequeath":4,"signal":9,"survive":6}
+[dispatcher] tick 20: pending=0 running=1 done=0 interactions=7 actions={"bequeath":6,"survive":4,"merge":1}
+[dispatcher] tick 30: pending=0 running=1 done=0 interactions=6 actions={"signal":4,"merge":1,"survive":4,"bequeath":1}
+[loader:slot-0] cluster snapshot at tick 36/60: 6 nodes
+[loader:slot-0] harvested: 6/39 survived (15.4%) pushback: pure=1 merged=5 loner=9 redundant=11 dead=13
+[dispatcher] complete: 36 ticks, 1 source reports
+
+[consensus] run 6/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 1 slot(s), 39 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-0] injected 39 nodes (1 sourceIds) at tick 0 [batch: batch-0-mmoetzy5]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 10: pending=0 running=1 done=0 interactions=15 actions={"merge":2,"bequeath":5,"survive":5,"signal":8}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 20: pending=0 running=1 done=0 interactions=10 actions={"survive":2,"signal":7,"bequeath":2,"merge":1}
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 30: pending=0 running=1 done=0 interactions=4 actions={"bequeath":2,"survive":3,"signal":2}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[loader:slot-0] cluster snapshot at tick 36/60: 2 nodes
+[loader:slot-0] harvested: 2/39 survived (5.1%) pushback: pure=1 merged=1 loner=12 redundant=11 dead=14
+[dispatcher] complete: 36 ticks, 1 source reports
+
+[consensus] run 7/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 1 slot(s), 39 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-0] injected 39 nodes (1 sourceIds) at tick 0 [batch: batch-0-mmoetzy5]
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 10: pending=0 running=1 done=0 interactions=14 actions={"bequeath":3,"survive":7,"signal":10,"merge":2}
+[dispatcher] tick 20: pending=0 running=1 done=0 interactions=6 actions={"merge":1,"survive":8,"signal":2,"bequeath":3}
+[dispatcher] tick 30: pending=0 running=1 done=0 interactions=6 actions={"merge":1,"signal":4,"bequeath":1,"survive":3}
+[loader:slot-0] cluster snapshot at tick 36/60: 7 nodes
+[loader:slot-0] harvested: 7/39 survived (17.9%) pushback: pure=1 merged=6 loner=8 redundant=13 dead=11
+[dispatcher] complete: 36 ticks, 1 source reports
+
+[consensus] run 8/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 1 slot(s), 39 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-0] injected 39 nodes (1 sourceIds) at tick 0 [batch: batch-0-mmoetzy5]
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 10: pending=0 running=1 done=0 interactions=14 actions={"bequeath":3,"merge":5,"survive":9,"signal":6}
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 20: pending=0 running=1 done=0 interactions=10 actions={"bequeath":2,"survive":7,"signal":8}
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 30: pending=0 running=1 done=0 interactions=5 actions={"survive":6,"bequeath":3,"merge":2}
+[loader:slot-0] cluster snapshot at tick 36/60: 6 nodes
+[loader:slot-0] harvested: 6/39 survived (15.4%) pushback: pure=2 merged=4 loner=9 redundant=12 dead=12
+[dispatcher] complete: 36 ticks, 1 source reports
+
+[consensus] run 9/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 1 slot(s), 39 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-0] injected 39 nodes (1 sourceIds) at tick 0 [batch: batch-0-mmoetzy5]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 10: pending=0 running=1 done=0 interactions=10 actions={"bequeath":2,"survive":7,"signal":7,"merge":1}
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 20: pending=0 running=1 done=0 interactions=9 actions={"signal":7,"survive":5,"bequeath":2}
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 30: pending=0 running=1 done=0 interactions=5 actions={"bequeath":2,"merge":3,"signal":2,"survive":3}
+[loader:slot-0] cluster snapshot at tick 36/60: 5 nodes
+[loader:slot-0] harvested: 5/39 survived (12.8%) pushback: pure=2 merged=3 loner=5 redundant=15 dead=14
+[dispatcher] complete: 36 ticks, 1 source reports
+
+[consensus] run 10/10 for world "shared"
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[dispatcher] 1 slot(s), 39 total points, adaptive inject (min=5, max=30, ratio=0.4)
+[loader:slot-0] injected 39 nodes (1 sourceIds) at tick 0 [batch: batch-0-mmoetzy5]
+[mycelium:spawn] 2 children born from 1 pairs
+[mycelium:spawn] 2 children born from 1 pairs
+[dispatcher] tick 10: pending=0 running=1 done=0 interactions=17 actions={"bequeath":5,"signal":11,"survive":7,"merge":1}
+[dispatcher] tick 20: pending=0 running=1 done=0 interactions=14 actions={"signal":10,"survive":5,"bequeath":4}
+[dispatcher] tick 30: pending=0 running=1 done=0 interactions=13 actions={"signal":8,"survive":3,"bequeath":4,"merge":1}
+[loader:slot-0] cluster snapshot at tick 36/60: 11 nodes
+[loader:slot-0] harvested: 11/39 survived (28.2%) pushback: pure=6 merged=5 loner=5 redundant=11 dead=12
+[dispatcher] complete: 36 ticks, 1 source reports
+[consensus] 10 runs complete — 1 sources (threshold=40%, minVotes=4/10)
+  source_arxiv_6:6: passing 100% (39/39 passed)
+
+=== Survivor Reports ===
+
+  Slot [batch-0-mmoetzy5]
+    sources: 1, survival: 4/39 (10.3%)
+    3-axis: pure:1 merged:3 loner:7 redundant:16 dead:12
+      source_arxiv_6:6: 4/39 survived (10.3%) [pure:1 merged:3 loner:7 redundant:16 dead:12] passing:100%
+    species: summarizer:2, herald:2, anchor:2, spore:5
+

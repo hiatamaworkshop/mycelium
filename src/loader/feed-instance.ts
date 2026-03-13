@@ -144,15 +144,23 @@ export class FeedInstance {
 
     const myceliumPoints: Array<{ id: string; vector: number[]; payload: ReturnType<typeof nodeToPayload> }> = [];
 
+    // Body species rotation for tag-less chunks (avoids spore monoculture)
+    const BODY_ROTATION: Species[] = ["summarizer", "herald", "spore"];
+
     for (let spIdx = 0; spIdx < this.sourcePoints.length; spIdx++) {
       const sp = this.sourcePoints[spIdx];
       const tags = sp.payload.tags ?? [];
       const trigger = "manual";
       // Species resolution: forceSpore treats all external data as unverified hypothesis
-      // Set LOADER_SPECIES_FROM_TAGS=true to use tag-based species mapping instead
-      const species = this.forceSpore
-        ? resolveSpecies(trigger, [])   // ignore tags → trigger "manual" → spore
-        : resolveSpecies(trigger, tags);
+      let species: Species;
+      if (this.forceSpore) {
+        species = resolveSpecies(trigger, []);   // ignore tags → trigger "manual" → spore
+      } else if (tags.length > 0) {
+        species = resolveSpecies(trigger, tags);  // tag-based mapping
+      } else {
+        // No tags: rotate body species for ecosystem diversity
+        species = BODY_ROTATION[spIdx % BODY_ROTATION.length];
+      }
       const inherited = getSpeciesMemory(species);
       const inheritedRes = getSpeciesResonanceDelta(species);
 
@@ -164,7 +172,9 @@ export class FeedInstance {
         inheritedRes,
         undefined,   // no nutrition override
         tags,
-        this.forceSpore ? "spore" : undefined,  // speciesOverride bypasses tag mapping
+        this.forceSpore ? "spore"
+          : tags.length === 0 ? species  // lock rotated species via override
+          : undefined,
       );
 
       const qualifiedSid = sp.payload.sourceId ?? String(sp.id);

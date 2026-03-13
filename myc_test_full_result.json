@@ -1,0 +1,370 @@
+[
+  {
+    "sourceId": "source_patent:8",
+    "collection": "source_patent",
+    "batchToken": "batch-2-mmo80naa",
+    "totalChunks": 61,
+    "survivingChunks": 3,
+    "survivalRate": 0.04918032786885246,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 1,
+      "spore": 2
+    },
+    "survivingTexts": [
+      "180°) show a significant difference in shape, especially in profile position 14 - 20 .\n\n[0068]    While there have been described herein what are considered to be preferred and exemplary embodiments of the present invention, other modifications of the invention shall be apparent to those skilled in the art from the teachings herein and, it is therefore, desired to be secured in the appended claims all such modifications as fall within the true spirit and scope of the invention. Thus, any modification of the shape, configuration and composition of the elements comprising the invention is within the scope of the present invention. Accordingly, what is desired to be secured by Letters Patent of the United States is the invention as defined and differentiated in the following claims.",
+      "collections in the alternate collection periods will provide comparable information and may save battery life.\n\n[0062]    One particular system for processing the signals is shown in  FIG. 11  and will be discussed in greater detail below. Wireless transmission can be carried out via radio waves, optical waves, or other known remote transmission methods. If a direct wired transmission is desired, slip ring assemblies and other well-known electrical coupling devices (not shown) could be utilized.",
+      "pressure variations. Other known equipment which can correct the roll cover could also be used.\n\n[0064]    The sensors can take any form recognized by those skilled in the art as being suitable for detecting and measuring pressure. Pressure sensors may include piezoelectric sensors, piezoresistive sensors, force sensitive resistors (FSRs), fiber optic sensors, strain gage based load cells, and capacitive sensors. The invention is not to be limited to the above-named sensors and may include other pressure sensors known to those of ordinary skill in the art. It should be appreciated that data relating to the operational parameter of interest, other than pressure, could be utilized with the present invention. In this case, the sensors could be used to measure temperature, strain, moisture, nip width, etc. The sensors would be strategically located along the sensing roll as described above. Depending on the type of sensor, additional electronics may be required at each sensor location. The design and operation of the above sensors are well known in the art and need not be discussed further herein."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 2,
+      "merged": 1,
+      "loner": 4,
+      "redundant": 36,
+      "dead": 18
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 61
+    },
+    "consensusRate": 0.9672131147540983
+  },
+  {
+    "sourceId": "source_patent:5",
+    "collection": "source_patent",
+    "batchToken": "batch-2-mmo80naa",
+    "totalChunks": 35,
+    "survivingChunks": 4,
+    "survivalRate": 0.11428571428571428,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 3,
+      "spore": 2
+    },
+    "survivingTexts": [
+      "not necessary, even over a wide range of process air flow rates. SUMMARY OF INVENTION\n\nThe present invention provides a melt spinning system and, more particularly, a melt spinning and air management system that overcomes the drawbacks and disadvantages of prior air management systems. The air management system of the invention includes at least one air handler for collecting air discharged from a melt spinning apparatus. In accordance with a general objective of the invention, the air handler produces a uniform air flow velocity in at least the cross-machine direction as the air enters the air handler. This is accomplished without the typical adjustable baffles and dampers required in the past. The air handler generally includes an outer housing having walls defining a first interior space. One of the walls has an intake opening for receiving the discharge air from the melt spinning apparatus. Another wall has an exhaust opening for discharging the air collected by the air handler. The intake opening is in fluid communication with the first interior space. An inner housing is positioned within the first interior space and has walls defining a second interior space. At least one of the walls of the inner housing has an opening. The first interior space communicates with the second interior space through the opening. The second interior space is in fluid communication with the exhaust opening.",
+      "will be equally applicable to the air management system associated with downstream station 16 .\n\nWith further reference to  FIGS. 2 and 3 , air management system  12  includes three discrete air handlers  52 ,  54 ,  56  disposed directly below the collector belt  34 . Air handlers  52 ,  54 ,  56  include intake openings  58 ,  60 ,  62  and oppositely disposed exhaust openings  64 ,  66 ,  68 . Individual exhaust conduits  70 ,  72 ,  74  are connected respectively to exhaust openings  64 ,  66 ,  68 . With specific reference to  FIG. 3 , exhaust conduit  70 , which is representative of exhaust conduits  72 ,  74 , is comprised of a series of individual components: first elbows  76 , second elbows  78 , elongated portion  80 , down portion  82 , and third elbow  84 . A series of parallel guide vanes  86  extend through down portion  82  and third elbow  84 . In operation, a variable speed fan (not shown) or any other suitable air moving device is connected to third elbow  84  to draw the air through the air management system  12 .",
+      ". The air flow path through air handler 174 is represented by arrows 224 .\n\nWhile the present invention has been illustrated by a description of various preferred embodiments and while these embodiments have been described in considerable detail in order to describe the best mode of practicing the invention, it is not the intention of applicants to restrict or in any way limit the scope of the appended claims to such detail. Additional advantages and modifications within the spirit and scope of the invention will readily appear to those skilled in the art.",
+      "may include a filter member having a perforated surface through which the incoming air flows.\n\nAir handlers  172 ,  174 ,  176  include inner boxes  192 ,  194 ,  196  and sidewalls  198 ,  200 ,  202 ,  204 . Spacing members  206 ,  208 ,  210  hold inner boxes  192 ,  194 ,  196  away from sidewalls  198 ,  200 ,  202 ,  204 . Inner boxes  192 ,  194 ,  196  include bottom panels  212 ,  214 ,  216  having slots  218 ,  220 ,  222 . The air flow path through air handlers  172 ,  174 ,  176  is similar to the air flow path in air handlers  52 ,  54 ,  56 . The air flow path through air handler  174  is represented by arrows  224 .",
+      "This application is a divisional of application Ser. No. 09/750,820, filed Dec. 28, 2000, now issued as U.S. Pat. No. 6,499,982, the disclosure of which is fully incorporated herein by reference."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 0,
+      "merged": 4,
+      "loner": 6,
+      "redundant": 5,
+      "dead": 20
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 35
+    },
+    "consensusRate": 1
+  },
+  {
+    "sourceId": "source_patent:0",
+    "collection": "source_patent",
+    "batchToken": "batch-4-mmo80naa",
+    "totalChunks": 30,
+    "survivingChunks": 2,
+    "survivalRate": 0.06666666666666667,
+    "species": {
+      "summarizer": 2,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 2,
+      "spore": 3
+    },
+    "survivingTexts": [
+      "in 1 min. and from the fiber bale 1c not later than in 0.75 min.\n\nTABLE__________________________________________________________________________Fiber Bale No. 1             Fiber Bale No. 2 Total height   Total height                        Total height   Total height prior to         Partial                after removal                        prior to                                Partial                                       after removal removal of         quantity to be                of partial                        removal of                                quantity to be                                       of partial partial quantity,         removed,                quantity,                        partial quantity,                                removed,                                       quantity, in cm   in cm  in cm   in cm   in cm  in cm__________________________________________________________________________1st pass 190          ##STR1##                188.1   200                                 ##STR2##                                       1982nd pass 188.1          ##STR3##                186.2   198                                 ##STR4##                                       1963rd pass 186.2          ##STR5##                184.3   196                                 ##STR6##                                       1944th to99th pass100th pass           zero                   zero__________________________________________________________________________                   Fiber Bales                  No. 3 to 19                        Fiber Bale No. 20__________________________________________________________________________                        Total height   Total height                        prior to                                Partial                                       after removal                        removal of                                quantity to be                                       of partial                        partial quantity,                                removed,                                       quantity,                        in cm   in cm  in cm__________________________________________________________________________            1st pass    170                                 ##STR7##                                       168.3            2nd pass    168.3                                 ##STR8##                                       166.6            3rd pass    166.6                                 ##STR9##                                       164.9            4th to            99th pass            100th pass                 zero__________________________________________________________________________",
+      "same time, be used as the signal for commanding the carriage to continue its travel.\n\nPreferably, the drive of the bale opener is a pole-reversible electromotor which accelerates the operation of the bale opener if, for example, in case of particularly hard (compressed) bales, the partial quantity is not removed within the predetermined period.",
+      "bale, the number of passes still to be performed is reduced by one to ninety-nine.\n\nThe Table at the end of the Examples indicates for each fiber bale the individual total height before fiber removal, the fiber quantity to be removed and the individual total height after removal.\n\nEXAMPLE 2",
+      "this manner the opening of the fiber bales can be effected within a predetermined period.\n\nPreferably, the fiber removal from the stored fiber lot can be accelerated to ensure that the partial quantities are removed not later than the lapse of the predetermined period.",
+      "of particularly hard (compressed) bales, the partial quantity is not removed within the predetermined period.\n\nBRIEF DESCRIPTION OF THE DRAWINGS \n     FIG. 1 is a schematic side elevational view of a preferred embodiment of the invention. \n     FIG. 2 is a schematic perspective view of the structure shown in FIG. 1. \n     FIG. 3 is a schematic front elevational view of another preferred embodiment of the invention. \n     FIG. 4 is a sectional side elevational view of a detail of the structure illustrated in FIG. 3. \n     FIG. 5 is a block diagram of a computer used in the apparatus according to the invention. \n     FIG. 6 is a circuit diagram of a component shown in FIG. 1.",
+      "the mixture can be obtained only in steps and therefore it cannot be optimally homogeneous.\n\nSUMMARY OF THE INVENTION\n\nIt is an object of the invention to provide an improved method of the above-outlined type from which the discussed disadvantages are eliminated, thus ensuring that the opening of all fiber bales is effected without fiber residuals and further, that an optimally homogeneous mixture is obtained.",
+      "168.3 ##STR8## 166.6 3rd pass 166.6 ##STR9## 164.9 4th to 99th pass 100th pass zero__________________________________________________________________________\n\nIt is to be understood that the above description of the present invention is susceptible to various modifications, changes and adaptations, and the same are intended to be comprehended within the meaning and range of equivalents of the appended claims."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 1,
+      "merged": 1,
+      "loner": 0,
+      "redundant": 6,
+      "dead": 22
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 30
+    },
+    "consensusRate": 1
+  },
+  {
+    "sourceId": "source_patent:9",
+    "collection": "source_patent",
+    "batchToken": "batch-4-mmo80naa",
+    "totalChunks": 36,
+    "survivingChunks": 3,
+    "survivalRate": 0.08333333333333333,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 3,
+      "spore": 5
+    },
+    "survivingTexts": [
+      "obstacle trough the apertures if initially trapped in the slots and thus avoiding permanent blockage.\n\nAs to the lower end of each slot it could preferably have an inclined end surface, such that this end surface is closer to the strict horizontal location, i.e. the end surface at an angle (90°-α), or even with less inclination angle (α being the cone diverter angle as indicated in  FIG. 2 ). This in order to establish a sloping surface such that obstacles caught against the slots in their upper slot part, and rubbed against the entire slot length, may be pushed out from the lower end of the slot.",
+      "being spacious and reducing the available volume in the digester used for the cooking process.\n\nA specific objective is to enable an improved wash zone in the bottom of the digester and especially for those digesters that are operating in an overloaded state such that the original wash effect in the bottom of the digester has disappeared. Thus suitable for an up-grade in those overloaded digesters.",
+      "could also be used to back flush the apertures via any appropriate controllable valve means.\n\nWhile the present invention has been described in accordance with preferred compositions and embodiments, it is to be understood that certain substitutions and alterations may be made thereto without departing from the spirit and scope of the following claims.",
+      "the central outlet bucket 52 compared with chip column movement close to the digester walls.\n\nWhile  FIG. 1  only discloses the basic features of conventional continuous digester, it is to be understood that the system could be modified in a number of ways. For example, the number of circulations could be more than those shown in  FIG. 1 . The heating devices  40 ,  41  could either be heaters using direct heating with steam, i.e. mixing steam into the circulation, or heat exchangers.",
+      "keeping manufacturing costs low. Slots could preferably be made using water or laser cutting techniques.\n\nThe invention could also be combined with a dilution scraper, i.e. a scraper adding dilution liquid also via its arms. In such embodiment could preferably dilution liquid be added as well via the drive shaft of the bottom scraper, but in a separate supply channel, preferably in form of a coaxial outer channel. Such a supply of dilution liquid to the arms of the bottom scraper could also be used to back flush the apertures via any appropriate controllable valve means.",
+      "PRIOR APPLICATION\n\nThis application is a U.S. national phase application that is based on and claims priority from International Application No. PCT/SE2011/050075, filed 25 Jan. 2011.",
+      "bottom of the digester has disappeared. Thus suitable for an up-grade in those overloaded digesters.\n\nYet another specific objective is to be able to maintain a high withdrawal capacity in a relatively small screen area, by increasing the rubbing action from the descending pulp column keeping the draining apertures of the screen clean, which is made possible by exposing the screen area for an increased vertical downward thrust from the descending pulp column.\n\nThe invention can advantageously be used when cooking hard wood and softwood chips, bagasse and other annual plants.",
+      "the pulp in order to facilitate out feed of digested cellulose material CH OUT .\n\nIn the bottom of the digester is in a conventional manner a bottom scraper arranged, comprising a drive shaft  70 , scraper arms  71  and a cone diverter  72 . The purpose of the cone diverter  72  is to force the central volume of the chip column towards the scraper arms, avoiding the risk for channelling inside the digester. Unless said cone diverter it may cause a non-uniform chip column movement as a more rapid flow in the centre of the digester may be developed towards the central outlet bucket  52  compared with chip column movement close to the digester walls."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 2,
+      "merged": 1,
+      "loner": 3,
+      "redundant": 8,
+      "dead": 22
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 36
+    },
+    "consensusRate": 0.9722222222222222
+  },
+  {
+    "sourceId": "source_patent:2",
+    "collection": "source_patent",
+    "batchToken": "batch-0-mmo80naa",
+    "totalChunks": 55,
+    "survivingChunks": 2,
+    "survivalRate": 0.03636363636363636,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 3,
+      "spore": 5
+    },
+    "survivingTexts": [
+      "impregnation, by one of the referenced methods, i.e., stitching, loose weave knitting, or adhesive bonding.\n\nAmong patents showing the formation of similar types of fabric are Eaton, U.S. Pat. No. 3,607,565; Smith, U.S. Pat. No. 3,765,893; and Campman et al U.S. Pat. No. 4,325,999.",
+      "function of holding the fabric in place up until that time, are no longer required.\n\nWhile the invention has been illustrated and described in accordance with the particular embodiments, it will be apparent to those skilled in the art that variations are possible within the spirit and scope of the invention. Accordingly, the invention is not to be considered as limited except as set forth in the appended claims.",
+      "of successive courses, and a lesser density of that layer in the finally formed fabric.\n\nBecause of the use of the rake system, particularly when used in conjunction with the slowing of the movement of the yarn carrying means near the extremities of travel, as set forth in my prior patent, complete parallelism within each layer is attained, with or without overlap. When there is overlap, the overlapped portions are parallel with the yarns of the first course, unlike the fabric construction set forth in my prior patent.",
+      "various yarns of the fabric in their proper position is accomplished by the cured resin.\n\nThe most desirable of the non-woven fabrics for structural purposes has been found to be those with at least two layers, the yarns of which are at an angle of approximately 45° to the long axis of the fabric direction, the two layers lying at 90° to each other. There can be more than two layers of yarns, depending upon the end use to which the fabric is to be put and either the first two layers, or any successive layers, can be placed at angles varying from 30° to 150° to the long axis of the fabric. If desired, a series of warp threads, lying parallel to the long axis of the fabric, a series of weft threads, lying at approximately 90° to the long axis of the fabric, or both, can be included. Once all of the fabric layers have been placed, the fabric is held together for storage, shipment, and ultimate impregnation, by one of the referenced methods, i.e., stitching, loose weave knitting, or adhesive bonding.",
+      "from, each block are a series of sharp needles 42 best illustrated in FIG. 4.\n\nFormed across, but slightly above, the conveyors 30 and 31 are a plurality of guide arms 50, 51, 52. Three such arms are illustrated for laying of three layers of yarn, but it will be appreciated that additional guide arms and complete yarn laying assemblies can be provided, depending upon the number of layers of yarn to be incorporated into the bias laid fabric. Similarly, the number of such guide arms can be reduced to two. Moving along each of the guide arms is a member 53 to which is attached a yarn carrier 54, each yarn carrier being employed for laying a plurality of yarns 55. It will be appreciated, from a review of FIG. 3, that regardless of the angling of the guide arms 50, 51, 52, the yarn carrier 54 is placed in a direction parallel to the movement of the conveyors 30, 31.",
+      "to provide for their reduced speed of motion near the ends of the travel paths.\n\nNo mention has yet been made in this specification of the loops which are obviously formed, either by the yarns wrapping around the various needles or by being impaled on them. As is apparent, these loops are at the extremities of the width of the fabric being formed. After stitching or other methods of bonding, so that the fabric is generally held together, the loops can be cut away by any known mechanism. Once the other bonding means have been put into place, the loops, which had served only the function of holding the fabric in place up until that time, are no longer required.",
+      "down is an aid to attaining parallelism of the yarns, even with the rake system.\n\nIn addition to being slowed down by this mechanism at either end of its travel, it is necessary to cause the yarn carrier to drop down below the level of the needles 42, when the carrier has passed beyond those needles and the associated conveyor. This dropping down is required in order to allow the yarns to be wrapped around the needles, or to be impaled by them. This is accomplished by mounting the yarn carrier on a guide pin which travels in a horizontal slot in a guide arm, that slot being angled downwardly beyond the conveyor and the rake system, so as to cam the yarn carrier downwardly, and move the yarns below the horizontal level of the needles. On the return stroke, the yarn carrier moves upwardly, completing the operation of wrapping the yarns around the needles, or impaling them; and then returns across the fabric being formed.",
+      "This is a division of application Ser. No. 922,344, filed Oct. 23, 1986 now U.S. Pat. No. 4,877,470."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 1,
+      "merged": 1,
+      "loner": 0,
+      "redundant": 3,
+      "dead": 50
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 55
+    },
+    "consensusRate": 1
+  },
+  {
+    "sourceId": "source_patent:1",
+    "collection": "source_patent",
+    "batchToken": "batch-0-mmo80naa",
+    "totalChunks": 28,
+    "survivingChunks": 2,
+    "survivalRate": 0.07142857142857142,
+    "species": {
+      "summarizer": 1,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 3,
+      "spore": 5
+    },
+    "survivingTexts": [
+      "21 and 22 and wash the fibers in the slurry flowing through the passageway 10.\n\nAn important feature of the present invention is the maintaining of the fibers in a fluidized state as the slurry flows through the passageway 10. More particularly, the individual fibers are not allowed to agglomerate or to collect on the screen 21 or 22. Anytime the fibers agglomerate, or collect together, it becomes difficult to bathe each fiber sufficiently in wash water and remove all contaminants from the fiber. Thus, the device in FIG. 1 includes fluidizing means generally designated at 24, the fluidizing means 24 including side plates 25 and a plurality of agitators 26. Agitators 26 are made of some impermeable material and are spaced throughout the length of the fluidizing means 24, the fluidizing means 24 in turn extending substantially the full distance of the passageway 10. Between the agitators 26, the fluidizing means 24 is open to the screens 21 and 22 so fluid can pass from within the fluidizing means 24 through the screens 21 and 22 and then to the channels 14 and 15.",
+      "water through the channels 14 and 15. This will be discussed in more detail hereinafter.\n\nThe wall 21 between the channel 14 and the passageway 10 comprises a screen; and, the wall 22 between the passageway 10 and the channel 15 also comprises a screen. As a result, it will be understood that the wash water from the channels 14 and 15 can pass through the walls 21 and 22 and wash the fibers in the slurry flowing through the passageway 10.",
+      "made to rotate, preferably counter to the rotation of the screen 35, for better agitation.\n\nFIG. 4 is an enlarged section of the screens 34 and 35 and it will be seen that each of the screens includes a plurality of agitators 42. The agitators 42 are here shown as being angled members similar to the agitators 26, the agitators 42 being integrally formed with the screens 34 and 35; but, it will be understood that additional pieces can be attached to an existing screen if desired.",
+      "removal of ink and other contaminants from fibers used in paper making and the like.\n\nThe present invention provides a method wherein a fluid suspension of fibers is cleaned by application of a washing fluid. More specifically, a slurry of fibers in fluid suspension is confined, at least one of the walls of the confinement being a screen. Fluidizing means assure that the fibers remain in a fluid state as a washing liquid is passed over the fibers to remove the undesirable contaminants. By proper selection of screens and adjustment of the pressure differential across the fluidized fiber, the undesirable contaminants can be removed without undue loss of fibers.",
+      "CROSS-REFERENCE TO RELATED APPLICATION \n     This application is a continuation-in-part of the co-pending application of the same inventor, titled &#34;Method and Apparatus for Cleaning Fibers&#34;, filed May 15, 1989, under Ser. No. 351,384, issued on Dec. 11, 1990, as U.S. Pat. No. 4,976,822.",
+      "removal of more or less of the contaminants and more or less of the fibers.\n\nThrough the use of extremely high pressure, which is to say a large pressure differential across a screen, some small fibers might be forced through the screen. With a smaller pressure differential, relatively solid particles such as ink or clay might pass through the screen whereas a fiber will not pass through the screen. The present invention therefore provides additional controls, and excellent cleaning of the fibers with minimal loss of the fibers.",
+      "provides additional controls, and excellent cleaning of the fibers with minimal loss of the fibers.\n\nIt will of course be understood by those skilled in the art that the particular embodiments of the invention here presented are by way of illustration only, and are meant to be in no way restrictive; therefore, numerous changes and modifications may be made, and the full use of equivalents resorted to, without departing from the spirit or scope of the invention as outlined in the appended claims.",
+      "38 are adjacent to each other, a wall 39 separates them for proper flow control.\n\nConsidering the description of the prior embodiment, it should be understood that a slurry or the like containing the fibers to be cleaned will be admitted through the inlet 36 so the fibers are contained in the passageway 40, between the two screens 34 and 35. A pump such as the pump 37 will cause the slurry to move around the passageway 40 and to be discharged at the discharge 38. However, while the slurry is moving around the passageway 40, wash water will be admitted through the inlet 31 to fill the channel 41. Appropriate pump pressure from the pump 33 will cause the wash water to move from the channel 41, through the screens 34 and 35 and to the center channel of the device to be discharged through the opening 32. As before, those skilled in the art will understand that the inlet and exit 36 and 38 are reversible, as are the inlet and exit 31 and 32. The flow can be periodically reversed or can be run in either direction as desired. Also, the inlet 31 may be located on an end of the apparatus, opposite the exit 32. The inlet and outlet 36 and 38 may also be located on the ends of the device, communicating with the passageway 40 between the screens 34 and 35.",
+      "connection with FIGS. 1 and 2, but the configuration of the apparatus is somewhat different.\n\nIn FIG. 3, there is a cylindrical container 30 having impermeable walls, and an inlet 31. At one end of the cylindrical container 30 there is an outlet designated at 32. Mounted within the container 30, and concentric therewith, there are two screens designated at 34 and 35. The screen 34 is stationarily mounted, and is provided with an inlet 36 and an outlet 38. While the inlet and outlet 36 and 38 are adjacent to each other, a wall 39 separates them for proper flow control."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 0,
+      "merged": 2,
+      "loner": 0,
+      "redundant": 1,
+      "dead": 25
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 28
+    },
+    "consensusRate": 1
+  },
+  {
+    "sourceId": "source_patent:4",
+    "collection": "source_patent",
+    "batchToken": "batch-1-mmo80naa",
+    "totalChunks": 33,
+    "survivingChunks": 2,
+    "survivalRate": 0.06060606060606061,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 2,
+      "spore": 2
+    },
+    "survivingTexts": [
+      "Rate (RPM/ms) Light 1/160, 1/190 (alternate rotation) Medium Light 1/150 Medium Heavy 1/180 Heavy 1/200\n\n[0031]     As tabulated in the table 1, the microprocessor determines the acceleration rate which corresponds to the load weight. A plurality of the acceleration rates is predetermined for a plurality of the load weight ranges. Each load weight range is assigned to a certain acceleration rate. Exceptionally, for the light load, the microprocessor alternately increases the rotational speed of the tub  3  to a predetermined speed by selecting the two determined optimal acceleration rates one by one in order to minimize the unbalanced distribution of the wet clothes within the tub  3 . The acceleration rate noticeably varies as the load weight changes in order to optimize efficiency of the load balancing cycle. To be more specific, the acceleration rate is inversely proportional to the load weight. The acceleration rate helps to quickly lower the unbalanced distribution level. Then, it will proceed to the main spinning cycle if the unbalanced distribution level is less than the reference value. As a note, the unit of the acceleration rate is RPM/ms, meaning that the speed of the motor increases by 1 revolution per minute (RPM) in 1 millisecond.",
+      "[0001]     This application claims the benefit of Korean Applications No. P2003-51511 filed on Jul. 25, 2003, P2003-51512 filed on Jul. 25, 2003, and P2003-72247 filed on Oct. 16, 2003, which are hereby incorporated by reference.",
+      "load weight, the load balancing cycle which balances the load, and the main spinning cycle.\n\n[0039]     It will be apparent to those skilled in the art that various modifications and variations can be made in the present invention without departing from the spirit or scope of the inventions. Thus, it is intended that the present invention covers the modifications and variations of this invention provided they come within the scope of the appended claims and their equivalents.",
+      "numbers will be used throughout the drawings to refer to the same or like parts.\n\n[0026]      FIG. 1  illustrates a prospective side view of a washing machine in accordance with the present invention. According to  FIG. 1 , the washing machine includes a cabinet  5 , a tub  3 , and a drum  9 . The drum  9  includes a drum axle  13 , which transmits a driving force of a DC motor  6  to the drum  9 . For smooth operation of the motor  6 , the drum axle  13  is equipped with bearings  12  at its both ends, which are placed in a bearing housing (not illustrated). The motor  6  itself contains a stator  7  and a rotor  8  which is directly connected to the drum  9  and rotates it. The washing machine also includes a hanging spring  4  which functions as a support between an inner top of the cabinet  5  and an outer top of the tub  3 . In order to reduce vibration of the tub  3 , the washing machine includes a friction damper  10  provided between an inner bottom of the cabinet  5  and the outer bottom of the tub  3 . In addition, the washing machine includes a motor sensor  11  which measures a number of the rotor  8  rotation, which represents the speed of the motor  6 ."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 2,
+      "merged": 0,
+      "loner": 0,
+      "redundant": 0,
+      "dead": 31
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 33
+    },
+    "consensusRate": 1
+  },
+  {
+    "sourceId": "source_patent:6",
+    "collection": "source_patent",
+    "batchToken": "batch-1-mmo80naa",
+    "totalChunks": 48,
+    "survivingChunks": 0,
+    "survivalRate": 0,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 1,
+      "spore": 7
+    },
+    "survivingTexts": [
+      "break at a torque that is lower than a torque that will break the valve.\n\nFigure seven shows another approach in which the motor drive transfers torque to valve  707  (hidden) through gears  704  and  706 . Motor mount  708  is mounted to the water pipes using mounts  703  and  705 .",
+      "manually controlled valve into an automatic valve would provide a valuable solution to many applications.\n\nReal property damage occurs when water supply pipes and other components break. A break can be caused by a variety reasons including freezing. Hoses that supply washing machines, dishwashers, and other appliances are particularly susceptible to breakage. The appliances can also break causing water to leak or gush. Water heaters wear out over time and are prone to leak or break suddenly.",
+      ". Motor controller 306 controls motor 304 based upon one or more of the following:\n\nuser programming\n\ncurrent demanded by motor  304\n\nthe volt time product or current time product required to drive motor  304  to turn on or off the controlled valve\n\nany other means to turn on and off the controlled valve\n\nFigure four shows the assembly described above mounted to a standard washer type valve  405 . In this embodiment, the length of the drive couplers  401  and  402  compensate for the up and down movement of the valve stem  403  and valve handle  404 .",
+      "such a watering a lawn. In a third embodiment, the method comprises the steps of:\n\n1. Sensing through a human interface or electronic interface that the appliance is on and requires water,",
+      "to a ball valve. FIG. 8 also shows a detail of the drive connecting system.\n\nFIG. 9 shows the invention mounted to a ball valve using a cylindrical coupling approach.\n\nFIG. 10 shows the invention mounted to a ball valve using a gear drive approach.\n\nFIG. 11 shows the invention mounted to a valve using a worm gear drive approach.\n\nFIG. 12 is a block diagram of the motor controller including user interfaces.",
+      "(This application claims the benefit of U.S. Provisional Application No. 60/159,583 filed on Oct. 18, 1999.)",
+      "turn the valve on or off The position of position sensor 1213 User interface 1210\n\nFigure thirteen shows one potential application of the invention. In this embodiment, the motor controlled valve  1301  (hidden) is the main shut off to a building. Motor control  1306  includes an occupancy sensor  1307 . Motor control  1306  turns valve  1301  on when building occupancy is sensed and off when building occupancy is not sensed. A delay can be added so that valve  1301  (hidden) is turned off after a pre-selected period after no occupancy is sensed in the building. Alternatively, a delay can be added that keeps the valve on for a pre-selected time after occupancy is sensed in the building. The motor drive can also contain circuitry that turns the valve on for short periods of time at specific intervals. This feature is useful under certain circumstances where equipment in the residence such as boilers, ice-cube makers, humidifiers, etc must be refurbished with water. The motor drive circuit can also include an override function to turn on the valve as required to operate other types of appliances such as lawn sprinklers. The valve would shut of concurrently with the equipment to minimize any damage done if a break had occurred in the water distribution system. The motor controller can also respond to a moisture detector  1308 , or other sensing mechanism  1309 . The motor controller can be set to turn on the valve using wires  1304  during periods when water is needed such as when a sprinkler system or outdoor spigot is turned on.",
+      "water is needed such as when a sprinkler system or outdoor spigot is turned on.\n\nFigure fourteen illustrates a second application of the invention. In this embodiment, the motor controlled valve  1401  (hidden) is used to turn on and off water supply to an outdoor water spigot. Motor control  1406  turns valve  1401  on based upon a user interface. The user interface can be as simple as a switch  1402  or a more complicated timer  1403  or water supply measuring device  1404 ."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 0,
+      "merged": 0,
+      "loner": 0,
+      "redundant": 0,
+      "dead": 48
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 48
+    },
+    "consensusRate": 1
+  },
+  {
+    "sourceId": "source_patent:3",
+    "collection": "source_patent",
+    "batchToken": "batch-3-mmo80naa",
+    "totalChunks": 35,
+    "survivingChunks": 3,
+    "survivalRate": 0.08571428571428572,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 3,
+      "spore": 1
+    },
+    "survivingTexts": [
+      "and carrying the weft thread through the warp shed with a suitable weft carrying force.\n\nThe weft carrying force may be regulated by varying the interval of time in which the air 15 under pressure is ejected. For example, the on-off command unit 26 generates the on-off command signals D, E for a longer interval of time when the thicker weft thread 3a is to be inserted, and generates the on-off command signals D, E for a shorter interval of time when the thinner weft thread 3b is to be inserted. The on-off valves 22, 24 are therefore open for different intervals of time dependent on the kind of weft thread to be inserted, for thereby exerting an appropriate weft carrying force to the selected weft thread.",
+      "the subnozzles, but it may alternatively be ejected sequentially from the successive groups of subnozzles.\n\nAlthough certain preferred embodiments have been shown and described, it should be understood that many changes and modifications may be made therein without departing from the scope of the appended claims.",
+      "D2 alternately issued by an on-off command unit 26 in synchronism with weft thread selection.\n\nAlthough the air jet loom employing two different weft threads has been described in each embodiment, the present invention is applicable to air jet looms using more than two different weft threads. The subnozzles and the piping system connected thereto in the 1st through 3rd embodiments may replace the subnozzles and the piping system connected thereto in the 4th and 6th embodiments. Furthermore, the main nozzle and the piping system coupled thereto with the control system therefor in the 4th and 6th embodiments may be incorporated in a multiple-color air jet loom having no subnozzles. In the illustrated embodiments, pressurized air is ejected at the same time from the subnozzles, but it may alternatively be ejected sequentially from the successive groups of subnozzles.",
+      "FIELD OF THE INVENTION\n\nThe present invention relates to weft insertion in a multiple-color air jet loom, and more particularly to a method of and an apparatus for inserting a selected weft thread with a weft carrying force appropriate for the selected weft thread."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 1,
+      "merged": 2,
+      "loner": 0,
+      "redundant": 0,
+      "dead": 32
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 35
+    },
+    "consensusRate": 1
+  },
+  {
+    "sourceId": "source_patent:7",
+    "collection": "source_patent",
+    "batchToken": "batch-3-mmo80naa",
+    "totalChunks": 47,
+    "survivingChunks": 0,
+    "survivalRate": 0,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 2,
+      "spore": 0
+    },
+    "survivingTexts": [
+      "per hour for each machine averagely when the multi-fibre yarn is 12 s in fineness.\n\n[0057]    While this invention has been described as having several preferred embodiments, the present invention can be further modified within the spirit and scope of this disclosure. This application is therefore intended to cover any variations, uses, or adaptations of the invention using its general principles. Further, this application is intended to cover such departures from this present disclosure as come within known or customary practice in the art to which this invention pertains and which fall within the limits of the appended claims.",
+      "TECHNICAL FIELD\n\n[0001]    The present invention relates to a bast fibre yarn obtained through spinning bast fibres, and a process of making thereof, in particular, relates to a bast fibre yarn obtained through twice health-preserving bast fibres and blended spinning bast fibres and other fibres, together with a process of making thereof."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 0,
+      "merged": 0,
+      "loner": 0,
+      "redundant": 0,
+      "dead": 47
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 47
+    },
+    "consensusRate": 1
+  }
+]
