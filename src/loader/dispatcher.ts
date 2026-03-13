@@ -392,13 +392,16 @@ export class Dispatcher {
       const sid = globalIdxToSourceId.get(globalIdx);
       if (!sid) continue;
 
+      // Threshold gate: unstable chunks (below minVotes) → dead
+      const effectiveCls = passedThreshold.has(globalIdx) ? cls : "dead" as ChunkClassification;
+
       // Breakdown
       let bd = sourceBreakdowns.get(sid);
       if (!bd) {
         bd = { pure: 0, merged: 0, loner: 0, redundant: 0, dead: 0 };
         sourceBreakdowns.set(sid, bd);
       }
-      bd[cls]++;
+      bd[effectiveCls]++;
 
       // Passing rate per source (chunk met threshold?)
       let sc = sourceConsensus.get(sid);

@@ -25,7 +25,7 @@
 //   CASCADE_MIN_DELAY     — Min ticks before considering next inject (default: 5)
 //   ABSORPTION_RATIO      — Interaction spike absorption threshold (default: 0.4)
 //   FILTER_HARDNESS       — "soft" | "mid" | "hard" (default: mid)
-//   CONSENSUS_RUNS        — Number of runs for majority-vote consensus (default: 1 = off)
+//   CONSENSUS_RUNS        — Number of runs for majority-vote consensus (default: 10)
 //   CONSENSUS_THRESHOLD   — Min vote ratio to consider a chunk's classification stable (default: 0.4)
 
 import { DEFAULT_CONFIG } from "../types.js";
@@ -52,7 +52,7 @@ const sourceCollectionNames = (process.env.SOURCE_COLLECTIONS ?? "source")
 
 const slotCapacity = parseInt(process.env.SLOT_CAPACITY ?? "100", 10);
 const cleanWorlds = (process.env.CLEAN_WORLDS ?? "").toLowerCase() === "true";
-const consensusRuns = Math.max(1, parseInt(process.env.CONSENSUS_RUNS ?? "1", 10));
+const consensusRuns = Math.max(1, parseInt(process.env.CONSENSUS_RUNS ?? "10", 10));
 const consensusThreshold = parseFloat(process.env.CONSENSUS_THRESHOLD ?? "0.4");
 
 const myceliumConfig: MyceliumConfig = {
