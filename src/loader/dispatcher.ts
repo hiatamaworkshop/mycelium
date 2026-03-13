@@ -17,7 +17,7 @@ import type { MyceliumConfig } from "../types.js";
 import type { SlotAssignment } from "./slot-allocator.js";
 import type { WorldDefinition } from "./world-config.js";
 import { FeedInstance } from "./feed-instance.js";
-import type { SurvivorReport, ChunkClassification, ClassificationBreakdown, SourceClassification } from "./feed-instance.js";
+import type { SurvivorReport, ChunkClassification, ClassificationBreakdown } from "./feed-instance.js";
 import { runTick, getAndClearDeathLog, resetTickState } from "../core/tick.js";
 import type { TickResult } from "../core/tick.js";
 import { ensureCollection } from "../qdrant.js";
@@ -298,7 +298,7 @@ export class Dispatcher {
     world: WorldDefinition,
     slots: SlotAssignment[],
     runs: number,
-  ): Promise<{ reports: SurvivorReport[]; consensusRate: number }> {
+  ): Promise<SurvivorReport[]> {
     // Collect per-chunk votes across N runs.
     // Key = global sourcePoint index (slot offset + local index).
     const allVotes: Map<number, ChunkClassification[]> = new Map();
@@ -360,17 +360,10 @@ export class Dispatcher {
 
     // ---- Majority vote per chunk ----
     const consensusVotes: Map<number, ChunkClassification> = new Map();
-    let totalChunks = 0;
-    let unanimousCount = 0;
 
     for (const [idx, votes] of allVotes) {
-      const winner = majorityVote(votes);
-      consensusVotes.set(idx, winner);
-      totalChunks++;
-      if (votes.every(v => v === winner)) unanimousCount++;
+      consensusVotes.set(idx, majorityVote(votes));
     }
-
-    const consensusRate = totalChunks > 0 ? unanimousCount / totalChunks : 1;
 
     // ---- Rebuild SurvivorReports from consensus votes ----
     // Map global sourcePoint index → qualifiedSourceId using slot data
@@ -384,39 +377,61 @@ export class Dispatcher {
       }
     }
 
-    // Build per-sourceId consensus breakdown
+    // Build per-sourceId consensus breakdown + per-source consensus rate
     const sourceBreakdowns: Map<string, ClassificationBreakdown> = new Map();
+    // Track per-source unanimous counts: sourceId → { total, unanimous }
+    const sourceConsensus: Map<string, { total: number; unanimous: number }> = new Map();
+
     for (const [globalIdx, cls] of consensusVotes) {
       const sid = globalIdxToSourceId.get(globalIdx);
       if (!sid) continue;
+
+      // Breakdown
       let bd = sourceBreakdowns.get(sid);
       if (!bd) {
         bd = { pure: 0, merged: 0, loner: 0, redundant: 0, dead: 0 };
         sourceBreakdowns.set(sid, bd);
       }
       bd[cls]++;
+
+      // Consensus rate per source
+      let sc = sourceConsensus.get(sid);
+      if (!sc) {
+        sc = { total: 0, unanimous: 0 };
+        sourceConsensus.set(sid, sc);
+      }
+      sc.total++;
+      const votes = allVotes.get(globalIdx)!;
+      if (votes.every(v => v === cls)) sc.unanimous++;
     }
 
-    // Patch template reports with consensus breakdowns
+    // Patch template reports with consensus breakdowns + per-source consensus rate
     const consensusReports: SurvivorReport[] = templateReports.map(r => {
       const bd = sourceBreakdowns.get(r.sourceId) ?? r.classificationBreakdown;
       const survivorCount = bd.pure + bd.merged;
+      const sc = sourceConsensus.get(r.sourceId);
+      const rate = sc && sc.total > 0 ? sc.unanimous / sc.total : 1;
       return {
         ...r,
         classificationBreakdown: bd,
         survivingChunks: survivorCount,
         survivalRate: r.totalChunks > 0 ? survivorCount / r.totalChunks : 0,
-        classification: deriveDominant(bd, survivorCount),
+        consensusRate: rate,
       };
     });
 
     console.error(
-      `[consensus] ${runs} runs complete — ` +
-      `${totalChunks} chunks, consensus rate: ${(consensusRate * 100).toFixed(1)}% ` +
-      `(${unanimousCount}/${totalChunks} unanimous)`,
+      `[consensus] ${runs} runs complete — ${consensusReports.length} sources`,
     );
+    for (const r of consensusReports) {
+      const sc = sourceConsensus.get(r.sourceId);
+      console.error(
+        `  ${r.sourceId}: consensus ${((r.consensusRate ?? 0) * 100).toFixed(0)}% ` +
+        `(${sc?.unanimous ?? 0}/${sc?.total ?? 0} unanimous)`,
+      );
+    }
 
-    return { reports: consensusReports, consensusRate };
+    return consensusReports;
   }
 }
 
@@ -442,16 +457,3 @@ function majorityVote(votes: ChunkClassification[]): ChunkClassification {
   return best;
 }
 
-function deriveDominant(
-  bd: ClassificationBreakdown,
-  survivorCount: number,
-): SourceClassification {
-  if (survivorCount === 0) {
-    if (bd.loner > 0 && bd.loner >= bd.redundant) return "loner";
-    if (bd.redundant > 0) return "redundant";
-    return "dead";
-  }
-  if (bd.pure > 0 && bd.pure >= bd.merged) return "pure";
-  if (bd.merged > 0) return "merged";
-  return "partial";
-}

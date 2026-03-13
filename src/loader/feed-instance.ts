@@ -34,9 +34,6 @@ export type ChunkClassification = "pure" | "loner" | "redundant" | "merged" | "d
 /** Per-chunk classification distribution for a sourceId */
 export type ClassificationBreakdown = Record<ChunkClassification, number>;
 
-/** Dominant classification derived from breakdown */
-export type SourceClassification = "pure" | "loner" | "redundant" | "merged" | "dead" | "partial";
-
 // ---- Survivor report (per sourceId) ----
 
 export interface SurvivorReport {
@@ -60,10 +57,10 @@ export interface SurvivorReport {
   survivingTexts: string[];
   /** Whether all parts were accounted for (survived + died = total) */
   partsComplete: boolean;
-  /** Dominant pushback classification (derived from breakdown) */
-  classification: SourceClassification;
   /** Per-chunk 3-axis classification distribution */
   classificationBreakdown: ClassificationBreakdown;
+  /** Per-source consensus rate (unanimous chunks / total chunks). Only set in consensus mode. */
+  consensusRate?: number;
   /** Doc-level metadata from sidecar (dataset, abstract, etc.) */
   sourceMetadata?: Record<string, unknown>;
 }
@@ -313,8 +310,8 @@ export class FeedInstance {
       // Parts complete check
       const partsComplete = survivingCount <= entry.totalChunks;
 
-      // ---- Classification: per-chunk breakdown + dominant label ----
-      const { breakdown, dominant } = this.classifyChunks(
+      // ---- Classification: per-chunk breakdown ----
+      const breakdown = this.classifyChunks(
         qualifiedSid, survivors, pureNodeIds, mergerNodeIds,
         redundantNodeIds, lonerNodeIds,
       );
@@ -329,7 +326,6 @@ export class FeedInstance {
         species: speciesCounts,
         survivingTexts,
         partsComplete,
-        classification: dominant,
         classificationBreakdown: breakdown,
         sourceMetadata: entry.metadata,
       });
@@ -367,7 +363,7 @@ export class FeedInstance {
     mergerNodeIds: Set<string>,
     redundantNodeIds: Set<string>,
     lonerNodeIds: Set<string>,
-  ): { breakdown: ClassificationBreakdown; dominant: SourceClassification } {
+  ): ClassificationBreakdown {
     const breakdown: ClassificationBreakdown = {
       pure: 0, merged: 0, loner: 0, redundant: 0, dead: 0,
     };
@@ -393,34 +389,17 @@ export class FeedInstance {
       }
     }
 
-    // Derive dominant classification from breakdown
-    const dominant = this.deriveDominant(breakdown, survivors.length);
-
-    return { breakdown, dominant };
-  }
-
-  private deriveDominant(
-    bd: ClassificationBreakdown,
-    survivorCount: number,
-  ): SourceClassification {
-    if (survivorCount === 0) {
-      // All dead — dominant death cause
-      if (bd.loner > 0 && bd.loner >= bd.redundant) return "loner";
-      if (bd.redundant > 0) return "redundant";
-      return "dead";
-    }
-    // Some survived — dominant survival type
-    if (bd.pure > 0 && bd.pure >= bd.merged) return "pure";
-    if (bd.merged > 0) return "merged";
-    return "partial";
+    return breakdown;
   }
 
   private summarizeClassifications(reports: SurvivorReport[]): string {
-    const counts: Record<string, number> = {};
+    const totals: Record<string, number> = {};
     for (const r of reports) {
-      counts[r.classification] = (counts[r.classification] ?? 0) + 1;
+      for (const [cls, n] of Object.entries(r.classificationBreakdown)) {
+        if (n > 0) totals[cls] = (totals[cls] ?? 0) + n;
+      }
     }
-    return Object.entries(counts)
+    return Object.entries(totals)
       .map(([k, v]) => `${k}=${v}`)
       .join(" ");
   }

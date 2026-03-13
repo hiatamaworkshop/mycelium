@@ -143,9 +143,8 @@ async function main(): Promise<void> {
         collection: myceliumConfig.collection,
         sourceCollections: sourceConfigs,
       };
-      const result = await dispatcher.runWorldConsensus(syntheticWorld, slots, consensusRuns);
-      console.error(`[loader] consensus rate: ${(result.consensusRate * 100).toFixed(1)}%`);
-      allReports.push(...result.reports);
+      const reports = await dispatcher.runWorldConsensus(syntheticWorld, slots, consensusRuns);
+      allReports.push(...reports);
     } else {
       const reports = await dispatcher.run(slots);
       allReports.push(...reports);
@@ -185,11 +184,7 @@ async function main(): Promise<void> {
 
       let reports: SurvivorReport[];
       if (consensusRuns > 1) {
-        const result = await dispatcher.runWorldConsensus(world, slots, consensusRuns);
-        reports = result.reports;
-        console.error(
-          `[loader:${world.name}] consensus rate: ${(result.consensusRate * 100).toFixed(1)}%`,
-        );
+        reports = await dispatcher.runWorldConsensus(world, slots, consensusRuns);
       } else {
         reports = await dispatcher.runWorld(world, slots);
       }
@@ -261,9 +256,12 @@ function printReports(reports: SurvivorReport[]): void {
           .filter(([, n]) => n > 0)
           .map(([k, v]) => `${k}:${v}`)
           .join(" ");
+        const consensusSuffix = r.consensusRate != null
+          ? ` consensus:${(r.consensusRate * 100).toFixed(0)}%`
+          : "";
         console.error(
           `      ${r.sourceId}: ${r.survivingChunks}/${r.totalChunks} survived ` +
-          `(${(r.survivalRate * 100).toFixed(1)}%) [${bdParts}]`,
+          `(${(r.survivalRate * 100).toFixed(1)}%) [${bdParts}]${consensusSuffix}`,
         );
       }
 
