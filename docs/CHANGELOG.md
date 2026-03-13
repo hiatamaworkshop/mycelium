@@ -1,5 +1,8 @@
 # Mycelium — Changelog
 
+loner 判定は　初期メトリクスがない汎用ローダーでは不正確だった、自然と長く生き延びるから
+汎用ローダー利用時は60% ticks 時で判定する調整をした
+
 ## 2026-03-12: Colony Store — per-tick Qdrant I/O 全廃
 
 ### 概要

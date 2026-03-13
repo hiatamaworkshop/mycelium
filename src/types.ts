@@ -291,6 +291,7 @@ export interface MetabolismSchema {
 
   pushback: {
     earlyPct: number;
+    lonerPct?: number;
     minCosine: number;
     posResThreshold: number;
     redundantCosine: number;

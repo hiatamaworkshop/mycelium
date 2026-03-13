@@ -107,18 +107,21 @@ export function extractRedundantIds(
 }
 
 /**
- * Find IDs of loner nodes: early death + near-zero positive resonance.
+ * Find IDs of loner nodes: death before lonerPct + near-zero positive resonance.
  * These are semantically isolated nodes — no meaningful social interactions.
+ * Uses lonerPct (default 0.6) instead of earlyPct (0.4) because resonance
+ * metrics need time to accumulate — nodes dying at tick 25-36 with posRes≈0
+ * are genuine loners that lacked initial metric support.
  */
 export function extractLonerIds(
   deathLog: Map<string, DeathRecord>,
   totalTicks: number,
-  earlyPct: number = PB.earlyPct,
+  lonerPct: number = PB.lonerPct ?? PB.earlyPct,
   posResThreshold: number = PB.posResThreshold,
   redundantCosine: number = PB.redundantCosine,
 ): string[] {
   const loners = new Set<string>();
-  const tickCutoff = Math.floor(totalTicks * earlyPct);
+  const tickCutoff = Math.floor(totalTicks * lonerPct);
 
   for (const [nodeId, death] of deathLog.entries()) {
     if (death.cause === "spawn") continue;
