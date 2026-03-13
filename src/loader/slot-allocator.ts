@@ -9,8 +9,14 @@
 // Qualified sourceId format: "{collection}:{rawSourceId}"
 // This prevents ID collisions across collections.
 
+import { readFileSync, existsSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import type { SourcePoint } from "./source-scroll.js";
 import { scrollSourcePoints } from "./source-scroll.js";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const META_DIR = join(__dirname, "..", "..", "data", "meta");
 
 // ---- Types ----
 
@@ -28,6 +34,8 @@ export interface ChunkRegistryEntry {
   collection: string;
   /** Raw (unqualified) sourceId */
   rawSourceId: string;
+  /** Doc-level metadata from sidecar (dataset, abstract, etc.) */
+  metadata?: Record<string, unknown>;
 }
 
 /** Chunk registry: qualifiedSourceId → metadata */
@@ -42,6 +50,25 @@ export interface SlotAssignment {
   points: SourcePoint[];
   /** Chunk registry: qualifiedSourceId → expected count */
   chunkRegistry: ChunkRegistry;
+}
+
+// ---- Metadata sidecar loading ----
+
+/** Load doc-level metadata from data/meta/{collection}.json if it exists. */
+function loadMetaSidecar(collection: string): Map<string, Record<string, unknown>> {
+  const metaPath = join(META_DIR, `${collection}.json`);
+  const map = new Map<string, Record<string, unknown>>();
+  if (!existsSync(metaPath)) return map;
+  try {
+    const raw = JSON.parse(readFileSync(metaPath, "utf-8")) as Record<string, Record<string, unknown>>;
+    for (const [sid, meta] of Object.entries(raw)) {
+      map.set(sid, meta);
+    }
+    console.error(`[slot-allocator] loaded metadata sidecar: ${metaPath} (${map.size} docs)`);
+  } catch (e) {
+    console.error(`[slot-allocator] failed to load metadata sidecar: ${metaPath}`, e);
+  }
+  return map;
 }
 
 // ---- Qualify sourceId ----
@@ -61,12 +88,19 @@ export async function loadSourceCollections(
     console.error(`[slot-allocator] scrolling ${cfg.collection} from ${cfg.qdrantUrl} ...`);
     const points = await scrollSourcePoints(cfg.qdrantUrl, cfg.collection);
 
+    // Load metadata sidecar for this collection
+    const metaSidecar = loadMetaSidecar(cfg.collection);
+
     // Qualify sourceIds to avoid cross-collection collisions
     for (const p of points) {
       const raw = p.payload.sourceId ?? String(p.id);
       p.payload.sourceId = qualifySourceId(cfg.collection, raw);
       // Tag with origin collection for traceability
-      (p.payload as Record<string, unknown>)._originCollection = cfg.collection;
+      const ext = p.payload as Record<string, unknown>;
+      ext._originCollection = cfg.collection;
+      // Attach doc-level metadata from sidecar (if available)
+      const meta = metaSidecar.get(raw);
+      if (meta) ext._sourceMeta = meta;
     }
 
     console.error(`  → ${points.length} points from ${cfg.collection}`);
@@ -107,13 +141,16 @@ export function allocateSlots(
 
     currentPoints.push(...group);
 
-    // Register chunk count for this sourceId
-    const origin = (group[0].payload as Record<string, unknown>)._originCollection as string ?? "unknown";
+    // Register chunk count + metadata for this sourceId
+    const ext = group[0].payload as Record<string, unknown>;
+    const origin = ext._originCollection as string ?? "unknown";
     const raw = qualifiedSid.includes(":") ? qualifiedSid.split(":").slice(1).join(":") : qualifiedSid;
+    const sourceMeta = ext._sourceMeta as Record<string, unknown> | undefined;
     currentRegistry.set(qualifiedSid, {
       totalChunks: group.length,
       collection: origin,
       rawSourceId: raw,
+      metadata: sourceMeta,
     });
   }
 

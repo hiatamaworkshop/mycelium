@@ -17,7 +17,7 @@ import type { MyceliumConfig } from "../types.js";
 import type { SlotAssignment } from "./slot-allocator.js";
 import type { WorldDefinition } from "./world-config.js";
 import { FeedInstance } from "./feed-instance.js";
-import type { SurvivorReport } from "./feed-instance.js";
+import type { SurvivorReport, ChunkClassification, ClassificationBreakdown, SourceClassification } from "./feed-instance.js";
 import { runTick, getAndClearDeathLog, resetTickState } from "../core/tick.js";
 import type { TickResult } from "../core/tick.js";
 import { ensureCollection } from "../qdrant.js";
@@ -291,8 +291,167 @@ export class Dispatcher {
   private hasWork(): boolean {
     return this.instances.some(i => i.status !== "done" && i.status !== "lost");
   }
+
+  // ---- Consensus mode: N-run majority vote ----
+
+  async runWorldConsensus(
+    world: WorldDefinition,
+    slots: SlotAssignment[],
+    runs: number,
+  ): Promise<{ reports: SurvivorReport[]; consensusRate: number }> {
+    // Collect per-chunk votes across N runs.
+    // Key = global sourcePoint index (slot offset + local index).
+    const allVotes: Map<number, ChunkClassification[]> = new Map();
+
+    // We need slot metadata from the first run to rebuild reports.
+    let templateReports: SurvivorReport[] = [];
+
+    // Track slot offsets: each slot's sourcePoints get a global index range.
+    const slotOffsets: number[] = [];
+    let offset = 0;
+    for (const slot of slots) {
+      slotOffsets.push(offset);
+      offset += slot.points.length;
+    }
+
+    for (let run = 0; run < runs; run++) {
+      console.error(`\n[consensus] run ${run + 1}/${runs} for world "${world.name}"`);
+
+      // Full state reset
+      store.clear();
+      resetTickState();
+      clearSnapshots();
+      resetDefaultDigestor();
+
+      const worldConfig: MyceliumConfig = {
+        ...this.config,
+        collection: world.collection,
+      };
+
+      await ensureCollection(
+        worldConfig.qdrantUrl,
+        worldConfig.collection,
+        worldConfig.embeddingDimension,
+      );
+      loadSpeciesMemory(worldConfig);
+
+      this.instances = [];
+      this.globalTick = 0;
+      this.allReports = [];
+      this.lastTickResult = null;
+
+      const reports = await this._runInternal(worldConfig, slots);
+
+      // Collect per-chunk votes from each instance
+      for (let si = 0; si < this.instances.length; si++) {
+        const instance = this.instances[si];
+        const baseOffset = slotOffsets[si];
+        for (const [localIdx, cls] of instance.chunkVotes) {
+          const globalIdx = baseOffset + localIdx;
+          const votes = allVotes.get(globalIdx) ?? [];
+          votes.push(cls);
+          allVotes.set(globalIdx, votes);
+        }
+      }
+
+      // Keep the last run's reports as template (for sourceId, collection, etc.)
+      templateReports = reports;
+    }
+
+    // ---- Majority vote per chunk ----
+    const consensusVotes: Map<number, ChunkClassification> = new Map();
+    let totalChunks = 0;
+    let unanimousCount = 0;
+
+    for (const [idx, votes] of allVotes) {
+      const winner = majorityVote(votes);
+      consensusVotes.set(idx, winner);
+      totalChunks++;
+      if (votes.every(v => v === winner)) unanimousCount++;
+    }
+
+    const consensusRate = totalChunks > 0 ? unanimousCount / totalChunks : 1;
+
+    // ---- Rebuild SurvivorReports from consensus votes ----
+    // Map global sourcePoint index → qualifiedSourceId using slot data
+    const globalIdxToSourceId: Map<number, string> = new Map();
+    for (let si = 0; si < slots.length; si++) {
+      const baseOffset = slotOffsets[si];
+      for (let pi = 0; pi < slots[si].points.length; pi++) {
+        const sp = slots[si].points[pi];
+        const qualifiedSid = sp.payload.sourceId ?? String(sp.id);
+        globalIdxToSourceId.set(baseOffset + pi, qualifiedSid);
+      }
+    }
+
+    // Build per-sourceId consensus breakdown
+    const sourceBreakdowns: Map<string, ClassificationBreakdown> = new Map();
+    for (const [globalIdx, cls] of consensusVotes) {
+      const sid = globalIdxToSourceId.get(globalIdx);
+      if (!sid) continue;
+      let bd = sourceBreakdowns.get(sid);
+      if (!bd) {
+        bd = { pure: 0, merged: 0, loner: 0, redundant: 0, dead: 0 };
+        sourceBreakdowns.set(sid, bd);
+      }
+      bd[cls]++;
+    }
+
+    // Patch template reports with consensus breakdowns
+    const consensusReports: SurvivorReport[] = templateReports.map(r => {
+      const bd = sourceBreakdowns.get(r.sourceId) ?? r.classificationBreakdown;
+      const survivorCount = bd.pure + bd.merged;
+      return {
+        ...r,
+        classificationBreakdown: bd,
+        survivingChunks: survivorCount,
+        survivalRate: r.totalChunks > 0 ? survivorCount / r.totalChunks : 0,
+        classification: deriveDominant(bd, survivorCount),
+      };
+    });
+
+    console.error(
+      `[consensus] ${runs} runs complete — ` +
+      `${totalChunks} chunks, consensus rate: ${(consensusRate * 100).toFixed(1)}% ` +
+      `(${unanimousCount}/${totalChunks} unanimous)`,
+    );
+
+    return { reports: consensusReports, consensusRate };
+  }
 }
 
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// ---- Consensus helpers ----
+
+function majorityVote(votes: ChunkClassification[]): ChunkClassification {
+  const counts: Record<string, number> = {};
+  for (const v of votes) {
+    counts[v] = (counts[v] ?? 0) + 1;
+  }
+  let best: ChunkClassification = votes[0];
+  let bestCount = 0;
+  for (const [cls, n] of Object.entries(counts)) {
+    if (n > bestCount) {
+      bestCount = n;
+      best = cls as ChunkClassification;
+    }
+  }
+  return best;
+}
+
+function deriveDominant(
+  bd: ClassificationBreakdown,
+  survivorCount: number,
+): SourceClassification {
+  if (survivorCount === 0) {
+    if (bd.loner > 0 && bd.loner >= bd.redundant) return "loner";
+    if (bd.redundant > 0) return "redundant";
+    return "dead";
+  }
+  if (bd.pure > 0 && bd.pure >= bd.merged) return "pure";
+  if (bd.merged > 0) return "merged";
+  return "partial";
 }

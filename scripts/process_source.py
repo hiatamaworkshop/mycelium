@@ -28,6 +28,8 @@ from pathlib import Path
 
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, PointStruct, VectorParams
+
+META_DIR = Path(__file__).resolve().parent.parent / "data" / "meta"
 from sentence_transformers import SentenceTransformer
 
 
@@ -35,11 +37,14 @@ from sentence_transformers import SentenceTransformer
 # Raw data loading
 # ===========================================================================
 
-def load_raw(path: Path) -> tuple[list[str], list, dict]:
-    """Load JSONL saved by prepare_source.py --save-raw. Returns (texts, ids, meta)."""
+def load_raw(path: Path) -> tuple[list[str], list, dict, list[dict]]:
+    """Load JSONL saved by prepare_source.py. Returns (texts, ids, meta, doc_extras).
+    doc_extras: per-doc extra fields (everything except id and text).
+    """
     texts: list[str] = []
     ids: list = []
     meta: dict = {}
+    doc_extras: list[dict] = []
     with open(path, "r", encoding="utf-8") as f:
         for line in f:
             obj = json.loads(line)
@@ -48,10 +53,17 @@ def load_raw(path: Path) -> tuple[list[str], list, dict]:
             else:
                 texts.append(obj["text"])
                 ids.append(obj["id"])
+                extras = {k: v for k, v in obj.items() if k not in ("id", "text")}
+                doc_extras.append(extras)
     print(f"  → Loaded {len(texts)} docs from {path}")
     if meta:
         print(f"  → Meta: {meta}")
-    return texts, ids, meta
+    if doc_extras and any(doc_extras):
+        sample_keys = set()
+        for d in doc_extras:
+            sample_keys.update(d.keys())
+        print(f"  → Extra fields per doc: {sorted(sample_keys)}")
+    return texts, ids, meta, doc_extras
 
 
 # ===========================================================================
@@ -313,8 +325,9 @@ def assign_tags(text: str, max_tags: int = 3) -> list[str]:
 # Pipeline: chunk → embed → tag → Qdrant
 # ===========================================================================
 
-def process(raw_texts: list[str], raw_ids: list, args):
-    """Full processing pipeline: chunk → embed → tag → Qdrant upload."""
+def process(raw_texts: list[str], raw_ids: list, args,
+            dataset_meta: dict | None = None, doc_extras: list[dict] | None = None):
+    """Full processing pipeline: chunk → embed → tag → Qdrant upload + metadata sidecar."""
     # ---- Chunk ----
     texts: list[str] = []
     source_ids: list[str] = []
@@ -409,6 +422,35 @@ def process(raw_texts: list[str], raw_ids: list, args):
         client.upsert(collection_name=args.collection, points=batch)
     print(f"  → Upserted {len(points)} points")
 
+    # ---- Write metadata sidecar (sourceId → doc-level metadata) ----
+    # Compute per-doc chunk counts from the per-chunk list
+    doc_chunk_counts: dict[str, int] = {}
+    for sid in source_ids:
+        doc_chunk_counts[sid] = doc_chunk_counts.get(sid, 0) + 1
+
+    META_DIR.mkdir(parents=True, exist_ok=True)
+    meta_index: dict = {}
+    for i, raw_id in enumerate(raw_ids):
+        sid = str(raw_id)
+        entry: dict = {}
+        if dataset_meta:
+            entry["dataset"] = dataset_meta.get("dataset", "")
+            entry["config"] = dataset_meta.get("config", "")
+        entry["chunkTotal"] = doc_chunk_counts.get(sid, 1)
+        if doc_extras and i < len(doc_extras):
+            for k, v in doc_extras[i].items():
+                # Truncate long values (e.g. abstract) to keep sidecar compact
+                if isinstance(v, str) and len(v) > 500:
+                    entry[k] = v[:500] + "..."
+                else:
+                    entry[k] = v
+        meta_index[sid] = entry
+
+    meta_path = META_DIR / f"{args.collection}.json"
+    with open(meta_path, "w", encoding="utf-8") as f:
+        json.dump(meta_index, f, ensure_ascii=False, indent=2)
+    print(f"  → Metadata sidecar: {meta_path} ({len(meta_index)} sourceIds)")
+
     print("\nDone. Source Qdrant is ready for mycelium loader.")
 
 
@@ -439,14 +481,14 @@ def main():
         print(f"ERROR: file not found: {path}")
         return
 
-    raw_texts, raw_ids, meta = load_raw(path)
+    raw_texts, raw_ids, meta, doc_extras = load_raw(path)
 
     # Apply preprocessing only if explicitly requested via CLI
     if args.doc_separator:
         print(f"  Applying doc_separator: {args.doc_separator!r}")
         raw_texts, raw_ids = split_on_separator(raw_texts, raw_ids, args.doc_separator)
 
-    process(raw_texts, raw_ids, args)
+    process(raw_texts, raw_ids, args, dataset_meta=meta, doc_extras=doc_extras)
 
 
 if __name__ == "__main__":

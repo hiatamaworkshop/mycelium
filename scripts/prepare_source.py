@@ -12,7 +12,8 @@ Usage:
     --config "pubmed" --split "train[:20]" --text-field "article"
 
   python scripts/prepare_source.py --dataset "NortheasternUniversity/big_patent" \\
-    --config "d" --split "train[:10]" --text-field "description"
+    --config "d" --split "train[:10]" --text-field "description" \\
+    --meta-fields "abstract"
 
   python scripts/prepare_source.py --dataset "alexfabbri/multi_news" \\
     --split "train[:100]" --text-field "document"
@@ -36,14 +37,21 @@ def _derive_filename(dataset: str, split: str, limit: int, config: str) -> str:
     return f"{name}__{split_clean}{config_suffix}" + (f"__L{limit}" if limit > 0 else "")
 
 
-def save_raw(texts: list[str], ids: list, meta: dict, filename: str) -> Path:
-    """Save raw texts + metadata as JSONL to data/raw/."""
+def save_raw(texts: list[str], ids: list, meta: dict, filename: str,
+             extra_fields: dict[str, list] | None = None) -> Path:
+    """Save raw texts + metadata as JSONL to data/raw/.
+    extra_fields: column_name → list of values (one per doc), saved per-doc as metadata.
+    """
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     path = RAW_DIR / f"{filename}.jsonl"
     with open(path, "w", encoding="utf-8") as f:
         f.write(json.dumps({"__meta__": True, **meta}, ensure_ascii=False) + "\n")
-        for text, doc_id in zip(texts, ids):
-            f.write(json.dumps({"id": doc_id, "text": text}, ensure_ascii=False) + "\n")
+        for i, (text, doc_id) in enumerate(zip(texts, ids)):
+            row: dict = {"id": doc_id, "text": text}
+            if extra_fields:
+                for col, vals in extra_fields.items():
+                    row[col] = vals[i]
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
     print(f"  → Saved {len(texts)} docs to {path} ({path.stat().st_size / 1024:.0f} KB)")
     return path
 
@@ -56,6 +64,7 @@ def main():
     parser.add_argument("--config", default="", help="Dataset config/subset name (e.g. 'd' for big_patent)")
     parser.add_argument("--text-field", default="text", help="Text column name in dataset")
     parser.add_argument("--id-field", default="", help="ID column name (empty=auto-generate)")
+    parser.add_argument("--meta-fields", default="", help="Comma-separated extra columns to save per doc (e.g. 'abstract,title')")
     args = parser.parse_args()
 
     config_label = f" (config={args.config})" if args.config else ""
@@ -69,6 +78,16 @@ def main():
     has_id = args.id_field and args.id_field in ds.column_names
     raw_ids = ds[args.id_field] if has_id else list(range(len(ds)))
 
+    # Collect extra metadata fields
+    meta_field_names = [f.strip() for f in args.meta_fields.split(",") if f.strip()] if args.meta_fields else []
+    extra_fields: dict[str, list] = {}
+    for col in meta_field_names:
+        if col in ds.column_names:
+            extra_fields[col] = list(ds[col])
+            print(f"  → meta-field '{col}': {len(ds)} values captured")
+        else:
+            print(f"  ⚠ meta-field '{col}' not found in dataset columns: {ds.column_names}")
+
     filename = _derive_filename(args.dataset, args.split, args.limit, args.config)
     meta = {
         "dataset": args.dataset,
@@ -77,9 +96,10 @@ def main():
         "limit": args.limit,
         "text_field": args.text_field,
         "id_field": args.id_field,
+        "meta_fields": meta_field_names,
         "doc_count": len(raw_texts),
     }
-    save_raw(raw_texts, raw_ids, meta, filename)
+    save_raw(raw_texts, raw_ids, meta, filename, extra_fields if extra_fields else None)
 
     print(f"\nDone. To process:\n  python scripts/process_source.py data/raw/{filename}.jsonl "
           f"--chunk-size 100 --collection <name>")

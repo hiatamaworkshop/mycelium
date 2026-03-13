@@ -25,6 +25,7 @@
 //   CASCADE_MIN_DELAY     — Min ticks before considering next inject (default: 5)
 //   ABSORPTION_RATIO      — Interaction spike absorption threshold (default: 0.4)
 //   FILTER_HARDNESS       — "soft" | "mid" | "hard" (default: mid)
+//   CONSENSUS_RUNS        — Number of runs for majority-vote consensus (default: 1 = off)
 
 import { DEFAULT_CONFIG } from "../types.js";
 import type { MyceliumConfig } from "../types.js";
@@ -50,6 +51,7 @@ const sourceCollectionNames = (process.env.SOURCE_COLLECTIONS ?? "source")
 
 const slotCapacity = parseInt(process.env.SLOT_CAPACITY ?? "100", 10);
 const cleanWorlds = (process.env.CLEAN_WORLDS ?? "").toLowerCase() === "true";
+const consensusRuns = Math.max(1, parseInt(process.env.CONSENSUS_RUNS ?? "1", 10));
 
 const myceliumConfig: MyceliumConfig = {
   ...DEFAULT_CONFIG,
@@ -105,6 +107,7 @@ async function main(): Promise<void> {
   console.error(`  ticks:         ${dispatchConfig.targetTicks}`);
   console.error(`  interval:      ${dispatchConfig.tickIntervalMs}ms`);
   console.error(`  cascade:       adaptive (min=${dispatchConfig.cascadeMinDelay}, max=${dispatchConfig.cascadeDelayTicks}, ratio=${dispatchConfig.absorptionRatio})`);
+  if (consensusRuns > 1) console.error(`  consensus:     ${consensusRuns} runs (majority vote)`);
   if (cleanWorlds) console.error(`  clean:         enabled (world collections will be recreated)`);
   for (const w of worlds) {
     console.error(`  world "${w.name}": ${w.collection} ← [${w.sourceCollections.map(s => s.collection).join(", ")}]`);
@@ -134,8 +137,19 @@ async function main(): Promise<void> {
     console.error(`[loader] ${slots.length} slot(s) allocated (inject order: ${slots.map(s => s.points.length).join(" → ")})\n`);
 
     const dispatcher = new Dispatcher(myceliumConfig, dispatchConfig);
-    const reports = await dispatcher.run(slots);
-    allReports.push(...reports);
+    if (consensusRuns > 1) {
+      const syntheticWorld = {
+        name: "shared",
+        collection: myceliumConfig.collection,
+        sourceCollections: sourceConfigs,
+      };
+      const result = await dispatcher.runWorldConsensus(syntheticWorld, slots, consensusRuns);
+      console.error(`[loader] consensus rate: ${(result.consensusRate * 100).toFixed(1)}%`);
+      allReports.push(...result.reports);
+    } else {
+      const reports = await dispatcher.run(slots);
+      allReports.push(...reports);
+    }
   } else {
     // World-isolated mode: each world runs independently
     for (let wi = 0; wi < worlds.length; wi++) {
@@ -166,9 +180,19 @@ async function main(): Promise<void> {
         `(inject order: ${slots.map(s => s.points.length).join(" → ")})`,
       );
 
-      // Run world in isolation
+      // Run world in isolation (with optional consensus)
       const dispatcher = new Dispatcher(myceliumConfig, dispatchConfig);
-      const reports = await dispatcher.runWorld(world, slots);
+
+      let reports: SurvivorReport[];
+      if (consensusRuns > 1) {
+        const result = await dispatcher.runWorldConsensus(world, slots, consensusRuns);
+        reports = result.reports;
+        console.error(
+          `[loader:${world.name}] consensus rate: ${(result.consensusRate * 100).toFixed(1)}%`,
+        );
+      } else {
+        reports = await dispatcher.runWorld(world, slots);
+      }
 
       // Stamp world name on reports
       for (const r of reports) {

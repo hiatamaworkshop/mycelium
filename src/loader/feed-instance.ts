@@ -64,6 +64,8 @@ export interface SurvivorReport {
   classification: SourceClassification;
   /** Per-chunk 3-axis classification distribution */
   classificationBreakdown: ClassificationBreakdown;
+  /** Doc-level metadata from sidecar (dataset, abstract, etc.) */
+  sourceMetadata?: Record<string, unknown>;
 }
 
 // ---- Instance status ----
@@ -90,6 +92,13 @@ export class FeedInstance {
 
   // nodeId → qualifiedSourceId mapping (for per-source harvest)
   private nodeSourceMap: Map<string, string> = new Map();
+
+  // nodeId → sourcePoints index (stable across runs for consensus voting)
+  private sourcePointIdxMap: Map<string, number> = new Map();
+
+  // Per-chunk classification votes (sourcePoints index → classification)
+  // Populated during harvest() for consensus aggregation
+  private _chunkVotes: Map<number, ChunkClassification> = new Map();
 
   // Death log: accumulated from global tick deaths, filtered to this instance's nodes
   private deathLog: Map<string, DeathRecord> = new Map();
@@ -124,6 +133,12 @@ export class FeedInstance {
     return this.sourcePoints.length;
   }
 
+  /** Per-chunk classification votes (sourcePoints index → classification).
+   *  Available after harvest(). Used by consensus aggregation. */
+  get chunkVotes(): ReadonlyMap<number, ChunkClassification> {
+    return this._chunkVotes;
+  }
+
   // ---- Inject source points into Mycelium Qdrant ----
 
   async inject(config: MyceliumConfig, currentTick: number): Promise<number> {
@@ -132,7 +147,8 @@ export class FeedInstance {
 
     const myceliumPoints: Array<{ id: string; vector: number[]; payload: ReturnType<typeof nodeToPayload> }> = [];
 
-    for (const sp of this.sourcePoints) {
+    for (let spIdx = 0; spIdx < this.sourcePoints.length; spIdx++) {
+      const sp = this.sourcePoints[spIdx];
       const tags = sp.payload.tags ?? [];
       const trigger = "manual";
       // Species resolution: forceSpore treats all external data as unverified hypothesis
@@ -164,6 +180,7 @@ export class FeedInstance {
 
       this.injectedNodeIds.add(node.id);
       this.nodeSourceMap.set(node.id, qualifiedSid);
+      this.sourcePointIdxMap.set(node.id, spIdx);
     }
 
     // Add to colony store (in-memory) + persist to Qdrant
@@ -246,6 +263,23 @@ export class FeedInstance {
     const redundantNodeIds = new Set(extractRedundantIds(this.deathLog, this.targetTicks));
     const lonerNodeIds = new Set(extractLonerIds(this.deathLog, this.targetTicks));
 
+    // ---- Build per-chunk votes (for consensus aggregation) ----
+    const survivorIdSet = new Set(myNodes.map(p => p.id));
+    this._chunkVotes.clear();
+    for (const [nodeId, spIdx] of this.sourcePointIdxMap) {
+      let cls: ChunkClassification;
+      if (survivorIdSet.has(nodeId)) {
+        cls = pureNodeIds.has(nodeId) ? "pure"
+          : mergerNodeIds.has(nodeId) ? "merged"
+          : "merged";
+      } else {
+        cls = lonerNodeIds.has(nodeId) ? "loner"
+          : redundantNodeIds.has(nodeId) ? "redundant"
+          : "dead";
+      }
+      this._chunkVotes.set(spIdx, cls);
+    }
+
     // ---- Group surviving nodes by qualifiedSourceId ----
     const survivorsBySource = new Map<string, typeof myNodes>();
     for (const p of myNodes) {
@@ -297,6 +331,7 @@ export class FeedInstance {
         partsComplete,
         classification: dominant,
         classificationBreakdown: breakdown,
+        sourceMetadata: entry.metadata,
       });
     }
 
