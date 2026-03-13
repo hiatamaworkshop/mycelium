@@ -3,6 +3,29 @@
 loner 判定は　初期メトリクスがない汎用ローダーでは不正確だった、自然と長く生き延びるから
 汎用ローダー利用時は60% ticks 時で判定する調整をした
 
+## 2026-03-13: Digest 3-tier + Keyword Context Extraction
+
+### 概要
+digest 出力を 4-tier → 3-tier（meta / pure / clusters）に統合。
+チャンク全文出力をキーワード文脈抽出（±40 chars 窓）に置き換え、トークン大幅削減。
+
+### 3-tier 統合
+- merged 配列を削除、clusters に text フィールドを追加して吸収
+- clusters = 吸収構造（size/depth1/deep）+ キーワード文脈テキスト
+- dead セクションも削除（meta.classification で十分）
+
+### キーワード文脈抽出 (extractContext)
+- `TAG_CONTEXT_PATTERNS`: process_source.py TAG_RULES をミラーした正規表現マップ
+- `hintTags`: ソース単位の survivorTags キーで検索スコープ絞り込み
+- パラメータ: CONTEXT_RADIUS=40, MAX_CONTEXT_WINDOWS=3, FALLBACK_LENGTH=80
+- 効果: 1ソース 509行 → 196行（62%削減、arxiv:17 測定）
+
+### 変更ファイル
+- `src/output/formatters.ts` — SourceDigest 3-tier化、extractContext()、TAG_CONTEXT_PATTERNS 追加
+- `docs/DIGEST_FORMAT.md` — 3-tier 構造、extractContext 仕様、設計判断を記録
+
+---
+
 ## 2026-03-13: Post-filter re-aggregation + Manifest mode
 
 ### 概要
