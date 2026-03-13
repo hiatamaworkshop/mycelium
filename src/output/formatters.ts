@@ -268,6 +268,15 @@ export interface SourceDigest {
     members?: string[];
     /** Species composition of absorbed members mapped to roles */
     composition?: Record<string, number>;
+    /** Cross-source links discovered in meta-world (Phase 4c) */
+    links?: Array<{
+      sourceId: string;
+      clusterSeq: number;
+      /** merged=同じ話, resonant=関連, loner=ユニーク */
+      relation: "merged" | "resonant" | "loner";
+    }>;
+    /** Meta-world cluster group ID — linked clusters share this ID */
+    metaClusterId?: string;
   }>;
 }
 
