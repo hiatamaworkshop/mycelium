@@ -5,7 +5,10 @@
 //
 // Reads pre-embedded data from Source Qdrant collections,
 // allocates into capacity-bounded slots, and runs through the
-// Mycelium tick engine with optional world isolation.
+// Mycelium tick engine via isolated parallel runners.
+//
+// Each slot (1 sourceId = 1 file) runs in its own IsolatedRunner
+// with no shared state. p-limit controls concurrency.
 //
 // Usage:
 //   npx tsx src/loader/main.ts
@@ -18,12 +21,10 @@
 //   WORLD_MAP             — Custom world grouping (custom mode only)
 //                           Format: "name1=col1,col2;name2=col3"
 //   CLEAN_WORLDS          — "true" to delete world collections before run
+//   PARALLEL_SLOTS        — Max concurrent slot runners (default: 3)
 //   TARGET_TICKS          — Ticks per instance (default: 60)
 //   TICK_INTERVAL_MS      — Milliseconds between ticks (default: 0)
 //   SLOT_CAPACITY         — Max nodes per slot (default: 100)
-//   CASCADE_MAX_DELAY     — Max ticks between cascade inject (default: 30)
-//   CASCADE_MIN_DELAY     — Min ticks before considering next inject (default: 5)
-//   ABSORPTION_RATIO      — Interaction spike absorption threshold (default: 0.4)
 //   FILTER_HARDNESS       — "soft" | "mid" | "hard" (default: mid)
 //   CONSENSUS_RUNS        — Number of runs for majority-vote consensus (default: 10)
 //   CONSENSUS_THRESHOLD   — Min vote ratio to consider a chunk's classification stable (default: 0.4)
@@ -36,11 +37,12 @@ import type { MyceliumConfig } from "../types.js";
 import { checkQdrantHealth, deleteCollection } from "../qdrant.js";
 import { loadSourceCollections, allocateSlots } from "./slot-allocator.js";
 import type { SourceCollectionConfig, SlotAssignment } from "./slot-allocator.js";
-import { Dispatcher, DEFAULT_DISPATCHER_CONFIG } from "./dispatcher.js";
+import { DEFAULT_DISPATCHER_CONFIG } from "./dispatcher.js";
 import type { DispatcherConfig } from "./dispatcher.js";
 import type { SurvivorReport } from "./feed-instance.js";
 import { parseIsolationMode, buildWorldDefinitions } from "./world-config.js";
 import { resolveHardness } from "./hardness.js";
+import { IsolatedRunner, pLimit } from "./isolated-runner.js";
 
 // ---- Config from environment ----
 
@@ -55,6 +57,7 @@ const sourceCollectionNames = (process.env.SOURCE_COLLECTIONS ?? "source")
 
 const slotCapacity = parseInt(process.env.SLOT_CAPACITY ?? "100", 10);
 const cleanWorlds = (process.env.CLEAN_WORLDS ?? "").toLowerCase() === "true";
+const parallelSlots = Math.max(1, parseInt(process.env.PARALLEL_SLOTS ?? "3", 10));
 const consensusRuns = Math.max(1, parseInt(process.env.CONSENSUS_RUNS ?? "10", 10));
 const consensusThreshold = parseFloat(process.env.CONSENSUS_THRESHOLD ?? "0.4");
 const consensusJitter = parseFloat(process.env.CONSENSUS_JITTER ?? "0.1");
@@ -108,11 +111,9 @@ async function main(): Promise<void> {
   console.error(`  qdrant:        ${qdrantUrl}`);
   console.error(`  sources:       ${sourceCollectionNames.join(", ")}`);
   console.error(`  isolation:     ${isolationMode} (${worlds.length} world(s))`);
-  console.error(`  slot capacity: ${slotCapacity} nodes/slot`);
+  console.error(`  parallel:      ${parallelSlots} slot(s)`);
   console.error(`  hardness:      ${hardnessLevel} (harvest at ${(hardnessPreset.harvestPct * 100).toFixed(0)}% of ticks)`);
   console.error(`  ticks:         ${dispatchConfig.targetTicks}`);
-  console.error(`  interval:      ${dispatchConfig.tickIntervalMs}ms`);
-  console.error(`  cascade:       adaptive (min=${dispatchConfig.cascadeMinDelay}, max=${dispatchConfig.cascadeDelayTicks}, ratio=${dispatchConfig.absorptionRatio})`);
   if (consensusRuns > 1) console.error(`  consensus:     ${consensusRuns} runs (threshold=${(consensusThreshold * 100).toFixed(0)}%, jitter=${(consensusJitter * 100).toFixed(0)}%)`);
   if (cleanWorlds) console.error(`  clean:         enabled (world collections will be recreated)`);
   for (const w of worlds) {
@@ -129,80 +130,98 @@ async function main(): Promise<void> {
 
   const allReports: SurvivorReport[] = [];
 
-  if (isolationMode === "shared") {
-    // Legacy shared mode: all sources → one world, use run()
-    const allSourcePoints = await loadSourceCollections(sourceConfigs);
-    if (allSourcePoints.length === 0) {
-      console.error("[loader] No source points found. Run prepare_source.py first.");
-      process.exit(1);
+  // Collect all slots across worlds with their world name
+  const slotQueue: Array<{ slot: SlotAssignment; worldName: string }> = [];
+
+  for (let wi = 0; wi < worlds.length; wi++) {
+    const world = worlds[wi];
+    if (worlds.length > 1) {
+      console.error(`\n--- World "${world.name}" ---`);
     }
-    console.error(`[loader] ${allSourcePoints.length} total source points loaded`);
 
-    const slots = allocateSlots(allSourcePoints, slotCapacity);
-    sandwichReorder(slots);
-    console.error(`[loader] ${slots.length} slot(s) allocated (inject order: ${slots.map(s => s.points.length).join(" → ")})\n`);
-
-    const dispatcher = new Dispatcher(myceliumConfig, dispatchConfig);
-    if (consensusRuns > 1) {
-      const syntheticWorld = {
-        name: "shared",
-        collection: myceliumConfig.collection,
-        sourceCollections: sourceConfigs,
-      };
-      const reports = await dispatcher.runWorldConsensus(syntheticWorld, slots, consensusRuns, consensusThreshold, consensusJitter);
-      allReports.push(...reports);
-    } else {
-      const reports = await dispatcher.run(slots);
-      allReports.push(...reports);
+    // Optional: clean world collection
+    if (cleanWorlds) {
+      const deleted = await deleteCollection(qdrantUrl, world.collection);
+      if (deleted) console.error(`[loader:${world.name}] cleaned collection ${world.collection}`);
     }
-  } else {
-    // World-isolated mode: each world runs independently
-    for (let wi = 0; wi < worlds.length; wi++) {
-      const world = worlds[wi];
-      console.error(`\n${"=".repeat(60)}`);
-      console.error(`=== World ${wi + 1}/${worlds.length}: "${world.name}" ===`);
-      console.error(`${"=".repeat(60)}`);
 
-      // Optional: clean world collection
-      if (cleanWorlds) {
-        const deleted = await deleteCollection(qdrantUrl, world.collection);
-        if (deleted) console.error(`[loader:${world.name}] cleaned collection ${world.collection}`);
-      }
+    // Load source points for this world
+    const worldSourcePoints = await loadSourceCollections(world.sourceCollections);
+    if (worldSourcePoints.length === 0) {
+      console.error(`[loader:${world.name}] no source points, skipping`);
+      continue;
+    }
+    console.error(`[loader:${world.name}] ${worldSourcePoints.length} source points loaded`);
 
-      // Load source points for this world
-      const worldSourcePoints = await loadSourceCollections(world.sourceCollections);
-      if (worldSourcePoints.length === 0) {
-        console.error(`[loader:${world.name}] no source points, skipping`);
-        continue;
-      }
-      console.error(`[loader:${world.name}] ${worldSourcePoints.length} source points loaded`);
+    // Allocate into slots (1 sourceId = 1 slot)
+    const slots = allocateSlots(worldSourcePoints, slotCapacity);
+    console.error(
+      `[loader:${world.name}] ${slots.length} slot(s): ` +
+      `${slots.map(s => `${s.slotId}(${s.points.length})`).join(", ")}`,
+    );
 
-      // Allocate into slots + reorder
-      const slots = allocateSlots(worldSourcePoints, slotCapacity);
-      sandwichReorder(slots);
-      console.error(
-        `[loader:${world.name}] ${slots.length} slot(s) allocated ` +
-        `(inject order: ${slots.map(s => s.points.length).join(" → ")})`,
-      );
+    for (const slot of slots) {
+      slotQueue.push({ slot, worldName: world.name });
+    }
+  }
 
-      // Run world in isolation (with optional consensus)
-      const dispatcher = new Dispatcher(myceliumConfig, dispatchConfig);
+  if (slotQueue.length === 0) {
+    console.error("[loader] No source points found. Run prepare_source.py first.");
+    process.exit(1);
+  }
+
+  // ---- Parallel execution via p-limit ----
+  const limit = pLimit(parallelSlots);
+  const startTime = Date.now();
+  let completed = 0;
+
+  console.error(
+    `\n[loader] starting ${slotQueue.length} slot(s) with concurrency=${parallelSlots}\n`,
+  );
+
+  const reportPromises = slotQueue.map(({ slot, worldName }) =>
+    limit(async () => {
+      const runner = new IsolatedRunner(myceliumConfig, dispatchConfig);
+      runner.loadSpeciesMemory();
+
+      const slotStart = Date.now();
+      const sid = [...slot.chunkRegistry.keys()][0] ?? slot.slotId;
+      console.error(`[runner:${slot.slotId}] start ${sid} (${slot.points.length} chunks, ${consensusRuns} runs)`);
 
       let reports: SurvivorReport[];
       if (consensusRuns > 1) {
-        reports = await dispatcher.runWorldConsensus(world, slots, consensusRuns, consensusThreshold, consensusJitter);
+        reports = runner.runConsensus(slot, consensusRuns, consensusThreshold, consensusJitter);
       } else {
-        reports = await dispatcher.runWorld(world, slots);
+        const { reports: r } = runner.runOnce(slot, consensusJitter);
+        reports = r;
       }
 
-      // Stamp world name on reports
+      // Stamp world name
       for (const r of reports) {
-        r.worldName = world.name;
+        r.worldName = worldName;
       }
 
-      allReports.push(...reports);
-    }
+      completed++;
+      const elapsed = ((Date.now() - slotStart) / 1000).toFixed(1);
+      const survival = reports.length > 0
+        ? `${reports[0].survivingChunks}/${reports[0].totalChunks}`
+        : "0/0";
+      console.error(
+        `[runner:${slot.slotId}] done ${sid} in ${elapsed}s — ` +
+        `survival ${survival} (${completed}/${slotQueue.length} complete)`,
+      );
+
+      return reports;
+    }),
+  );
+
+  const results = await Promise.all(reportPromises);
+  for (const reports of results) {
+    allReports.push(...reports);
   }
+
+  const totalElapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+  console.error(`\n[loader] all ${slotQueue.length} slots complete in ${totalElapsed}s`);
 
   // Output results
   printReports(allReports);

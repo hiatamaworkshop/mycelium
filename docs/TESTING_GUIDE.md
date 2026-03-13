@@ -255,6 +255,7 @@ curl -s -X POST http://localhost:6334/collections/source_patent/points/scroll \
 | `TARGET_TICKS` | `60` | 各 run の tick 数 |
 | `FILTER_HARDNESS` | `mid` | `soft`/`mid`/`hard` — harvest タイミングを制御 |
 | `CLEAN_WORLDS` | `false` | `true` で mycelium コレクションを毎回再作成 |
+| `PARALLEL_SLOTS` | `3` | 同時実行スロット数（p-limit 方式、空いたら次を投入） |
 | `TICK_INTERVAL_MS` | `0` | tick 間の待機（ms）— デフォルト 0（全速）。本番で Qdrant 負荷を抑えたい場合のみ設定 |
 | `ISOLATION` | `shared` | `shared`/`domain`/`custom` — world 分離モード |
 | `REPORT_DIR` | `data/reports` | レポート JSON の保存先 |
