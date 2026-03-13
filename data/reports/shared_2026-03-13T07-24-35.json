@@ -1,0 +1,399 @@
+[
+  {
+    "sourceId": "source_patent:8",
+    "collection": "source_patent",
+    "batchToken": "batch-0-mmokmy4a",
+    "totalChunks": 61,
+    "survivingChunks": 3,
+    "survivalRate": 0.04918032786885246,
+    "species": {
+      "summarizer": 3,
+      "sentinel": 1,
+      "herald": 4,
+      "anchor": 0,
+      "spore": 0
+    },
+    "survivingTexts": [
+      "along the nip region of the press. The present inventions satisfy these and other needs.\n\nSUMMARY OF THE INVENTION",
+      "collections in the alternate collection periods will provide comparable information and may save battery life.\n\n[0062]    One particular system for processing the signals is shown in  FIG. 11  and will be discussed in greater detail below. Wireless transmission can be carried out via radio waves, optical waves, or other known remote transmission methods. If a direct wired transmission is desired, slip ring assemblies and other well-known electrical coupling devices (not shown) could be utilized.",
+      "in pounds per linear inch while the x-axis designates the cross-directional position on the roll.\n\n[0010]    While a single line of sensors on the sensing roll may provide a fairly good representation of nip pressure cross-directional variability, these same sensors may not properly take into account the variability of pressure across the nip region caused by the high speed rotation of the sensing roll. The dynamics of a cylinder/roll rotating at a high angular speed (high RPMs) can cause slight changes to the pressure produced by the cylinder/roll that are not necessarily detectable when the cylinder/roll is at rest or rotating at a low speed. Such dynamic changes could be the result of centrifugal forces acting on the cylinder/roll, roll flexing, roll balance, eccentric shaft mounting or out-or round rolls and could possibly be influenced by environmental factors. The dynamic behavior of a typical high speed rotating cylinder/roll is often characterized by a development of an unbalance and bending stiffness variation. Such variations along the cylinder/roll are often referred to as rotational variability. Unbalance can be observed as a vibration component at certain rotating frequencies and also can cause unwanted bending of the flexible cylinder/roll as a function of the rotating speed. Since the lengths of the sensing rolls used in paper manufacturing can be quite long, unbalance in the rotating rolls can pose a serious problem to the paper manufacturer since a less than even nip pressure profile may be created and displayed by the control equipment. Any unwanted bending of the sensing roll can, of course, change the amount of pressure being exerted on the web as it travels through the nip roller. Again, since even nip pressure is highly desired during paper manufacturing, it would be highly beneficial to correctly display the nip pressure profile since any corrects to be made to the rotating roll based on an inaccurate nip pressure profile could certainly exacerbate the problem. A single sensor located at an individual cross-directional position on the sensing roll may not be able to compensate for the effect of rotational variability at that sensor&#39;s position and may provide less than accurate pressure readings. There are three primary measurements of variability. The true nip pressure profile has variability that can be term cross-directional variability as it is the variability of average pressure per cross-direction position across the nip. Each sensor in a single line of sensors may have some variability associated with it that may be calculated as the data is collected at high speed. This particular variability profile represents the variability of the high speed measurements at each position in the single line of sensors. This variability contains the variability of other equipment in the paper making process including the rotational variability of the roll nipped to the sensing roll. The third variability profile is the nip profile variability of multiple sensors at each cross-directional position of the roll. This variability represents the “rotational variability” of the sensing roll as it rotates through its plurality or sensing positions.",
+      "in conjunction with the drawings, illustrate by way of example the principles of the invention.\n\nBRIEF DESCRIPTION OF THE DRAWINGS\n\n[0023]      FIG. 1  is a perspective view showing a nip press which utilizes a particular embodiment of a sensing or covered roll made in accordance with the present invention.\n\n[0024]      FIG. 2  is an end, schematic view of the nip press of  FIG. 1  showing the formation of a web nipped between the nip rolls, the nip width of the nip press being designated by the letters “NW.”",
+      "180°) show a significant difference in shape, especially in profile position 14 - 20 .\n\n[0068]    While there have been described herein what are considered to be preferred and exemplary embodiments of the present invention, other modifications of the invention shall be apparent to those skilled in the art from the teachings herein and, it is therefore, desired to be secured in the appended claims all such modifications as fall within the true spirit and scope of the invention. Thus, any modification of the shape, configuration and composition of the elements comprising the invention is within the scope of the present invention. Accordingly, what is desired to be secured by Letters Patent of the United States is the invention as defined and differentiated in the following claims.",
+      "for 3 sensor arrays for array 1 (0°), array 2 (90°) and array 3 (180°).\n\nDETAILED DESCRIPTION OF THE PREFERRED EMBODIMENTS",
+      "above sensors are well known in the art and need not be discussed further herein.\n\n[0065]    The processor unit is typically a personal computer or similar data exchange device, such as the distributive control system of a paper mill that can process signals from the sensors into useful, easily understood information from a remote location. Suitable exemplary processing units are discussed in U.S. Pat. Nos. 5,562,027 and 6,568,285 to Moore, the disclosures of which are hereby incorporated herein in their entireties.",
+      "that is being applied to the moving web as it passes through the nip region.\n\n[0009]    Control instrumentation associated with the nip press can provide a good representation of the cross-directional nip pressure (commonly referred to as the “nip pressure profile” or just “nip profile”) and will allow the operator to correct the nip pressure distribution should it arise. The control instruments usually provide a real time graphical display of the nip pressure profile on a computer screen or monitor. The nip profile is a compilation of pressure data that is being received from the sensors located on the sensing roll. It usually graphically shows the pressure signal in terms of the cross-directional position on the sensing roll. The y-axis usually designates pressure in pounds per linear inch while the x-axis designates the cross-directional position on the roll."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 3,
+      "merged": 0,
+      "loner": 6,
+      "redundant": 30,
+      "dead": 22
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 61
+    },
+    "consensusRate": 0.9180327868852459,
+    "worldName": "shared"
+  },
+  {
+    "sourceId": "source_patent:0",
+    "collection": "source_patent",
+    "batchToken": "batch-1-mmokmy4a",
+    "totalChunks": 30,
+    "survivingChunks": 4,
+    "survivalRate": 0.13333333333333333,
+    "species": {
+      "summarizer": 3,
+      "sentinel": 1,
+      "herald": 3,
+      "anchor": 1,
+      "spore": 1
+    },
+    "survivingTexts": [
+      "bale, the number of passes still to be performed is reduced by one to ninety-nine.\n\nThe Table at the end of the Examples indicates for each fiber bale the individual total height before fiber removal, the fiber quantity to be removed and the individual total height after removal.\n\nEXAMPLE 2",
+      "of particularly hard (compressed) bales, the partial quantity is not removed within the predetermined period.\n\nBRIEF DESCRIPTION OF THE DRAWINGS \n     FIG. 1 is a schematic side elevational view of a preferred embodiment of the invention. \n     FIG. 2 is a schematic perspective view of the structure shown in FIG. 1. \n     FIG. 3 is a schematic front elevational view of another preferred embodiment of the invention. \n     FIG. 4 is a sectional side elevational view of a detail of the structure illustrated in FIG. 3. \n     FIG. 5 is a block diagram of a computer used in the apparatus according to the invention. \n     FIG. 6 is a circuit diagram of a component shown in FIG. 1.",
+      "which is connected with a pole-reversible drive motor 31 of the breaker aprons 4, 5.\n\nTurning now to the front elevational FIG. 3, in another preferred embodiment shown therein, the apparatus according to the invention has a fiber removing apparatus which opens the fiber bales from above and which has an electromechanical height-measuring device. The fiber bales (of which only bale 1a is visible in FIG. 3) are positioned on a platform 30 supported on the floor. Adjacent the platform 30 there are provided rails 16 on which a vertical stand 18 may travel by means of rollers 17, propelled by a motor 27. A horizontal support arm 19 is height-adjustably mounted on the stand 18 by means of a securing member 20. The support arm 19 carries a bale opener 21 adapted to engage each fiber bale on the top. A motor 22 drives, in a manner not shown, an opening roll 23 as well as delivery rolls 24 of the bale opener, as seen in more detail in FIG. 4. Parallel to the stand 18 there is arranged a vertical measuring device 25 which, in essence, is formed of a sliding potentiometer. The vertically displaceable securing member 20 is coupled by means of a contact member 26 with the measuring element 25, so that a displacement of the securing element 20 is a measure for the change of height of the bale opener 21 and thus is a measure of the height of the removed fiber quantities. The fiber removing operation performed by the bale opener 21 may be time-controlled and quantity-controlled. Consequently, after the lapse of a predetermined period or upon reaching a predetermined tuft quantity, the bale opener is lifted off the fiber bale which has just undergone opening and is moved to an adjacent fiber bale and is then lowered to resume the opening operation. In this manner a programmed fiber removal can be effected, that is, a predetermined quantity of fine fiber tufts can be obtained in a predetermined mixture ratio in a predetermined time period for further processing, for example, in a cleaner. The control described in connection with the embodiment shown in FIGS. 1 and 2 may find application in the arrangement of FIG. 3 as well. After removing the predetermined partial quantity, the support arrangement 18, 19 and 20 with the bale opener 21 is, as commanded by the control device 10, displaced to the adjacent fiber bale. At the foot of the stand 18, there is mounted a switch 28 which is oriented towards the fiber bales and which is connected with an input of the computer 9. The switch 28 engages electric switch contacts 29 (only one shown) associated with each fiber bale and mounted laterally on the platform 30. The reversal of the operation of the fiber removing apparatus 21 at the end of the fiber bale series can be effected by the actuation of a limit switch as described in connection with the embodiment shown in FIG. 1. As an alternative, it is feasible to initially set the number of the fiber bales at the control device 10, so that both the reversal of the fiber removing apparatus 21 and the reduction of the number of passes by one are performed automatically.",
+      "168.3 ##STR8## 166.6 3rd pass 166.6 ##STR9## 164.9 4th to 99th pass 100th pass zero__________________________________________________________________________\n\nIt is to be understood that the above description of the present invention is susceptible to various modifications, changes and adaptations, and the same are intended to be comprehended within the meaning and range of equivalents of the appended claims.",
+      "apparatus 21 and the reduction of the number of passes by one are performed automatically.\n\nTurning now to FIG. 5, there is illustrated the relationship between principal components of, for example, a commercially available microcomputer 9. The computer has inputs, for example, to receive signals from the switching element 13 and the height measuring device 6 as well as an output, for example, to apply signals to the control device 10. The microcomputer 9 conventionally includes a unit for the system program, a central unit (CPU) and data memories, all interconnected in a known manner.",
+      "the mixture can be obtained only in steps and therefore it cannot be optimally homogeneous.\n\nSUMMARY OF THE INVENTION\n\nIt is an object of the invention to provide an improved method of the above-outlined type from which the discussed disadvantages are eliminated, thus ensuring that the opening of all fiber bales is effected without fiber residuals and further, that an optimally homogeneous mixture is obtained.",
+      "the fiber quantity to be removed and the individual total height after removal. EXAMPLE 2\n\nThis example, which is discussed in conjunction with the apparatus illustrated in FIGS. 3 and 4, generally corresponds to Example 1; the partial quantity, however, is removed from each bale not later than at the end of a predetermined period. For the removal of a partial quantity from the fiber bale 1a, the control device 10 is set by the timer 11 for a removal period of 0.5 minutes in addition to the total height of 1.9 cm to be removed. The fiber removing apparatus 21 removes fiber from the first fiber bale 1a for a certain period, for example 0.25 min. Thereafter, the actual height is determined and, by means of the computer 9, there is performed a comparison between the desired quantity to be removed and the quantity actually removed. If after 1/2 of the predetermined period, that is, after 0.25 min., the first half of the partial quantity to be removed, that is, 0.95 cm has been reached, the second half is removed with the same speed as the first half. If, however, after the first half of the predetermined period, one half of the material to be removed has not yet been reached, that is, less than 0.95 cm was removed, the control device emits an electric signal to the drive motor 22 to accelerate its rotation so that the rolls 23 and 24 will effect a faster removal of fiber from the fiber bale 1a.",
+      "that the partial quantities are removed not later than the lapse of the predetermined period.\n\nThe invention further relates to an apparatus for performing the above-outlined method according to the invention. The apparatus includes a bale opener for removing fibers from the various stored fiber lots, as well as a quantity measuring device associated with the opener and a control device which controls the mode of operation of the opener as a function of the signals transmitted by the quantity measuring device.",
+      "31 whereas the output of the AND gate 33 is connected to the motor 12.\n\nA fixed program is fed into the control device 10 which, based on this program and upon the actual instructions from the computer 9, controls the motors 12 and 31.\n\nThe method according to the invention will be described in three examples which follow.\n\nEXAMPLE 1"
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 3,
+      "merged": 1,
+      "loner": 4,
+      "redundant": 6,
+      "dead": 16
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 30
+    },
+    "consensusRate": 0.9666666666666667,
+    "worldName": "shared"
+  },
+  {
+    "sourceId": "source_patent:1",
+    "collection": "source_patent",
+    "batchToken": "batch-2-mmokmy4a",
+    "totalChunks": 28,
+    "survivingChunks": 4,
+    "survivalRate": 0.14285714285714285,
+    "species": {
+      "summarizer": 1,
+      "sentinel": 0,
+      "herald": 5,
+      "anchor": 1,
+      "spore": 1
+    },
+    "survivingTexts": [
+      "1989, under Ser. No. 351,384, issued on Dec. 11, 1990, as U.S. Pat. No. 4,976,822.\n\nINFORMATION DISCLOSURE STATEMENT",
+      "made to rotate, preferably counter to the rotation of the screen 35, for better agitation.\n\nFIG. 4 is an enlarged section of the screens 34 and 35 and it will be seen that each of the screens includes a plurality of agitators 42. The agitators 42 are here shown as being angled members similar to the agitators 26, the agitators 42 being integrally formed with the screens 34 and 35; but, it will be understood that additional pieces can be attached to an existing screen if desired.",
+      "removal of more or less of the contaminants and more or less of the fibers.\n\nThrough the use of extremely high pressure, which is to say a large pressure differential across a screen, some small fibers might be forced through the screen. With a smaller pressure differential, relatively solid particles such as ink or clay might pass through the screen whereas a fiber will not pass through the screen. The present invention therefore provides additional controls, and excellent cleaning of the fibers with minimal loss of the fibers.",
+      "will of course retain ink and other contaminants to prevent complete cleaning of the fibers.\n\nSUMMARY OF THE INVENTION\n\nThis invention relates generally to the cleaning of fibrous material, and is more particularly concerned with the removal of ink and other contaminants from fibers used in paper making and the like.",
+      "a separated state, and also sufficient to prevent fibers from sticking to the screen 21.\n\nIt will be understood by those skilled in the art that used paper will generally be processed into a liquid, primarily by mechanical and chemical means, and some contaminants may be removed through prior processing. It is common to use sedimentation, centrifuging, and preliminary screening to remove some of the contaminants; and, flotation is commonly used for substantial cleaning of the fibers. Any of these conventional steps may be carried out initially, before the fiber is introduced to the apparatus shown in FIG. 1 of the drawings. As is stated above, the prior art techniques do not yield sufficiently clean fiber and something further is needed. The present invention can therefore be used as the final cleaning step, though of course some prior art steps may be omitted, and the apparatus and method of the present invention substituted therefor.",
+      "No. 351,384, issued on Dec. 11, 1990, as U.S. Pat. No. 4,976,822. INFORMATION DISCLOSURE STATEMENT\n\nIt is well known in the art to recycle paper fibers by mechanically and chemically processing the paper into a slurry, and treating the slurry to remove ink, clay and other unwanted additives and contaminants. Conventional techniques including mechanical and chemical treatment, centrifuging, flotation, screening and the like will remove the greatest part of the unwanted material from the fibers, but the prior art techniques tend to leave a certain amount of ink and other contaminants on the fibers. As a result, the contaminants are present when the fibers are reused to make paper.",
+      "As a result, the contaminants are present when the fibers are reused to make paper.\n\nOne technique utilized as a final step for removal of fine particles is to wash the fibers by allowing the fibers to collect on a screen, and flowing wash water over the fibers and through the screen. The concept is that the wash water will pick up the contaminants and carry the contaminants away from the fibers. The problem with the technique is that the fibers collect on the screen, and the mass of fibers tends to retain some of the contaminants so that the washing is not entirely effective. A similar technique is disclosed in the patent to Gartland U.S. Pat. No. 4,215,447. The Gartland device includes a screen on which the fibers tend to collect, and wash water is flowed through the fibers and through the screen. The Gartland improvement is in the provision of stirring means which removes clusters of fibers from the screen and causes the clusters to be entrained in a fluid stream moving from an inlet for the pulp to an outlet for the pulp. These clusters of fibers will of course retain ink and other contaminants to prevent complete cleaning of the fibers.",
+      "CROSS-REFERENCE TO RELATED APPLICATION \n     This application is a continuation-in-part of the co-pending application of the same inventor, titled &#34;Method and Apparatus for Cleaning Fibers&#34;, filed May 15, 1989, under Ser. No. 351,384, issued on Dec. 11, 1990, as U.S. Pat. No. 4,976,822."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 4,
+      "merged": 0,
+      "loner": 0,
+      "redundant": 6,
+      "dead": 18
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 28
+    },
+    "consensusRate": 0.8928571428571429,
+    "worldName": "shared"
+  },
+  {
+    "sourceId": "source_patent:5",
+    "collection": "source_patent",
+    "batchToken": "batch-3-mmokmy4a",
+    "totalChunks": 35,
+    "survivingChunks": 4,
+    "survivalRate": 0.11428571428571428,
+    "species": {
+      "summarizer": 5,
+      "sentinel": 0,
+      "herald": 2,
+      "anchor": 3,
+      "spore": 0
+    },
+    "survivingTexts": [
+      "velocities in the cross machine direction at the intake opening 60 which varied by ±0.5%.\n\nWith specific reference to  FIG. 5 , air enters through perforated cover  96  and passes through perforated filter members  102 ,  104  as illustrated by arrows  120 . The air passes through the gap between the inner box  98  and the outer housing  94  as illustrated by arrows  122 . The air then enters the interior of inner box  98  through slot  112  as illustrated by arrows  124 . Finally, the air exits the inner box  98  through exhaust opening  66  as illustrated by arrows  126  and then travels through exhaust conduit  72 . The openings  101  in spacing members  100  allow the air to move in the cross-machine direction to minimize transverse pressure gradients.",
+      "managing air flow during the manufacture of nonwoven webs and laminates. BACKGROUND OF THE INVENTION\n\nMeltblowing and spunbond processes are commonly employed to manufacture nonwoven webs and laminates. With meltblowing, a molten thermoplastic is extruded from a die tip to form a row of filaments or fibers. Converging sheets or jets of hot air impinge upon the fibers as they are extruded from the die tip to stretch or draw the fibers, thereby reducing the diameter of the fibers. The fibers are then deposited in a random manner onto a moving collector belt to form a nonwoven web.",
+      "be formed from one or more openings of various shapes, such round, elongate, rectangular, etc.\n\nThe shape of slot  112  influences the air flow velocity in the cross machine direction at the intake opening  60 . If the shape of the slot  112  is not properly contoured the air flow velocities at the intake opening  60  may vary greatly in the cross machine direction. The particular shape shown in  FIG. 6  was determined through an iterative process using a computational fluid dynamics (CFD) model which incorporated the geometry of the air handler  54 . A series of slot shapes were evaluated at intake air flow velocities ranging between 500 to 2500 feet per minute. After the CFD model analyzed a particular slot shape, the air flow velocity profile in the cross machine direction was checked. Ultimately, the goal was to choose a shape for the slot  112  which provided a substantially uniform air flow velocity in the cross machine direction at intake opening  60 . Initially, a rectangular slot  112  was evaluated, yielding air flow velocities in the cross machine direction at the intake opening  60  which varied by as much as twenty percent. With the rectangular slot  112 , the air flow velocities near the ends of the intake opening  60  were greater than the air flow velocities approaching the center of the intake opening  60 . To address this uneven air flow velocity profile, the width of ends  114 ,  116  was reduced relative to the width of the center portion  118 . After approximately five iterations, the shape of slot  118  is  FIG. 6  was chosen. That slot shape yields air flow velocities in the cross machine direction at the intake opening  60  which varied by ±0.5%.",
+      "may include a filter member having a perforated surface through which the incoming air flows.\n\nAir handlers  172 ,  174 ,  176  include inner boxes  192 ,  194 ,  196  and sidewalls  198 ,  200 ,  202 ,  204 . Spacing members  206 ,  208 ,  210  hold inner boxes  192 ,  194 ,  196  away from sidewalls  198 ,  200 ,  202 ,  204 . Inner boxes  192 ,  194 ,  196  include bottom panels  212 ,  214 ,  216  having slots  218 ,  220 ,  222 . The air flow path through air handlers  172 ,  174 ,  176  is similar to the air flow path in air handlers  52 ,  54 ,  56 . The air flow path through air handler  174  is represented by arrows  224 .",
+      "through the collector belt 34 is nonuniform, the resultant web will likely not be homogeneous.\n\nWith reference to  FIG. 2 , transport structure  50  of the two-station production line  10  of  FIG. 1  is shown. While the two-station production line  10  includes two air management systems  12 , the following description will focus on the air management system  12  associated with the upstream station  14 . Nevertheless, the description will be equally applicable to the air management system associated with downstream station  16 .",
+      "This application is a divisional of application Ser. No. 09/750,820, filed Dec. 28, 2000, now issued as U.S. Pat. No. 6,499,982, the disclosure of which is fully incorporated herein by reference.",
+      "not necessary, even over a wide range of process air flow rates. SUMMARY OF INVENTION\n\nThe present invention provides a melt spinning system and, more particularly, a melt spinning and air management system that overcomes the drawbacks and disadvantages of prior air management systems. The air management system of the invention includes at least one air handler for collecting air discharged from a melt spinning apparatus. In accordance with a general objective of the invention, the air handler produces a uniform air flow velocity in at least the cross-machine direction as the air enters the air handler. This is accomplished without the typical adjustable baffles and dampers required in the past. The air handler generally includes an outer housing having walls defining a first interior space. One of the walls has an intake opening for receiving the discharge air from the melt spinning apparatus. Another wall has an exhaust opening for discharging the air collected by the air handler. The intake opening is in fluid communication with the first interior space. An inner housing is positioned within the first interior space and has walls defining a second interior space. At least one of the walls of the inner housing has an opening. The first interior space communicates with the second interior space through the opening. The second interior space is in fluid communication with the exhaust opening.",
+      ". The air flow path through air handler 174 is represented by arrows 224 .\n\nWhile the present invention has been illustrated by a description of various preferred embodiments and while these embodiments have been described in considerable detail in order to describe the best mode of practicing the invention, it is not the intention of applicants to restrict or in any way limit the scope of the appended claims to such detail. Additional advantages and modifications within the spirit and scope of the invention will readily appear to those skilled in the art.",
+      "spunbond webs. However, the laminate may include any combination of meltblown webs and spunbond webs.\n\nThe two-station production line  10  in  FIG. 1  is shown forming a two-ply laminate  18  with a meltblown layer or web  20  on the bottom and a spunbond layer or web  22  on the top. The two-ply laminate  18  is consolidated downstream using compacting rolls, for example. The upstream station  14  includes a melt spinning assembly  24  with a meltblowing die  26  and the downstream station  16  includes a melt spinning assembly  28  with a spunbond die  30 .",
+      "air which spills over, i.e., not collected, from the air handler below the forming zone.\n\nVarious additional advantages and features of the invention will become more readily apparent to those of ordinary skill in the art upon review of the following detailed description taken in conjunction with the accompanying drawings."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 2,
+      "merged": 2,
+      "loner": 4,
+      "redundant": 5,
+      "dead": 22
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 35
+    },
+    "consensusRate": 0.9142857142857143,
+    "worldName": "shared"
+  },
+  {
+    "sourceId": "source_patent:3",
+    "collection": "source_patent",
+    "batchToken": "batch-4-mmokmy4a",
+    "totalChunks": 35,
+    "survivingChunks": 4,
+    "survivalRate": 0.11428571428571428,
+    "species": {
+      "summarizer": 1,
+      "sentinel": 1,
+      "herald": 1,
+      "anchor": 3,
+      "spore": 1
+    },
+    "survivingTexts": [
+      "the air 15 under pressure is effectively utilized without wastefull consumption. 2nd embodiment (FIG. 2):\n\nAccording to the embodiment shown in FIG. 2, different weft carrying forces are produced in warp sheds by providing subnozzles having different orifice diameters or supplying air under different pressures to the subnozzles. There are no common nozzles such as those shown at 12 in FIG. 1, and pairs of subnozzles 11, 13 are arrayed at equal intervals or pitches, the subnozzles 11 or 13 being spaced at equal intervals. The groups of subnozzles 11, 13 are capable of producing different weft carrying forces. More specifically, the subnozzles 11 have nozzle orifices of an effective cross-sectional area larger than that of the nozzle orifices of the subnozzles 13. Provided the air 15 is supplied under the same pressure to the subnozzles 11, 13, therefore, the subnozzles 11 can exert a greater weft carrying force than the subnozzles 13. The weft insertion apparatus also includes a pair of regulators 7a, 7b and a pair of subtanks 8a, 8b connected respectively thereto. The subtank 8a is connected through the on-off valves 9 to the subnozzles 11, while the subtank 8b is connected through the on-off valves 10 to the subnozzles 13. One of the regulators, 7a for example, has a greater pressure setting than that of the other regulator 7b. As a consequence, the subtanks 8a, 8b supply the air 15 under different pressures to the corresponding subnozzles 11, 13 for regulating the weft carrying forces produced by the subnozzles 11, 13.",
+      "FIELD OF THE INVENTION\n\nThe present invention relates to weft insertion in a multiple-color air jet loom, and more particularly to a method of and an apparatus for inserting a selected weft thread with a weft carrying force appropriate for the selected weft thread.",
+      "D2 alternately issued by an on-off command unit 26 in synchronism with weft thread selection.\n\nAlthough the air jet loom employing two different weft threads has been described in each embodiment, the present invention is applicable to air jet looms using more than two different weft threads. The subnozzles and the piping system connected thereto in the 1st through 3rd embodiments may replace the subnozzles and the piping system connected thereto in the 4th and 6th embodiments. Furthermore, the main nozzle and the piping system coupled thereto with the control system therefor in the 4th and 6th embodiments may be incorporated in a multiple-color air jet loom having no subnozzles. In the illustrated embodiments, pressurized air is ejected at the same time from the subnozzles, but it may alternatively be ejected sequentially from the successive groups of subnozzles.",
+      "respectively. The pressure in the subtank 8a is lower than that in the subtank 8b.\n\nWhile the main shaft of the loom makes one complete revolution, the cam 28 makes half of its full revolution so that the output signal from the sensor 27 will be varied each time the cam 28 rotates 180 degrees. Each time the cam 28 rotates 180 degrees or the loom main shaft makes one revolution, the switching command unit 25 varies the level of the weft selection signal C to shift the directional control valves 21, 23 for supplying air 15 under a different pressure to the on-off valves 22, 24. In response to the information from the sensor 27, the on-off program selector 30 reads a stored on-off program, that is, weft insertion timing program from the memory 31, to deliver a displacement angle with its timing corresponding to the selected weft thread to the on-off command unit 26. The on-off command unit 26 compares the weft insertion timing angle as read from the memory 31 with an actual displacement angle of the loom shaft as detected by the encoder 29. When the compared angles coincide with each other, the on-off command unit 26 issues the on-off command signals D, E to the on-off valves 22, 24, respectively. The on-off valves 22, 24 are then opened to allow the air 15 under pressure to pass therethrough to the main nozzle 6 and the subnozzles 12 in timed relation to weft inserting and carrying operations.",
+      "be inserted, for thereby exerting an appropriate weft carrying force to the selected weft thread.\n\nWith the embodiment shown in FIGS. 4 and 5, the nozzles are supplied with air having a pressure suitable for a weft thread to be inserted. Where a weft thread is to be inserted which requires no larger weft carrying force, no undue consumption of pressurized air is assured for reduced total air consumption under pressure. Furthermore, since the nozzles for inserting and carrying weft threads are supplied with pressurized air at suitable ejection timings for the selected weft threads, respectively, the occurrence of weft insertion failures becomes less frequent, resulting in stabilized weft insertion.",
+      "the subnozzles, but it may alternatively be ejected sequentially from the successive groups of subnozzles.\n\nAlthough certain preferred embodiments have been shown and described, it should be understood that many changes and modifications may be made therein without departing from the scope of the appended claims.",
+      "to being drawn for weft insertion and are slightly differently carried on jets of air.\n\nIn prior multiple-color air jet looms, however, air under uniform pressure is ejected from groups of main nozzles and subnozzles irrespectively of the kind of selected weft thread to be inserted. This means that the weft carrying force remains constant at all times for different weft threads, and that the speed at which the weft threads are taken through the warp sheds varies from one weft type to another. For alternately inserting thin and thick weft threads, for instance, the pressure of air jets is preselected and fixed to meet the thick weft thread which requires a greater weft carrying force. Therefore, a certain amount of air under pressure is wasted when inserting the thinner weft threads."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 3,
+      "merged": 1,
+      "loner": 4,
+      "redundant": 18,
+      "dead": 9
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 35
+    },
+    "consensusRate": 0.9714285714285714,
+    "worldName": "shared"
+  },
+  {
+    "sourceId": "source_patent:7",
+    "collection": "source_patent",
+    "batchToken": "batch-5-mmokmy4a",
+    "totalChunks": 47,
+    "survivingChunks": 0,
+    "survivalRate": 0,
+    "species": {
+      "summarizer": 1,
+      "sentinel": 0,
+      "herald": 0,
+      "anchor": 0,
+      "spore": 0
+    },
+    "survivingTexts": [
+      "and blended spinning bast fibres and other fibres, together with a process of making thereof.\n\nBACKGROUND OF THE INVENTION"
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 0,
+      "merged": 0,
+      "loner": 0,
+      "redundant": 39,
+      "dead": 8
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 47
+    },
+    "consensusRate": 1,
+    "worldName": "shared"
+  },
+  {
+    "sourceId": "source_patent:2",
+    "collection": "source_patent",
+    "batchToken": "batch-6-mmokmy4a",
+    "totalChunks": 55,
+    "survivingChunks": 7,
+    "survivalRate": 0.12727272727272726,
+    "species": {
+      "summarizer": 0,
+      "sentinel": 0,
+      "herald": 1,
+      "anchor": 3,
+      "spore": 1
+    },
+    "survivingTexts": [
+      "impregnation, by one of the referenced methods, i.e., stitching, loose weave knitting, or adhesive bonding.\n\nAmong patents showing the formation of similar types of fabric are Eaton, U.S. Pat. No. 3,607,565; Smith, U.S. Pat. No. 3,765,893; and Campman et al U.S. Pat. No. 4,325,999.",
+      "function of holding the fabric in place up until that time, are no longer required.\n\nWhile the invention has been illustrated and described in accordance with the particular embodiments, it will be apparent to those skilled in the art that variations are possible within the spirit and scope of the invention. Accordingly, the invention is not to be considered as limited except as set forth in the appended claims.",
+      "to provide for their reduced speed of motion near the ends of the travel paths.\n\nNo mention has yet been made in this specification of the loops which are obviously formed, either by the yarns wrapping around the various needles or by being impaled on them. As is apparent, these loops are at the extremities of the width of the fabric being formed. After stitching or other methods of bonding, so that the fabric is generally held together, the loops can be cut away by any known mechanism. Once the other bonding means have been put into place, the loops, which had served only the function of holding the fabric in place up until that time, are no longer required.",
+      "54 is placed in a direction parallel to the movement of the conveyors 30, 31.\n\nAs illustrated in my prior patent, U.S. Pat. No. 4,556,440, the yarn carriers are mounted in a slot so that they dip down below the level of the needles 42, and similar needles formed on the rake systems, to be described, in order to allow the yarns 55 being carried to be caught in the rake system at either end of the travel of the carriers 54. As also set forth in that patent, each of the carriers 54 may be mounted on a pneumatic cylinder attached to a source of air or other gas under pressure to allow movement of the carrier 54 rearwardly as the yarns are caught on the rake system.",
+      "This is a division of application Ser. No. 922,344, filed Oct. 23, 1986 now U.S. Pat. No. 4,877,470."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 4,
+      "merged": 3,
+      "loner": 8,
+      "redundant": 21,
+      "dead": 19
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 55
+    },
+    "consensusRate": 0.9818181818181818,
+    "worldName": "shared"
+  },
+  {
+    "sourceId": "source_patent:9",
+    "collection": "source_patent",
+    "batchToken": "batch-7-mmokmy4a",
+    "totalChunks": 36,
+    "survivingChunks": 7,
+    "survivalRate": 0.19444444444444445,
+    "species": {
+      "summarizer": 4,
+      "sentinel": 1,
+      "herald": 2,
+      "anchor": 2,
+      "spore": 3
+    },
+    "survivingTexts": [
+      "more vulnerable for withdrawal compared to locating draining structures in the top of the digester.\n\nAs indicated in  FIG. 2  is a displacement wash effect developed from the dilution/wash liquid nozzles and towards the drainage apertures in the upper inclined surface of the cone diverter  72  (indicated by broken arrows). This means that the added dilution/wash liquid DL will displace the liquid towards the apertures, and ideally should the displacement front end at the surface of the cone diverter such that the old liquid in the pulp is withdrawn and replaced with new fresh dilution/wash liquid DL. As indicated is also a part of the added liquid DL also flowing directly towards the outlet bucket  52  as well as towards the lowermost strainer section  63   a.",
+      "view of an embodiment with elongated slot-like drainage apertures as seen from the pulp side.\n\nDETAILED DESCRIPTION OF PREFERRED EMBODIMENTS\n\nFIG. 1  shows a typical design of a conventional continuous digester. The cellulose material CH IN  is fed to the top of the digester vessel with additional charge of cooking chemicals WL. Excess liquor LIQ RET  is withdrawn in a top separator via a first strainer section  60  and a pump  30 .",
+      "in a top separator via a first strainer section 60 and a pump 30 .\n\nIn a first cooking circulation comprising a strainer section  61 , pump  31 , heating device  40  and a central pipe  21   a  is the cellulose material heated to the necessary cooking temperature and cooking chemicals WL is added.",
+      "recovery REC, or alternatively sent to any black liquor impregnation vessel preceding the cooking vessel.\n\nBelow the strainer section  62  of the extraction circulation is a counter current hi-heat washing zone established, and the cellulose material is moving down in a plug flow trough the washing zone until it reaches a wash circulation which terminates the hi-heat washing zone. The wash circulation comprises a strainer section  63 , here with 1 screen row, pump  33 , and a central pipe  23   a . As indicated is this wash circulation complemented with a heating device  41 .",
+      "having many variants such as ITC-cooking (Iso Thermal Cooking), EAPC-cooking (Enhanced Alkali Profile Cooking) etc.\n\nMany of the old digesters, having been designed for “conventional cooking” or “Modified continuous cooking” also tried to increase production capacity, and this resulted in that the digester most often became overloaded, and the originally intended wash zone lost some of its function as a wash effect. Then some of the washing had to be done in subsequent wash equipment.",
+      "PRIOR APPLICATION\n\nThis application is a U.S. national phase application that is based on and claims priority from International Application No. PCT/SE2011/050075, filed 25 Jan. 2011.",
+      "the pulp in order to facilitate out feed of digested cellulose material CH OUT .\n\nIn the bottom of the digester is in a conventional manner a bottom scraper arranged, comprising a drive shaft  70 , scraper arms  71  and a cone diverter  72 . The purpose of the cone diverter  72  is to force the central volume of the chip column towards the scraper arms, avoiding the risk for channelling inside the digester. Unless said cone diverter it may cause a non-uniform chip column movement as a more rapid flow in the centre of the digester may be developed towards the central outlet bucket  52  compared with chip column movement close to the digester walls.",
+      "keeping manufacturing costs low. Slots could preferably be made using water or laser cutting techniques.\n\nThe invention could also be combined with a dilution scraper, i.e. a scraper adding dilution liquid also via its arms. In such embodiment could preferably dilution liquid be added as well via the drive shaft of the bottom scraper, but in a separate supply channel, preferably in form of a coaxial outer channel. Such a supply of dilution liquid to the arms of the bottom scraper could also be used to back flush the apertures via any appropriate controllable valve means.",
+      "in the cone diverter is typically in the range 10-30%, and preferably at least 15%.\n\nIn the bottom of the digester are typically narrower slots or bore holes used in any draining structures as the wood material is delignified to a great extent and thus more vulnerable for withdrawal compared to locating draining structures in the top of the digester.",
+      "cooking chemicals WL OPT , which then modifies the washing zone to a cooking zone.\n\nFinally, cold wash and dilution liquid DL is added to the bottom of the digester via a number of vertical and horizontal nozzles, which results in a counter current wash displacement zone towards the wash circulation, in order to remove cooking chemicals and dissolved organic material, as well as lowering of the temperature of the pulp before out feed from the digester, and dilution of the pulp in order to facilitate out feed of digested cellulose material CH OUT .",
+      "the cellulose material heated to the necessary cooking temperature and cooking chemicals WL is added.\n\nThe cellulose material is thereafter moving down in a plug flow concurrent with the flow of cooking chemicals trough the digesting zone until it reaches an extraction circulation which terminates the cooking zone. The extraction circulation comprises a strainer section  62 , here with 2 screen rows, pump  32 , and a central pipe  22   a . A larger part of the withdrawn and used treatment liquor is extracted from the digester and sent to recovery REC, or alternatively sent to any black liquor impregnation vessel preceding the cooking vessel.",
+      "advantageously be used when cooking hard wood and softwood chips, bagasse and other annual plants.\n\nThe characteristics of the invention are defined by the independent claims, and optional embodiments are defined in dependent claims in order of dependency of preceding claims. The invention is also disclosed in a preferred embodiment, but any specific feature of this embodiment could as such be included in the invention optionally, if not specifically defined as a necessary feature for the argued effect."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 3,
+      "merged": 4,
+      "loner": 5,
+      "redundant": 7,
+      "dead": 17
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 36
+    },
+    "consensusRate": 0.9444444444444444,
+    "worldName": "shared"
+  },
+  {
+    "sourceId": "source_patent:6",
+    "collection": "source_patent",
+    "batchToken": "batch-8-mmokmy4a",
+    "totalChunks": 48,
+    "survivingChunks": 3,
+    "survivalRate": 0.0625,
+    "species": {
+      "summarizer": 4,
+      "sentinel": 0,
+      "herald": 2,
+      "anchor": 1,
+      "spore": 4
+    },
+    "survivingTexts": [
+      "switch 1402 or a more complicated timer 1403 or water supply measuring device 1404 .\n\nFigure fifteen shows a multiple valve assembly, in this case two valves, in which both valves are controlled by a single user interface, in this case a lever  1570 . Pipe  1540  provides liquid to valve  1520  and pipe  1530  provides liquid to valve  1510 . Coupler  1580  connects valve  1510  to valve  1520 . Valve control lever  1570  is connected to coupler  1580  to turn valve  1510  and valve  1520  on and off. One implementation of this type of valve assembly is to turn the hot and cold water to a washing machine for cloths on and off. For this case hoses  1550  and  1560  connect the hot and cold water to the washing machine. However, this arrangement could be used to supply liquid to any machine or appliance.",
+      "machine. However, this arrangement could be used to supply liquid to any machine or appliance.\n\nFigure sixteen shows one method to couple a motor to the multiple valve assembly shown in figure fifteen. Motor  1620  is mounted to motor bracket  1610 . Motor bracket  11610  is either an integral part of valve brace  1640  or is mounted to valve brace  1640  using any suitable fastening system. Valve brace  1640  is a box like structure that has a top and four sides. One of the sides is cut to accommodate hoses  1550  and  1560 . The top has a slot that allows valve control lever  1570  to pass through and move freely. Valve brace  1640  is placed over the valve assembly such that hoses  1550  and  1560  pass through one of the sides and lever  1570  passes through the top. The valve brace braces the motor bracket to the valve assembly.",
+      "at a stress level that is lower than a level that will break the valve.\n\nFigure nine shows an alternative embodiment for the ball valve. The torque produced by motor  903  is transferred through drive  904  to valve  902  through a coupling device  901 . The coupling device  901  directly couples drive  904  to valve  902 . Coupler  901  of figure nine replaces the function of drive connector  811  and drive couplers  807  and  808 , of figure eight. To prevent damaging the valve under fault conditions, coupler  901  can be designed to break at a torque that is lower than a torque that will break the valve.",
+      "device turns the water on only when the water is needed to operate the appliance.\n\nThe above and other objectives are also achieved according to the invention by a method of controlling a valve that controls liquid flow.\n\nIn one embodiment, the method comprises the steps of",
+      "(This application claims the benefit of U.S. Provisional Application No. 60/159,583 filed on Oct. 18, 1999.)",
+      "the clockwise direction turns the valve on and the counter-clockwise direction turns the valve off.\n\nMotor control  1201  directs current flow based upon one or more of the following:\n\nThe current flowing through motor  1208\n\nThe last direction of rotation of the motor\n\nThe time required to turn on or off the controlled valve\n\nThe volt time product to turn the valve on or off\n\nThe current time product to turn the valve on or off\n\nThe position of position sensor  1213\n\nUser interface  1210",
+      "interface, through a timer mechanism, or through sensing that the appliance no longer requires water.\n\nBRIEF DESCRIPTION OF THE DRAWINGS\n\nFIG. 1 is a drawing of a solenoid-controlled valve as used in prior art\n\nFIG. 2 is a drawing of a motor driven valve as used in prior art\n\nFIG. 3 is a drawing of certain elements of the invention including the motor controller, the motor, a gear drive, the motor mount, and a means to transfer torque from the motor using drive studs.\n\nFIG. 4 shows the invention connected to a standard pre-mounted washer valve.",
+      "break at a torque that is lower than a torque that will break the valve.\n\nFigure ten shows another approach in which the motor drive transfers torque to a gate valve  1006  (hidden) through gears  1004  and  1005 . Motor mount  1008  is mounted to the water pipes using mounts  1002  and  1003 .",
+      "time after occupancy is sensed. In a second embodiment, the method comprises the steps of:\n\n1. Sensing through a human user interface that the user wants to turn on the valve, and\n\n2. Turning on the valve for a period of time selected by the user or as required to serve a purpose such a watering a lawn.\n\nIn a third embodiment, the method comprises the steps of:",
+      "1101 drives worm gear 1104 . Mounting bracket 1102 secures motor 1101 to the pipe.\n\nFigure twelve is a block diagram representation of one possible embodiment of the motor control. For this embodiment, motor control  1201  consists of timer circuit  1203 , current sense circuit  1205 , voltage sense circuit  1211 , motor current control switch  1206 , logic driver  1204 , position sensor  1213  and user interface  1210 . Motor control  1201  provides voltage to motor  1208  through wires  1207  and  1212 . Motor  1208  can be of the type such that the motor turns in one direction (clockwise for purposes of this discussion) when wire  1207  is positive with respect to wire  1212  and the opposing direction (counter-clockwise) when wire  1212  is more positive than  1207 . In this example the clockwise direction turns the valve on and the counter-clockwise direction turns the valve off.",
+      "water is needed such as when a sprinkler system or outdoor spigot is turned on.\n\nFigure fourteen illustrates a second application of the invention. In this embodiment, the motor controlled valve  1401  (hidden) is used to turn on and off water supply to an outdoor water spigot. Motor control  1406  turns valve  1401  on based upon a user interface. The user interface can be as simple as a switch  1402  or a more complicated timer  1403  or water supply measuring device  1404 ."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 0,
+      "merged": 3,
+      "loner": 7,
+      "redundant": 9,
+      "dead": 29
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 48
+    },
+    "consensusRate": 0.9166666666666666,
+    "worldName": "shared"
+  },
+  {
+    "sourceId": "source_patent:4",
+    "collection": "source_patent",
+    "batchToken": "batch-9-mmokmy4a",
+    "totalChunks": 33,
+    "survivingChunks": 5,
+    "survivalRate": 0.15151515151515152,
+    "species": {
+      "summarizer": 1,
+      "sentinel": 0,
+      "herald": 3,
+      "anchor": 1,
+      "spore": 1
+    },
+    "survivingTexts": [
+      "between the first and second unbalanced distribution levels is greater than a second predetermined value.\n\n[0017]     It is to be understood that both the foregoing general description and the following detailed description of the present invention are exemplary and explanatory and are intended to provide further explanation of the invention as claimed.",
+      "[0001]     This application claims the benefit of Korean Applications No. P2003-51511 filed on Jul. 25, 2003, P2003-51512 filed on Jul. 25, 2003, and P2003-72247 filed on Oct. 16, 2003, which are hereby incorporated by reference.",
+      "clothes within a tub so that the performance of the spinning operation can be improved.\n\n[0011]     Additional advantages, objects, and features of the invention will be set forth in part in the description which follows and in part will become apparent to those having ordinary skill in the art upon examination of the following or may be learned from practice of the invention. The objectives and other advantages of the invention may be realized and attained by the structure particularly pointed out in the written description and claims hereof as well as the appended drawings.",
+      "25, 2003, and P2003-72247 filed on Oct. 16, 2003, which are hereby incorporated by reference.\n\nBACKGROUND OF THE INVENTION",
+      "speed at the determined optimal acceleration rate upon the measured load weight (S 202 ).\n\n[0030]      FIG. 3  is a graph illustrating a spinning operation including a determined optimal acceleration rate during a load balancing cycle in accordance with the present invention. During the load balancing cycle, the motor  6  rotates up to 108 RPM at the determined acceleration rate based upon the load measured weight. According to the present invention, table 1 below shows how the acceleration rate differentiates upon the load weight.",
+      "present invention, table 1 below shows how the acceleration rate differentiates upon the load weight.\n\nTABLE 1                           Acceleration rate varies dependent upon load weight.                Load Weight   Acceleration Rate (RPM/ms)                       Light   1/160, 1/190 (alternate rotation)           Medium Light   1/150           Medium Heavy   1/180           Heavy   1/200"
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 5,
+      "merged": 0,
+      "loner": 2,
+      "redundant": 16,
+      "dead": 10
+    },
+    "sourceMetadata": {
+      "dataset": "NortheasternUniversity/big_patent",
+      "config": "d",
+      "chunkTotal": 33
+    },
+    "consensusRate": 0.9393939393939394,
+    "worldName": "shared"
+  }
+]

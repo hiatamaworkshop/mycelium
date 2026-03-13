@@ -1,0 +1,225 @@
+=== Mycelium Universal Loader ===
+  qdrant:        http://localhost:6334
+  sources:       source_arxiv
+  isolation:     shared (1 world(s))
+  parallel:      3 slot(s)
+  hardness:      mid (harvest at 60% of ticks)
+  ticks:         30
+  consensus:     3 runs (threshold=40%, jitter=10%)
+  world "shared": mycelium_loader ← [source_arxiv]
+
+[slot-allocator] scrolling source_arxiv from http://localhost:6334 ...
+[slot-allocator] loaded metadata sidecar: C:\Users\kazuh\Desktop\Various\programming\DockerFiles\mycelium_universal\data\meta\source_arxiv.json (20 docs)
+  → 1781 points from source_arxiv
+[loader:shared] 1781 source points loaded
+[slot-allocator] allocated 1781 points → 20 slots (1 source/slot):
+  slot-0: source_arxiv:14 (156 chunks)
+  slot-1: source_arxiv:17 (131 chunks)
+  slot-2: source_arxiv:1 (47 chunks)
+  slot-3: source_arxiv:2 (78 chunks)
+  slot-4: source_arxiv:4 (133 chunks)
+  slot-5: source_arxiv:9 (59 chunks)
+  slot-6: source_arxiv:0 (63 chunks)
+  slot-7: source_arxiv:15 (52 chunks)
+  slot-8: source_arxiv:12 (329 chunks)
+  slot-9: source_arxiv:10 (213 chunks)
+  slot-10: source_arxiv:5 (95 chunks)
+  slot-11: source_arxiv:3 (52 chunks)
+  slot-12: source_arxiv:7 (48 chunks)
+  slot-13: source_arxiv:8 (25 chunks)
+  slot-14: source_arxiv:16 (63 chunks)
+  slot-15: source_arxiv:19 (117 chunks)
+  slot-16: source_arxiv:13 (44 chunks)
+  slot-17: source_arxiv:6 (39 chunks)
+  slot-18: source_arxiv:11 (28 chunks)
+  slot-19: source_arxiv:18 (9 chunks)
+[loader:shared] 20 slot(s): slot-0(156), slot-1(131), slot-2(47), slot-3(78), slot-4(133), slot-5(59), slot-6(63), slot-7(52), slot-8(329), slot-9(213), slot-10(95), slot-11(52), slot-12(48), slot-13(25), slot-14(63), slot-15(117), slot-16(44), slot-17(39), slot-18(28), slot-19(9)
+
+[loader] starting 20 slot(s) with concurrency=3
+
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-0] start source_arxiv:14 (156 chunks, 3 runs)
+[runner:slot-0] done source_arxiv:14 in 1.5s — survival 51/156 (1/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-1] start source_arxiv:17 (131 chunks, 3 runs)
+[runner:slot-1] done source_arxiv:17 in 1.2s — survival 46/131 (2/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-2] start source_arxiv:1 (47 chunks, 3 runs)
+[runner:slot-2] done source_arxiv:1 in 0.1s — survival 13/47 (3/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-3] start source_arxiv:2 (78 chunks, 3 runs)
+[runner:slot-3] done source_arxiv:2 in 0.4s — survival 24/78 (4/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-4] start source_arxiv:4 (133 chunks, 3 runs)
+[runner:slot-4] done source_arxiv:4 in 0.9s — survival 30/133 (5/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-5] start source_arxiv:9 (59 chunks, 3 runs)
+[runner:slot-5] done source_arxiv:9 in 0.2s — survival 18/59 (6/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-6] start source_arxiv:0 (63 chunks, 3 runs)
+[runner:slot-6] done source_arxiv:0 in 0.2s — survival 20/63 (7/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-7] start source_arxiv:15 (52 chunks, 3 runs)
+[runner:slot-7] done source_arxiv:15 in 0.2s — survival 28/52 (8/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-8] start source_arxiv:12 (329 chunks, 3 runs)
+[runner:slot-8] done source_arxiv:12 in 5.2s — survival 66/329 (9/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-9] start source_arxiv:10 (213 chunks, 3 runs)
+[runner:slot-9] done source_arxiv:10 in 3.0s — survival 70/213 (10/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-10] start source_arxiv:5 (95 chunks, 3 runs)
+[runner:slot-10] done source_arxiv:5 in 0.7s — survival 35/95 (11/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-11] start source_arxiv:3 (52 chunks, 3 runs)
+[runner:slot-11] done source_arxiv:3 in 0.2s — survival 19/52 (12/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-12] start source_arxiv:7 (48 chunks, 3 runs)
+[runner:slot-12] done source_arxiv:7 in 0.1s — survival 18/48 (13/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-13] start source_arxiv:8 (25 chunks, 3 runs)
+[runner:slot-13] done source_arxiv:8 in 0.0s — survival 9/25 (14/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-14] start source_arxiv:16 (63 chunks, 3 runs)
+[runner:slot-14] done source_arxiv:16 in 0.2s — survival 17/63 (15/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-15] start source_arxiv:19 (117 chunks, 3 runs)
+[runner:slot-15] done source_arxiv:19 in 0.8s — survival 40/117 (16/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-16] start source_arxiv:13 (44 chunks, 3 runs)
+[runner:slot-16] done source_arxiv:13 in 0.1s — survival 8/44 (17/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-17] start source_arxiv:6 (39 chunks, 3 runs)
+[runner:slot-17] done source_arxiv:6 in 0.1s — survival 12/39 (18/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-18] start source_arxiv:11 (28 chunks, 3 runs)
+[runner:slot-18] done source_arxiv:11 in 0.1s — survival 10/28 (19/20 complete)
+[mycelium:digestor] loaded species memory from data\snapshots\species-weights-20260312T145317.json (5 species)
+[runner:slot-19] start source_arxiv:18 (9 chunks, 3 runs)
+[runner:slot-19] done source_arxiv:18 in 0.0s — survival 2/9 (20/20 complete)
+
+[loader] all 20 slots complete in 15.4s
+
+=== Survivor Reports ===
+
+  Slot [batch-0-mmonlare]
+    sources: 1, survival: 51/156 (32.7%)
+    3-axis: pure:34 merged:17 loner:7 redundant:42 dead:56
+      source_arxiv:14: 51/156 survived (32.7%) [pure:34 merged:17 loner:7 redundant:42 dead:56] passing:82%
+    species: summarizer:21, sentinel:1, herald:31, anchor:3, spore:9
+
+  Slot [batch-1-mmonlare]
+    sources: 1, survival: 46/131 (35.1%)
+    3-axis: pure:28 merged:18 loner:17 redundant:8 dead:60
+      source_arxiv:17: 46/131 survived (35.1%) [pure:28 merged:18 loner:17 redundant:8 dead:60] passing:75%
+    species: summarizer:20, sentinel:4, herald:26, anchor:2, spore:10
+
+  Slot [batch-2-mmonlare]
+    sources: 1, survival: 13/47 (27.7%)
+    3-axis: pure:5 merged:8 loner:5 redundant:14 dead:15
+      source_arxiv:1: 13/47 survived (27.7%) [pure:5 merged:8 loner:5 redundant:14 dead:15] passing:72%
+    species: summarizer:3, herald:3, anchor:1, spore:4
+
+  Slot [batch-3-mmonlare]
+    sources: 1, survival: 24/78 (30.8%)
+    3-axis: pure:19 merged:5 loner:5 redundant:13 dead:36
+      source_arxiv:2: 24/78 survived (30.8%) [pure:19 merged:5 loner:5 redundant:13 dead:36] passing:71%
+    species: summarizer:9, sentinel:3, herald:9, anchor:3, spore:1
+
+  Slot [batch-4-mmonlare]
+    sources: 1, survival: 30/133 (22.6%)
+    3-axis: pure:18 merged:12 loner:8 redundant:30 dead:65
+      source_arxiv:4: 30/133 survived (22.6%) [pure:18 merged:12 loner:8 redundant:30 dead:65] passing:73%
+    species: summarizer:12, sentinel:5, herald:25, spore:10
+
+  Slot [batch-5-mmonlare]
+    sources: 1, survival: 18/59 (30.5%)
+    3-axis: pure:14 merged:4 loner:7 redundant:9 dead:25
+      source_arxiv:9: 18/59 survived (30.5%) [pure:14 merged:4 loner:7 redundant:9 dead:25] passing:75%
+    species: summarizer:7, sentinel:5, herald:7, anchor:3, spore:10
+
+  Slot [batch-6-mmonlare]
+    sources: 1, survival: 20/63 (31.7%)
+    3-axis: pure:9 merged:11 loner:11 redundant:5 dead:27
+      source_arxiv:0: 20/63 survived (31.7%) [pure:9 merged:11 loner:11 redundant:5 dead:27] passing:63%
+    species: summarizer:8, sentinel:11, herald:4, anchor:3, spore:2
+
+  Slot [batch-7-mmonlare]
+    sources: 1, survival: 28/52 (53.8%)
+    3-axis: pure:20 merged:8 loner:6 redundant:2 dead:16
+      source_arxiv:15: 28/52 survived (53.8%) [pure:20 merged:8 loner:6 redundant:2 dead:16] passing:73%
+    species: summarizer:11, herald:8, anchor:2, spore:9
+
+  Slot [batch-8-mmonlare]
+    sources: 1, survival: 66/329 (20.1%)
+    3-axis: pure:37 merged:29 loner:35 redundant:96 dead:132
+      source_arxiv:12: 66/329 survived (20.1%) [pure:37 merged:29 loner:35 redundant:96 dead:132] passing:75%
+    species: summarizer:28, sentinel:11, herald:35, anchor:1, spore:27
+
+  Slot [batch-9-mmonlare]
+    sources: 1, survival: 70/213 (32.9%)
+    3-axis: pure:42 merged:28 loner:18 redundant:28 dead:97
+      source_arxiv:10: 70/213 survived (32.9%) [pure:42 merged:28 loner:18 redundant:28 dead:97] passing:68%
+    species: summarizer:26, sentinel:3, herald:37, anchor:3, spore:16
+
+  Slot [batch-10-mmonlare]
+    sources: 1, survival: 35/95 (36.8%)
+    3-axis: pure:24 merged:11 loner:9 redundant:11 dead:40
+      source_arxiv:5: 35/95 survived (36.8%) [pure:24 merged:11 loner:9 redundant:11 dead:40] passing:73%
+    species: summarizer:10, sentinel:5, herald:23, anchor:1, spore:2
+
+  Slot [batch-11-mmonlare]
+    sources: 1, survival: 19/52 (36.5%)
+    3-axis: pure:12 merged:7 loner:9 redundant:3 dead:21
+      source_arxiv:3: 19/52 survived (36.5%) [pure:12 merged:7 loner:9 redundant:3 dead:21] passing:73%
+    species: summarizer:13, herald:9, anchor:2, spore:7
+
+  Slot [batch-12-mmonlare]
+    sources: 1, survival: 18/48 (37.5%)
+    3-axis: pure:15 merged:3 loner:3 redundant:8 dead:19
+      source_arxiv:7: 18/48 survived (37.5%) [pure:15 merged:3 loner:3 redundant:8 dead:19] passing:75%
+    species: summarizer:8, herald:8, anchor:2, spore:3
+
+  Slot [batch-13-mmonlare]
+    sources: 1, survival: 9/25 (36.0%)
+    3-axis: pure:7 merged:2 loner:1 redundant:2 dead:13
+      source_arxiv:8: 9/25 survived (36.0%) [pure:7 merged:2 loner:1 redundant:2 dead:13] passing:64%
+    species: summarizer:3, herald:4, anchor:2, spore:6
+
+  Slot [batch-14-mmonlare]
+    sources: 1, survival: 17/63 (27.0%)
+    3-axis: pure:12 merged:5 loner:2 redundant:9 dead:35
+      source_arxiv:16: 17/63 survived (27.0%) [pure:12 merged:5 loner:2 redundant:9 dead:35] passing:67%
+    species: summarizer:7, sentinel:4, herald:9, anchor:3, spore:4
+
+  Slot [batch-15-mmonlare]
+    sources: 1, survival: 40/117 (34.2%)
+    3-axis: pure:28 merged:12 loner:4 redundant:27 dead:46
+      source_arxiv:19: 40/117 survived (34.2%) [pure:28 merged:12 loner:4 redundant:27 dead:46] passing:74%
+    species: summarizer:15, sentinel:3, herald:22, anchor:3, spore:7
+
+  Slot [batch-16-mmonlare]
+    sources: 1, survival: 8/44 (18.2%)
+    3-axis: pure:3 merged:5 loner:6 redundant:10 dead:20
+      source_arxiv:13: 8/44 survived (18.2%) [pure:3 merged:5 loner:6 redundant:10 dead:20] passing:64%
+    species: summarizer:7, herald:6, anchor:2, spore:3
+
+  Slot [batch-17-mmonlare]
+    sources: 1, survival: 12/39 (30.8%)
+    3-axis: pure:8 merged:4 loner:3 redundant:9 dead:15
+      source_arxiv:6: 12/39 survived (30.8%) [pure:8 merged:4 loner:3 redundant:9 dead:15] passing:64%
+    species: summarizer:4, herald:5, anchor:3, spore:5
+
+  Slot [batch-18-mmonlare]
+    sources: 1, survival: 10/28 (35.7%)
+    3-axis: pure:5 merged:5 redundant:3 dead:15
+      source_arxiv:11: 10/28 survived (35.7%) [pure:5 merged:5 redundant:3 dead:15] passing:71%
+    species: summarizer:1, sentinel:2, herald:5, anchor:3, spore:3
+
+  Slot [batch-19-mmonlare]
+    sources: 1, survival: 2/9 (22.2%)
+    3-axis: pure:1 merged:1 redundant:2 dead:5
+      source_arxiv:18: 2/9 survived (22.2%) [pure:1 merged:1 redundant:2 dead:5] passing:67%
+    species: herald:2, anchor:2
+
+[loader] Report saved: data\reports\shared_2026-03-13T08-47-30.json
