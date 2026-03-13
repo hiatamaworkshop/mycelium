@@ -1,0 +1,34 @@
+[
+  {
+    "sourceId": "source_arxiv_6:6",
+    "collection": "source_arxiv_6",
+    "batchToken": "batch-0-mmogf4y7",
+    "totalChunks": 39,
+    "survivingChunks": 0,
+    "survivalRate": 0,
+    "species": {
+      "summarizer": 1,
+      "sentinel": 1,
+      "herald": 1,
+      "anchor": 1,
+      "spore": 2
+    },
+    "survivingTexts": [
+      "b. ; zhang , x .- c . materials for terahertz science and technology .\n\nphoton . _ * 2002 * , _ 1 _ , 2633 ulbricht ,  r. ; hendry ,  e. ; shan ,  j. ; heinz ,  t.  f. ; bonn ,  m. carrier dynamics in semiconductors studied with time - resolved terahertz spectroscopy . _\n\n_ * 2011 * , _ 83 _ , 543586 kampfrath ,  t. ; tanaka ,  k. ; nelson ,  k.  a. resonant and nonresonant control over matter and light by intense terahertz transients .",
+      "sic , polytypes 3c , 4h , 6h , 15r , and 21r . _\n\nrev . _ * 1968 * , _ 173 _ , 787793 engelbrecht ,  f. ; helbig ,  r. effect of crystal anisotropy on the infrared reflectivity of 6h  sic .\n\nb _ * 1993 * , _ 48 _ , 1569815707 metzger ,  b. ; gui ,  l. ; fuchs ,  j. ; floess ,  d. ; hentschel ,  m. ; giessen ,  h. strong enhancement of second harmonic emission by plasmonic resonances at the second harmonic wavelength .",
+      "s. et al . graphene on hexagonal boron nitride as a tunable hyperbolic metamaterial .\n\nnano . _ * 2015 * , _ 10 _ , 682687 caldwell ,  j.  d. ; vurgaftman ,  i. ; tischler ,  j.  g. ; glembocki ,  o.  j. ; owrutsky ,  j.  c. ; reinecke ,  t.  l. atomic - scale photonic hybrids for mid - infrared and terahertz nanophotonics .\n\nnano . _ * 2015 * , _ 11 _ , 915",
+      "route to sub - wavelength optics . _ j. opt . a : pure appl\n\n_ * 2006 * , _ 8 _ , s87s93 greffet ,  j .- j . ;\n\ncarminati ,  r. ; joulain ,  k. ; mulet ,  j .- p . ;\n\nmainguy ,  s. ; chen ,  y. coherent emission of light by thermal sources .\n\n_ nature ( london ) _ * 2002 * , _ 416 _ , 6164 hillenbrand ,  r. ; taubner ,  t. ; keilmann ,  f. phonon - enhanced light - matter interaction at the nanometre scale .",
+      "; dereux , a. ; ebbesen , t. w. surface plasmon subwavelength optics . _\n\nnature ( london ) _ * 2003 * , _ 424 _ , 824830 maier ,  s.  a. _ plasmonics : fundamentals and applications _ ; springer : new york , 2007 schuller ,  j.  a. ; barnard ,  e.  s. ; cai ,  w. ; jun ,  y.  c. ; white ,  j.  s. ; brongersma ,  m.  l. plasmonics for extreme light concentration and manipulation .",
+      "n. ; kivshar , y. s. enhanced magnetic second - harmonic generation from resonant metasurfaces\n\n. _ acs photonics _ * 2015 * , _ 2 _ , 10071012 hille ,  a. ; moeferdt ,  m. ; wolff ,  c. ; matyssek ,  c. ; rodriguez - oliveros ,  r. ; prohm ,  c. ; niegemann ,  j. ; grafstrom ,  s. ; eng ,  l.  m. ; ; busch ,  k. second harmonic generation from metal nano - particle resonators : numerical analysis on the basis of the hydrodynamic drude model .\n\n_ j. phys ."
+    ],
+    "partsComplete": true,
+    "classificationBreakdown": {
+      "pure": 0,
+      "merged": 0,
+      "loner": 5,
+      "redundant": 16,
+      "dead": 18
+    },
+    "consensusRate": 0.9487179487179487
+  }
+]
