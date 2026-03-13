@@ -26,6 +26,7 @@
 //   ABSORPTION_RATIO      — Interaction spike absorption threshold (default: 0.4)
 //   FILTER_HARDNESS       — "soft" | "mid" | "hard" (default: mid)
 //   CONSENSUS_RUNS        — Number of runs for majority-vote consensus (default: 1 = off)
+//   CONSENSUS_THRESHOLD   — Min vote ratio to consider a chunk's classification stable (default: 0.4)
 
 import { DEFAULT_CONFIG } from "../types.js";
 import type { MyceliumConfig } from "../types.js";
@@ -52,6 +53,7 @@ const sourceCollectionNames = (process.env.SOURCE_COLLECTIONS ?? "source")
 const slotCapacity = parseInt(process.env.SLOT_CAPACITY ?? "100", 10);
 const cleanWorlds = (process.env.CLEAN_WORLDS ?? "").toLowerCase() === "true";
 const consensusRuns = Math.max(1, parseInt(process.env.CONSENSUS_RUNS ?? "1", 10));
+const consensusThreshold = parseFloat(process.env.CONSENSUS_THRESHOLD ?? "0.4");
 
 const myceliumConfig: MyceliumConfig = {
   ...DEFAULT_CONFIG,
@@ -107,7 +109,7 @@ async function main(): Promise<void> {
   console.error(`  ticks:         ${dispatchConfig.targetTicks}`);
   console.error(`  interval:      ${dispatchConfig.tickIntervalMs}ms`);
   console.error(`  cascade:       adaptive (min=${dispatchConfig.cascadeMinDelay}, max=${dispatchConfig.cascadeDelayTicks}, ratio=${dispatchConfig.absorptionRatio})`);
-  if (consensusRuns > 1) console.error(`  consensus:     ${consensusRuns} runs (majority vote)`);
+  if (consensusRuns > 1) console.error(`  consensus:     ${consensusRuns} runs (threshold=${(consensusThreshold * 100).toFixed(0)}%)`);
   if (cleanWorlds) console.error(`  clean:         enabled (world collections will be recreated)`);
   for (const w of worlds) {
     console.error(`  world "${w.name}": ${w.collection} ← [${w.sourceCollections.map(s => s.collection).join(", ")}]`);
@@ -143,7 +145,7 @@ async function main(): Promise<void> {
         collection: myceliumConfig.collection,
         sourceCollections: sourceConfigs,
       };
-      const reports = await dispatcher.runWorldConsensus(syntheticWorld, slots, consensusRuns);
+      const reports = await dispatcher.runWorldConsensus(syntheticWorld, slots, consensusRuns, consensusThreshold);
       allReports.push(...reports);
     } else {
       const reports = await dispatcher.run(slots);
@@ -184,7 +186,7 @@ async function main(): Promise<void> {
 
       let reports: SurvivorReport[];
       if (consensusRuns > 1) {
-        reports = await dispatcher.runWorldConsensus(world, slots, consensusRuns);
+        reports = await dispatcher.runWorldConsensus(world, slots, consensusRuns, consensusThreshold);
       } else {
         reports = await dispatcher.runWorld(world, slots);
       }
@@ -257,7 +259,7 @@ function printReports(reports: SurvivorReport[]): void {
           .map(([k, v]) => `${k}:${v}`)
           .join(" ");
         const consensusSuffix = r.consensusRate != null
-          ? ` consensus:${(r.consensusRate * 100).toFixed(0)}%`
+          ? ` passing:${(r.consensusRate * 100).toFixed(0)}%`
           : "";
         console.error(
           `      ${r.sourceId}: ${r.survivingChunks}/${r.totalChunks} survived ` +

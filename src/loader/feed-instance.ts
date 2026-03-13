@@ -59,7 +59,7 @@ export interface SurvivorReport {
   partsComplete: boolean;
   /** Per-chunk 3-axis classification distribution */
   classificationBreakdown: ClassificationBreakdown;
-  /** Per-source consensus rate (unanimous chunks / total chunks). Only set in consensus mode. */
+  /** Per-source consensus passing rate (chunks where top vote ≥ threshold / total). Only set in consensus mode. */
   consensusRate?: number;
   /** Doc-level metadata from sidecar (dataset, abstract, etc.) */
   sourceMetadata?: Record<string, unknown>;

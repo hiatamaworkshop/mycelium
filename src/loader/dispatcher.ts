@@ -298,6 +298,7 @@ export class Dispatcher {
     world: WorldDefinition,
     slots: SlotAssignment[],
     runs: number,
+    threshold = 0.4,
   ): Promise<SurvivorReport[]> {
     // Collect per-chunk votes across N runs.
     // Key = global sourcePoint index (slot offset + local index).
@@ -358,11 +359,16 @@ export class Dispatcher {
       templateReports = reports;
     }
 
-    // ---- Majority vote per chunk ----
+    // ---- Majority vote per chunk (with passing threshold) ----
     const consensusVotes: Map<number, ChunkClassification> = new Map();
+    // Track which chunks passed the threshold
+    const passedThreshold: Set<number> = new Set();
+    const minVotes = Math.ceil(runs * threshold);
 
     for (const [idx, votes] of allVotes) {
-      consensusVotes.set(idx, majorityVote(votes));
+      const { cls, count } = majorityVote(votes);
+      consensusVotes.set(idx, cls);
+      if (count >= minVotes) passedThreshold.add(idx);
     }
 
     // ---- Rebuild SurvivorReports from consensus votes ----
@@ -377,10 +383,10 @@ export class Dispatcher {
       }
     }
 
-    // Build per-sourceId consensus breakdown + per-source consensus rate
+    // Build per-sourceId consensus breakdown + per-source passing rate
     const sourceBreakdowns: Map<string, ClassificationBreakdown> = new Map();
-    // Track per-source unanimous counts: sourceId → { total, unanimous }
-    const sourceConsensus: Map<string, { total: number; unanimous: number }> = new Map();
+    // Track per-source passing counts: sourceId → { total, passed }
+    const sourceConsensus: Map<string, { total: number; passed: number }> = new Map();
 
     for (const [globalIdx, cls] of consensusVotes) {
       const sid = globalIdxToSourceId.get(globalIdx);
@@ -394,23 +400,22 @@ export class Dispatcher {
       }
       bd[cls]++;
 
-      // Consensus rate per source
+      // Passing rate per source (chunk met threshold?)
       let sc = sourceConsensus.get(sid);
       if (!sc) {
-        sc = { total: 0, unanimous: 0 };
+        sc = { total: 0, passed: 0 };
         sourceConsensus.set(sid, sc);
       }
       sc.total++;
-      const votes = allVotes.get(globalIdx)!;
-      if (votes.every(v => v === cls)) sc.unanimous++;
+      if (passedThreshold.has(globalIdx)) sc.passed++;
     }
 
-    // Patch template reports with consensus breakdowns + per-source consensus rate
+    // Patch template reports with consensus breakdowns + per-source passing rate
     const consensusReports: SurvivorReport[] = templateReports.map(r => {
       const bd = sourceBreakdowns.get(r.sourceId) ?? r.classificationBreakdown;
       const survivorCount = bd.pure + bd.merged;
       const sc = sourceConsensus.get(r.sourceId);
-      const rate = sc && sc.total > 0 ? sc.unanimous / sc.total : 1;
+      const rate = sc && sc.total > 0 ? sc.passed / sc.total : 1;
       return {
         ...r,
         classificationBreakdown: bd,
@@ -421,13 +426,14 @@ export class Dispatcher {
     });
 
     console.error(
-      `[consensus] ${runs} runs complete — ${consensusReports.length} sources`,
+      `[consensus] ${runs} runs complete — ${consensusReports.length} sources ` +
+      `(threshold=${(threshold * 100).toFixed(0)}%, minVotes=${minVotes}/${runs})`,
     );
     for (const r of consensusReports) {
       const sc = sourceConsensus.get(r.sourceId);
       console.error(
-        `  ${r.sourceId}: consensus ${((r.consensusRate ?? 0) * 100).toFixed(0)}% ` +
-        `(${sc?.unanimous ?? 0}/${sc?.total ?? 0} unanimous)`,
+        `  ${r.sourceId}: passing ${((r.consensusRate ?? 0) * 100).toFixed(0)}% ` +
+        `(${sc?.passed ?? 0}/${sc?.total ?? 0} passed)`,
       );
     }
 
@@ -441,7 +447,7 @@ function sleep(ms: number): Promise<void> {
 
 // ---- Consensus helpers ----
 
-function majorityVote(votes: ChunkClassification[]): ChunkClassification {
+function majorityVote(votes: ChunkClassification[]): { cls: ChunkClassification; count: number } {
   const counts: Record<string, number> = {};
   for (const v of votes) {
     counts[v] = (counts[v] ?? 0) + 1;
@@ -454,6 +460,6 @@ function majorityVote(votes: ChunkClassification[]): ChunkClassification {
       best = cls as ChunkClassification;
     }
   }
-  return best;
+  return { cls: best, count: bestCount };
 }
 
