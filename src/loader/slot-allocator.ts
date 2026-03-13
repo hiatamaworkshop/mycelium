@@ -125,52 +125,30 @@ export function allocateSlots(
     else groups.set(sid, [p]);
   }
 
-  // 2. Bin-pack groups into slots respecting capacity
-  //    Rule: all chunks of same sourceId MUST go to same slot
+  // 2. One sourceId = one slot (never mix files)
+  //    Each file runs in its own isolated mycelium instance
   const slots: SlotAssignment[] = [];
-  let currentPoints: SourcePoint[] = [];
-  let currentRegistry: ChunkRegistry = new Map();
 
   for (const [qualifiedSid, group] of groups) {
-    // If adding this group exceeds capacity, finalize current slot
-    if (currentPoints.length > 0 && currentPoints.length + group.length > capacity) {
-      slots.push(finalizeSlot(slots.length, currentPoints, currentRegistry));
-      currentPoints = [];
-      currentRegistry = new Map();
-    }
-
-    currentPoints.push(...group);
-
-    // Register chunk count + metadata for this sourceId
+    const registry: ChunkRegistry = new Map();
     const ext = group[0].payload as Record<string, unknown>;
     const origin = ext._originCollection as string ?? "unknown";
     const raw = qualifiedSid.includes(":") ? qualifiedSid.split(":").slice(1).join(":") : qualifiedSid;
     const sourceMeta = ext._sourceMeta as Record<string, unknown> | undefined;
-    currentRegistry.set(qualifiedSid, {
+    registry.set(qualifiedSid, {
       totalChunks: group.length,
       collection: origin,
       rawSourceId: raw,
       metadata: sourceMeta,
     });
-  }
-
-  // Finalize last slot
-  if (currentPoints.length > 0) {
-    slots.push(finalizeSlot(slots.length, currentPoints, currentRegistry));
+    slots.push(finalizeSlot(slots.length, group, registry));
   }
 
   // Log allocation summary
-  console.error(`[slot-allocator] allocated ${sourcePoints.length} points → ${slots.length} slots:`);
+  console.error(`[slot-allocator] allocated ${sourcePoints.length} points → ${slots.length} slots (1 source/slot):`);
   for (const s of slots) {
-    const chunkedSources = [...s.chunkRegistry.entries()]
-      .filter(([, e]) => e.totalChunks > 1)
-      .map(([sid, e]) => `${sid}(${e.totalChunks} chunks)`);
-    const singleSources = [...s.chunkRegistry.entries()].filter(([, e]) => e.totalChunks === 1).length;
-    console.error(
-      `  ${s.slotId}: ${s.points.length} points, ${s.chunkRegistry.size} sourceIds` +
-      (chunkedSources.length > 0 ? ` [chunked: ${chunkedSources.join(", ")}]` : "") +
-      (singleSources > 0 ? ` [single: ${singleSources}]` : ""),
-    );
+    const [sid, entry] = [...s.chunkRegistry.entries()][0];
+    console.error(`  ${s.slotId}: ${sid} (${entry.totalChunks} chunks)`);
   }
 
   return slots;

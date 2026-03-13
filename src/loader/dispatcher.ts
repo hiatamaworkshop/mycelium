@@ -49,7 +49,7 @@ export const DEFAULT_DISPATCHER_CONFIG: DispatcherConfig = {
   cascadeDelayTicks: 30,
   cascadeMinDelay: 5,
   absorptionRatio: 0.4,
-  tickIntervalMs: 3000,
+  tickIntervalMs: 0,
 };
 
 // ---- Absorption detector ----

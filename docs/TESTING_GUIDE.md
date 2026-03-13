@@ -192,6 +192,111 @@ node scripts/train-species.cjs 200 100
 
 **Tick logic:** Phase 2.1。Qdrant への書き戻しあり（survivors を mycelium コレクションに upsert）。
 
+## Universal Loader テスト
+
+### 基本コマンド
+
+```bash
+# ビルド必須
+npm run build
+
+# 1ファイル単体テスト（推奨）
+SOURCE_COLLECTIONS=source_patent_8 \
+CONSENSUS_RUNS=10 \
+CONSENSUS_JITTER=0.1 \
+TARGET_TICKS=60 \
+FILTER_HARDNESS=mid \
+CLEAN_WORLDS=true \
+npx tsx src/loader/main.ts > result.json 2> result.log
+```
+
+stdout に JSON、stderr にログが出力される。`> result.json 2> result.log` で必ず分離すること。混ぜると JSON が壊れる。
+
+### 重要: 1ファイル = 1 mycelium
+
+**異なるファイル（sourceId）のデータを同一 mycelium に混在させてはならない。**
+
+- Mycelium はファイル内の情報密度を評価する装置
+- 異なるファイルのセマンティクスが混ざるとフィルタリング精度が落ちる
+- `slot-allocator` は sourceId 単位でスロットを割り当てる（1 source = 1 slot）
+- 複数ソースを `SOURCE_COLLECTIONS` に指定した場合、各 sourceId が独立スロットとして直列実行される
+
+```bash
+# 10 sourceId → 10 スロット × 直列実行（各スロット独立 mycelium）
+SOURCE_COLLECTIONS=source_patent npx tsx src/loader/main.ts
+
+# 1 sourceId だけテストしたい場合は専用コレクションを用意する
+# （source_patent の sourceId=8 だけ抽出した source_patent_8 など）
+```
+
+### テスト用コレクションの準備
+
+Qdrant に 1 sourceId 分だけのコレクションを手動作成する場合:
+
+```bash
+# 1. 元コレクションの sourceId 分布を確認
+curl -s -X POST http://localhost:6334/collections/source_patent/points/scroll \
+  -H "Content-Type: application/json" \
+  -d '{"limit": 500, "with_payload": true, "with_vector": false}' \
+  | node -e "..." # sourceId ごとの chunk 数を集計
+
+# 2. 特定 sourceId のポイントを抽出して新コレクションに upsert
+#    （with_vector: true で取得し、PUT /collections/{name} → PUT /points）
+```
+
+### ENV 一覧
+
+| 変数 | デフォルト | 説明 |
+|------|-----------|------|
+| `SOURCE_COLLECTIONS` | `source` | カンマ区切りのソースコレクション名 |
+| `CONSENSUS_RUNS` | `10` | コンセンサス投票の周回数 |
+| `CONSENSUS_THRESHOLD` | `0.4` | 安定判定の最低投票率 |
+| `CONSENSUS_JITTER` | `0.1` | 初期 w/h の ±揺らぎ幅（0.1 = ±10%） |
+| `TARGET_TICKS` | `60` | 各 run の tick 数 |
+| `FILTER_HARDNESS` | `mid` | `soft`/`mid`/`hard` — harvest タイミングを制御 |
+| `CLEAN_WORLDS` | `false` | `true` で mycelium コレクションを毎回再作成 |
+| `TICK_INTERVAL_MS` | `0` | tick 間の待機（ms）— デフォルト 0（全速）。本番で Qdrant 負荷を抑えたい場合のみ設定 |
+| `ISOLATION` | `shared` | `shared`/`domain`/`custom` — world 分離モード |
+| `REPORT_DIR` | `data/reports` | レポート JSON の保存先 |
+
+### 実行時間の目安
+
+consensus 10 run × 60 ticks × 1 ソース（61 chunks）で約 10 分。
+チャンク数に比例し、consensus runs にも線形で伸びる。
+
+### フォーマッタの確認
+
+レポート保存後、フォーマッタで出力を確認できる:
+
+```bash
+cat > _test_fmt.ts << 'SCRIPT'
+import { readFileSync, writeFileSync } from "fs";
+import { formatReports } from "./src/output/formatters.js";
+const report = JSON.parse(readFileSync("data/reports/<filename>.json", "utf8"));
+writeFileSync("_compact.txt", formatReports(report, { format: "compact" }), "utf8");
+writeFileSync("_detailed.txt", formatReports(report, { format: "detailed", sampleLimit: 2 }), "utf8");
+console.error("done");
+SCRIPT
+npx tsx _test_fmt.ts
+```
+
+3 モード: `compact`（LLM 向け最小）、`detailed`（人間精査用）、`structured`（JSON）
+
+### 結果の読み方
+
+- **survivalRate**: harvest 時点（mid=60%=tick 36）の生存率。全 tick 終了時ではない
+- **consensusRate**: 10 run 中 threshold 以上で同じ分類が安定した chunk の割合。100% 未満の source は jitter で揺れた = 境界線上のチャンクが多い
+- **3 軸分類**: pure（ユニーク生存）、merged（クラスタ統合）、loner（孤立死）、redundant（冗長）、dead（自然死）
+- **species**: summarizer/sentinel/herald/anchor/spore の分布。偏りが大きすぎる場合は種族ローテーションに問題がある可能性
+
+### 踏みやすい罠
+
+1. **stdout/stderr 混在**: `> file 2>&1` は厳禁。JSON が壊れる。必ず `> out.json 2> out.log` で分離
+2. **CLEAN_WORLDS=true 忘れ**: 前回の mycelium コレクションが残っていると ensureCollection が既存を再利用し、前回のノードが混入する可能性
+3. **ファイル混在**: 複数 sourceId を同一 mycelium に投入すると意味が混ざる。常に 1 sourceId = 1 mycelium
+4. **jitter=0 での consensus 100%**: 初期条件が完全同一 → 乱数源は softmax のみ → ほぼ同じ結果 → 偽の高 consensus。必ず jitter > 0 で実行
+5. **大量 source の実行時間**: source_patent（10 sourceId × 10 runs）は数十分かかる。バックグラウンド実行推奨
+
 ## Tick Logic Versions
 
 ### Phase 2.0 (旧)

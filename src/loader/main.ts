@@ -19,7 +19,7 @@
 //                           Format: "name1=col1,col2;name2=col3"
 //   CLEAN_WORLDS          — "true" to delete world collections before run
 //   TARGET_TICKS          — Ticks per instance (default: 60)
-//   TICK_INTERVAL_MS      — Milliseconds between ticks (default: 3000)
+//   TICK_INTERVAL_MS      — Milliseconds between ticks (default: 0)
 //   SLOT_CAPACITY         — Max nodes per slot (default: 100)
 //   CASCADE_MAX_DELAY     — Max ticks between cascade inject (default: 30)
 //   CASCADE_MIN_DELAY     — Min ticks before considering next inject (default: 5)
@@ -69,7 +69,7 @@ const dispatchConfig: DispatcherConfig = {
   ...DEFAULT_DISPATCHER_CONFIG,
   targetTicks: parseInt(process.env.TARGET_TICKS ?? "60", 10),
   harvestPct: hardnessPreset.harvestPct,
-  tickIntervalMs: parseInt(process.env.TICK_INTERVAL_MS ?? "3000", 10),
+  tickIntervalMs: parseInt(process.env.TICK_INTERVAL_MS ?? "0", 10),
   cascadeDelayTicks: parseInt(process.env.CASCADE_MAX_DELAY ?? "30", 10),
   cascadeMinDelay: parseInt(process.env.CASCADE_MIN_DELAY ?? "5", 10),
   absorptionRatio: parseFloat(process.env.ABSORPTION_RATIO ?? "0.4"),
