@@ -173,7 +173,7 @@
     }
   },
   "pushback": {
-    "earlyPct": 0.4,
+    "earlyPct": 0.25,
     "lonerPct": 0.6,
     "minCosine": 0.75,
     "posResThreshold": 0.05,

@@ -40,6 +40,8 @@ export interface ChunkDetail {
   text: string;
   species: Species;
   classification: ChunkClassification;
+  /** Per-chunk consensus agreement rate (topVotes / totalRuns). Only set in consensus mode. */
+  consensusRate?: number;
 }
 
 /** Dead chunk brief (redundant/loner) — lightweight identifier + snippet */
@@ -50,6 +52,8 @@ export interface DeadBrief {
   cause?: string;            // death cause from deathLog
   cosine?: number;           // merge similarity (redundant)
   posRes?: number;           // positive resonance (loner)
+  /** Per-chunk consensus agreement rate (topVotes / totalRuns). Only set in consensus mode. */
+  consensusRate?: number;
 }
 
 /** Merger cluster mapped to source position */

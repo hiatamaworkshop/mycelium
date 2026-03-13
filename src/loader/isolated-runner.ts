@@ -469,6 +469,13 @@ export class IsolatedRunner {
       idxConsensus.set(idx, passedThreshold.has(idx) ? cls : "dead" as ChunkClassification);
     }
 
+    // Build per-chunk consensus rate: spIdx → topVoteCount / totalRuns
+    const idxConsensusRate = new Map<number, number>();
+    for (const [idx, votes] of allVotes) {
+      const { count } = majorityVote(votes);
+      idxConsensusRate.set(idx, count / runs);
+    }
+
     // Build seqNo → spIdx reverse map for detail filtering
     const seqToIdx = new Map<number, number>();
     for (let pi = 0; pi < slot.points.length; pi++) {
@@ -494,7 +501,8 @@ export class IsolatedRunner {
       }).map(c => {
         const spIdx = seqToIdx.get(c.chunkSeqNo)!;
         const cls = idxConsensus.get(spIdx)!;
-        return { ...c, classification: cls };
+        const cRate = idxConsensusRate.get(spIdx);
+        return { ...c, classification: cls, ...(cRate != null ? { consensusRate: cRate } : {}) };
       });
 
       const pureSurvivors = chunkDetails.filter(c => c.classification === "pure");
@@ -514,10 +522,12 @@ export class IsolatedRunner {
       }).map(d => {
         const spIdx = seqToIdx.get(d.chunkSeqNo);
         const cls = spIdx != null ? idxConsensus.get(spIdx) : undefined;
+        const cRate = spIdx != null ? idxConsensusRate.get(spIdx) : undefined;
+        const rateField = cRate != null ? { consensusRate: cRate } : {};
         if (cls && !consensusSurvivorCls.has(cls)) {
-          return { ...d, classification: cls as "redundant" | "loner" | "dead" };
+          return { ...d, classification: cls as "redundant" | "loner" | "dead", ...rateField };
         }
-        return d;
+        return { ...d, ...rateField };
       });
 
       // Also add template survivors that consensus demoted to dead
@@ -529,10 +539,12 @@ export class IsolatedRunner {
         if (sid !== r.sourceId) continue;
         if (templateSurvivorSeqs.has(seqNo) && !deadBriefs.some(d => d.chunkSeqNo === seqNo)) {
           const text = slot.points[spIdx]?.payload.text ?? "";
+          const cRate = idxConsensusRate.get(spIdx);
           deadBriefs.push({
             chunkSeqNo: seqNo,
             classification: cls as "redundant" | "loner" | "dead",
             snippet: text.slice(0, 80),
+            ...(cRate != null ? { consensusRate: cRate } : {}),
           });
         }
       }
