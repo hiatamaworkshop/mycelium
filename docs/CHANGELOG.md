@@ -3,6 +3,85 @@
 loner 判定は　初期メトリクスがない汎用ローダーでは不正確だった、自然と長く生き延びるから
 汎用ローダー利用時は60% ticks 時で判定する調整をした
 
+## 2026-03-15: Delta Chain + clusterSnapshot clamp
+
+### 概要
+consensus N-run 間で learnedDelta / learnedResonanceDelta を引き継ぐ delta chain を実装。
+合わせて clusterSnapshotTick が harvestTick を超える場合のクランプ修正を実施。
+
+### Delta Chain（run 間学習蓄積）
+
+**問題**: 従来は N-run すべてが同一の initialDelta スナップショットから開始。
+各 run の digestor が蓄積した学習結果は run 終了時に破棄されていた。
+
+**実装**: `runOnce()` 終了時に digestor の `getDelta()` / `getResonanceDeltaAll()` を返し、
+次の run の初期値として引き継ぐ。
+
+```
+Run 1: baseline → tick loop → digest蓄積 → endDelta₁
+Run 2: endDelta₁ → tick loop → digest蓄積 → endDelta₂
+Run 3: endDelta₂ → tick loop → digest蓄積 → endDelta₃（リセット）
+Run 4: baseline → ...
+```
+
+**過剰蓄積対策**: 3 run ごとに baseline スナップショットにリセット（`DELTA_CHAIN_LENGTH=3`）。
+全 run 蓄積だと merge×kinship の負δが一方向に積み上がり、後半 run で merge がほぼ消滅する。
+
+### テスト結果（arxiv:17, CONSENSUS_RUNS=10, TARGET_TICKS=60, mid）
+
+| 方式 | survived | pure | merged | clusters | consensus% |
+|------|----------|------|--------|----------|------------|
+| delta固定（従来） | 34 | 9 | 25 | 25 | — |
+| 全chain（10run蓄積） | 21.3±3.0 | 9.8±1.3 | 11.5±2.2 | 6.3±1.3 | 92.4±1.4 |
+| 3run chain | 19.3±3.3 | 7.7±0.5 | 11.7±2.9 | 7.7±3.8 | 92.9±2.0 |
+| 3run chain + clamp | 16.0±0.8 | 8.0±0.8 | 8.0±1.4 | 4.0±1.6 | 93.6±1.9 |
+
+### Delta Chain の効果
+
+- **consensus rate が 90-96% に安定** — run 間の学習収束により投票の再現性が劇的に改善
+- **pure はほぼ維持** — 本当にユニークなチャンクは選択圧が上がっても残る
+- **merged/clusters 減少** — merge×kinship の負δ蓄積により安易な merge が抑制された
+- **clusters の質は向上** — 前回 size=13 の「ゴミ箱クラスタ」（参考文献に雑多に吸収）が消え、
+  意味的に coherent なクラスタのみが残った（size=7 の数値分解トピック等）
+- **安定性の改善** — clamp 後は survived σ=0.8, loner σ=0.0 と驚異的な再現性
+
+### clusterSnapshot クランプ修正
+
+**問題**: `clusterPct=0.7` + `harvestPct=0.6` + `TARGET_TICKS=60` の組み合わせで、
+clusterSnapshotTick(42) > harvestTick(36) となり、クラスタスナップショットが一度も取得されなかった。
+
+```
+tick 36: harvest（ループ終了）
+tick 42: clusterSnapshot（到達しない）→ 常に fallback（harvest 時点のノード）
+```
+
+**修正**: `clusterSnapshotTick = min(計算値, harvestTick - 1)` にクランプ。
+IsolatedRunner と FeedInstance の両方に適用。
+
+### 3run chain 長の根拠
+
+全 run 蓄積（10run）vs 3run chain のテストで、全蓄積は merge 行動を過剰に抑制した。
+3run は学習の恩恵（consensus 安定化）を得つつ、merge チェーンの形成を維持するバランス点。
+
+### TARGET_TICKS=70 テスト（不採用）
+
+tick 数を伸ばせばクラスタが増えると仮定してテストしたが逆効果:
+- clusters 5.7±1.7（t=60 の 7.7 より悪化）
+- survived 15.0±4.1（σ 増大）
+- クラスタ形成後の崩壊まで観察してしまう
+
+### 変更ファイル
+- `src/loader/isolated-runner.ts` — RunResult に endDelta/endResonanceDelta 追加、
+  runConsensus で 3run chain + baseline リセット、clusterSnapshotTick クランプ
+- `src/loader/feed-instance.ts` — clusterSnapshotTick クランプ（同様の修正）
+
+### 残る課題
+- `DELTA_CHAIN_LENGTH=3` はハードコード。環境変数化を検討
+- clusters 数の減少（25→4-8）が許容範囲かはユースケース依存。質は向上しているが量は減った
+- resonance 実値の run 間引継ぎは未実装（inject 時 zeroResonance() のまま）
+
+---
+
 ## 2026-03-13: Digest 3-tier + Keyword Context Extraction
 
 ### 概要

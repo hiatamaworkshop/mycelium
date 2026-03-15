@@ -171,8 +171,12 @@ export class FeedInstance {
     this.chunkRegistry = chunkRegistry;
     this.harvestPct = harvestPct;
     this.forceSpore = (process.env.LOADER_FORCE_SPORE ?? "").toLowerCase() === "true";
-    this.clusterSnapshotTick = Math.floor(targetTicks * (M.pushback?.clusterPct ?? 0.6));
     this.harvestTick = Math.floor(targetTicks * harvestPct);
+    // Clamp cluster snapshot to before harvest — otherwise it never fires
+    this.clusterSnapshotTick = Math.min(
+      Math.floor(targetTicks * (M.pushback?.clusterPct ?? 0.6)),
+      this.harvestTick - 1,
+    );
   }
 
   get nodeCount(): number {

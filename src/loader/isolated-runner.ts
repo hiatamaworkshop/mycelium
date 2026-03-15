@@ -36,9 +36,16 @@ const M = metabolismRaw as unknown as MetabolismSchema;
 
 // ---- Types ----
 
-interface RunResult {
+interface HarvestResult {
   reports: SurvivorReport[];
   chunkVotes: Map<number, ChunkClassification>;
+}
+
+interface RunResult extends HarvestResult {
+  /** Accumulated species delta at end of run (for cross-run chaining). */
+  endDelta: Record<string, WeightMatrix>;
+  /** Accumulated resonance sensitivity delta at end of run. */
+  endResonanceDelta: Record<string, Record<string, number>>;
 }
 
 // ---- IsolatedRunner ----
@@ -47,6 +54,9 @@ export class IsolatedRunner {
   private store = new Map<string, NodeWithVector>();
   private initialDelta: Record<string, WeightMatrix> | null = null;
   private initialResonanceDelta: Record<string, Record<string, number>> | null = null;
+  /** Snapshot from loadSpeciesMemory — used to reset delta chain periodically. */
+  private baselineDelta: Record<string, WeightMatrix> | null = null;
+  private baselineResonanceDelta: Record<string, Record<string, number>> | null = null;
 
   constructor(
     private config: MyceliumConfig,
@@ -59,6 +69,9 @@ export class IsolatedRunner {
     if (probe.load(this.config)) {
       this.initialDelta = probe.getDelta();
       this.initialResonanceDelta = probe.getResonanceDeltaAll();
+      // Keep baseline for periodic chain reset
+      this.baselineDelta = probe.getDelta();
+      this.baselineResonanceDelta = probe.getResonanceDeltaAll();
     }
   }
 
@@ -74,15 +87,30 @@ export class IsolatedRunner {
     let templateReports: SurvivorReport[] = [];
 
     for (let run = 0; run < runs; run++) {
-      const { reports, chunkVotes } = this.runOnce(slot, jitter);
+      const result = this.runOnce(slot, jitter);
 
-      for (const [idx, cls] of chunkVotes) {
+      for (const [idx, cls] of result.chunkVotes) {
         const votes = allVotes.get(idx) ?? [];
         votes.push(cls);
         allVotes.set(idx, votes);
       }
 
-      templateReports = reports;
+      templateReports = result.reports;
+
+      // Chain learned delta into next run, reset every DELTA_CHAIN_LENGTH runs
+      const DELTA_CHAIN_LENGTH = 3;
+      if ((run + 1) % DELTA_CHAIN_LENGTH === 0) {
+        // Reset to baseline snapshot — prevent over-accumulation
+        this.initialDelta = this.baselineDelta
+          ? Object.fromEntries(Object.entries(this.baselineDelta).map(([k, v]) => [k, (v as number[][]).map(r => [...r])]))
+          : null;
+        this.initialResonanceDelta = this.baselineResonanceDelta
+          ? Object.fromEntries(Object.entries(this.baselineResonanceDelta).map(([k, v]) => [k, { ...v }]))
+          : null;
+      } else {
+        this.initialDelta = result.endDelta as Record<string, WeightMatrix>;
+        this.initialResonanceDelta = result.endResonanceDelta;
+      }
     }
 
     return this.buildConsensusReports(templateReports, allVotes, runs, threshold, slot);
@@ -105,11 +133,13 @@ export class IsolatedRunner {
 
     // 2. Tick loop
     const deathLog = new Map<string, DeathRecord>();
-    const clusterSnapshotTick = Math.floor(
-      this.dispatchConfig.targetTicks * (M.pushback?.clusterPct ?? 0.6),
-    );
     const harvestTick = Math.floor(
       this.dispatchConfig.targetTicks * this.dispatchConfig.harvestPct,
+    );
+    // Clamp cluster snapshot to before harvest — otherwise it never fires
+    const clusterSnapshotTick = Math.min(
+      Math.floor(this.dispatchConfig.targetTicks * (M.pushback?.clusterPct ?? 0.6)),
+      harvestTick - 1,
     );
     let clusterSnapshot: MyceliumNode[] | null = null;
 
@@ -158,10 +188,16 @@ export class IsolatedRunner {
     }
 
     // 3. Harvest
-    return this.harvest(
+    const harvestResult = this.harvest(
       slot, injectedNodeIds, nodeSourceMap, sourcePointIdxMap,
       deathLog, clusterSnapshot,
     );
+
+    return {
+      ...harvestResult,
+      endDelta: digestor.getDelta(),
+      endResonanceDelta: digestor.getResonanceDeltaAll(),
+    };
   }
 
   // ---- Inject source points into local store ----
@@ -236,7 +272,7 @@ export class IsolatedRunner {
     sourcePointIdxMap: Map<string, number>,
     deathLog: Map<string, DeathRecord>,
     clusterSnapshot: MyceliumNode[] | null,
-  ): RunResult {
+  ): HarvestResult {
     // Surviving injected nodes
     const myLiving: MyceliumNode[] = [];
     const survivorIds = new Set<string>();
