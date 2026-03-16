@@ -420,7 +420,28 @@ function saveReports(reports: SurvivorReport[]): void {
     console.error(`[loader] Report saved: ${rawPath}`);
   }
 
-  // 3. latest files — clean old latest.* then write current
+  // 3. FIFO cleanup — keep only 5 most recent runs
+  const reportKeep = parseInt(process.env.REPORT_KEEP ?? "5", 10);
+  if (reportKeep > 0) {
+    const timestamped = readdirSync(reportDir)
+      .filter(f => !f.startsWith("latest.") && !f.startsWith("."))
+      .sort();
+    const basenames = [...new Set(timestamped.map(f => f.replace(/\.(digest|manifest|compact|detailed|structured)\.(json|txt)$/, ".json")))];
+    if (basenames.length > reportKeep) {
+      const removeSet = new Set<string>();
+      for (const b of basenames.slice(0, basenames.length - reportKeep)) {
+        const prefix = b.replace(/\.json$/, "");
+        for (const f of timestamped) {
+          if (f.startsWith(prefix)) removeSet.add(f);
+        }
+      }
+      for (const f of removeSet) {
+        try { unlinkSync(join(reportDir, f)); } catch {}
+      }
+    }
+  }
+
+  // 4. latest files — clean old latest.* then write current
   for (const f of readdirSync(reportDir)) {
     if (f.startsWith("latest.")) {
       try { unlinkSync(join(reportDir, f)); } catch {}
