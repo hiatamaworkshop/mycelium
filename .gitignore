@@ -28,5 +28,9 @@ package-lock.json
 data/species-weights.json
 data/snapshots/species-weights-2*.json
 
+# Reports (auto-generated per run)
+data/reports/*.json
+data/reports/*.txt
+
 # Raw HuggingFace datasets (large, downloaded via --save-raw)
 data/raw/
