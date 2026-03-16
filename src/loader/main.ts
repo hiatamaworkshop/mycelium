@@ -411,13 +411,15 @@ async function runCrossFileAffinity(
   reports: SurvivorReport[],
   slotQueue: Array<{ slot: SlotAssignment; worldName: string }>,
 ): Promise<void> {
-  // Collect surviving source points from 1st pass (pure + merged only)
+  // Collect source points from 1st pass (pure + merged + loner)
+  // Loners are included: isolated within own source but may relate to other sources
+  const CROSS_CLASSIFICATIONS = new Set(["pure", "merged", "loner"]);
   const crossPoints: import("./source-scroll.js").SourcePoint[] = [];
   for (const { slot } of slotQueue) {
     for (const report of reports) {
       if (!report.chunkDetails) continue;
       for (const chunk of report.chunkDetails) {
-        if (chunk.classification !== "pure" && chunk.classification !== "merged") continue;
+        if (!CROSS_CLASSIFICATIONS.has(chunk.classification)) continue;
         // Find the original source point by seqNo
         const sp = slot.points.find(p =>
           (p.payload.sourceId ?? String(p.id)) === report.sourceId.replace(/^[^:]+:/, "") &&
