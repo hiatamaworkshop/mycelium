@@ -265,14 +265,74 @@ merge accept 時、**w が高い方が absorber（生存）**、低い方が con
 
 ---
 
-## レガシーコード
+## サブシステムとしての利用（receptor 連携）
 
-以下は Phase 0 時代のコードで、現行パスでは使用されない:
+mycelium は外部システム（engram 等）のサブシステムとして subprocess 実行される想定。
 
-| ファイル | 状態 | 説明 |
+### 実行・リターン作法
+
+**呼び出し側（receptor executor）が行うこと**:
+```bash
+SOURCE_QDRANT_URL=http://localhost:6333 \
+SOURCE_COLLECTIONS=engram \
+VIEW_FORMAT=digest \
+npx tsx src/loader/main.ts
+```
+
+**mycelium が返すもの**:
+
+| チャネル | 内容 | 用途 |
 |---------|------|------|
-| `src/server.ts` | レガシー | MCP Server（手動 tick 操作用） |
-| `src/core/tick.ts` | レガシー | spawn → Qdrant upsert を含む旧 tick ラッパー |
-| `src/loader/dispatcher.ts` | レガシー | isolated-runner 以前のフロー |
+| **stdout** | VIEW_FORMAT に応じた結果 JSON/text | executor が受け取る本体データ |
+| **stderr** | 進捗ログ + サマリ行 | デバッグ / 監視用 |
+| **exit code** | 0=成功, 1=失敗 | executor の成否判定 |
 
-現行の実稼働パス: `loader/main.ts → isolated-runner.ts → tick-core.ts`
+**mycelium はファイル保存しない**（呼び出し側の責務）:
+- `REPORT_DIR` を未指定、または呼び出し側が `REPORT_DIR` を指定して保存先を制御
+- mycelium は stdout に結果を返すだけ。どこに保存するかは知らない
+
+### 呼び出し側の処理フロー
+
+```
+receptor trigger (background / on-demand)
+    ↓
+executor: mycelium を subprocess 実行、stdout を取得
+    ↓
+sink 処理:
+  1. ファイル保存 → {subsystem_dir}/mycelium/latest.json
+  2. サマリメッセージ生成 → "mycelium: 54/100 survived, 3 clusters"
+  3. hotmemo FIFO に enqueue (ring buffer, max N件)
+    ↓
+エージェントへの提示:
+  - hotmemo: 最新 N 件のサマリのみ（1行/件）
+  - 詳細: エージェントがオンデマンドで開封（engram_pull 等）
+```
+
+### stdout の構造（VIEW_FORMAT 別）
+
+| FORMAT | stdout の内容 | サマリ抽出方法 |
+|--------|-------------|--------------|
+| `compact` | 1行サマリ + per-source 行 | そのまま hotmemo に使用可能 |
+| `digest` | 構造化 JSON | `.summary.survivingChunks` / `.summary.survivalRate` |
+| `manifest` | 軽量インデックス JSON | per-source headline |
+| (なし) | raw SurvivorReport[] JSON | 自前でパース |
+
+### 設計原則
+
+- **mycelium は stdin/stdout のフィルタ** — 入力は Qdrant scroll、出力は stdout JSON
+- **ファイル保存・通知・FIFO は呼び出し側** — mycelium は保存先を知る必要がない
+- **hotmemo は「存在の通知」だけ** — 詳細をホットメモに流すとうるさい
+- **FIFO ring buffer** — エージェントが読まなくても古いメッセージは自動的に押し出される
+- **オンデマンド開封** — 保存されたファイルはエージェントの意思で取得
+
+### REPORT_DIR（ローカル保存モード）
+
+mycelium 単体で使う場合、`REPORT_DIR` でローカル保存も可能:
+
+```bash
+REPORT_DIR=./data/reports VIEW_FORMAT=digest npx tsx src/loader/main.ts
+```
+
+- タイムスタンプ付きファイル: `engram_2026-03-16T09-45.digest.json`
+- `latest.json` + `latest.{format}.{ext}` — 常に最新を指す
+- FIFO: デフォルト5件保持、超過分は自動削除（`REPORT_KEEP`）
