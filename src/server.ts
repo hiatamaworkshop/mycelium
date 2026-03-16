@@ -21,7 +21,7 @@ import { promisify } from "node:util";
 const execFileAsync = promisify(execFile);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(__dirname, "..");
-const LOADER_ENTRY = join(__dirname, "loader", "main.ts");
+const LOADER_ENTRY = join(PROJECT_ROOT, "src", "loader", "main.ts");
 const REPORT_DIR = join(PROJECT_ROOT, "data", "reports");
 
 const server = new McpServer({
