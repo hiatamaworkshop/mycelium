@@ -210,7 +210,7 @@
     "mergeTtlTransfer": 0.3,
     "mergeResonanceBoost": 0.5,
     "mergeResonanceTransfer": 0.5,
-    "bequeathTtlRatio": 0.3,
+    "bequeathTtlRatio": 0.1,
     "bequeathDecayReduction": 0.95,
     "bequeathResonanceBoost": 0.3,
     "ignoreResonanceFade": 0.05,
