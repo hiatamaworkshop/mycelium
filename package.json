@@ -1,24 +1,21 @@
 {
   "name": "mycelium",
-  "version": "0.1.0",
-  "description": "Biological knowledge node observation system — petri dish for engram seeds",
+  "version": "1.0.0",
+  "description": "Bio-inspired semantic filtering engine — ecosystem simulation for knowledge quality assessment",
   "type": "module",
-  "main": "dist/server.js",
+  "main": "dist/loader/main.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/server.js",
-    "dev": "tsx src/server.ts"
+    "start": "node dist/loader/main.js",
+    "dev": "tsx src/loader/main.ts",
+    "filter": "tsx src/loader/main.ts"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.1",
     "@xenova/transformers": "^2.17.2",
-    "better-sqlite3": "^11.0.0",
     "zod": "^3.22.0"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.8",
     "@types/node": "^22.0.0",
-    "esbuild": "^0.24.0",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0"
   }
