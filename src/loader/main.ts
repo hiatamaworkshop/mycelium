@@ -14,7 +14,8 @@
 //   npx tsx src/loader/main.ts
 //
 // Environment:
-//   QDRANT_URL            — Qdrant endpoint (default: http://localhost:6334)
+//   QDRANT_URL            — Qdrant endpoint for mycelium working collections (default: http://localhost:6334)
+//   SOURCE_QDRANT_URL     — Qdrant endpoint for source data (default: QDRANT_URL)
 //   SOURCE_COLLECTIONS    — Comma-separated source collection names (default: source)
 //   MYCELIUM_COLLECTION   — Default Mycelium collection (default: mycelium_loader)
 //   ISOLATION             — "shared" | "domain" | "custom" (default: shared)
@@ -61,6 +62,7 @@ import type { ViewFormat, DigestQuery } from "../output/formatters.js";
 const { level: hardnessLevel, preset: hardnessPreset } = resolveHardness(process.env.FILTER_HARDNESS);
 
 const qdrantUrl = process.env.QDRANT_URL ?? "http://localhost:6334";
+const sourceQdrantUrl = process.env.SOURCE_QDRANT_URL ?? qdrantUrl;
 
 const sourceCollectionNames = (process.env.SOURCE_COLLECTIONS ?? "source")
   .split(",")
@@ -135,7 +137,7 @@ async function main(): Promise<void> {
   const isolationMode = parseIsolationMode(process.env.ISOLATION);
 
   const sourceConfigs: SourceCollectionConfig[] = sourceCollectionNames.map(name => ({
-    qdrantUrl,
+    qdrantUrl: sourceQdrantUrl,
     collection: name,
   }));
 
@@ -147,7 +149,8 @@ async function main(): Promise<void> {
   );
 
   console.error("=== Mycelium Universal Loader ===");
-  console.error(`  qdrant:        ${qdrantUrl}`);
+  console.error(`  source qdrant: ${sourceQdrantUrl}`);
+  if (qdrantUrl !== sourceQdrantUrl) console.error(`  work qdrant:   ${qdrantUrl}`);
   console.error(`  sources:       ${sourceCollectionNames.join(", ")}`);
   console.error(`  isolation:     ${isolationMode} (${worlds.length} world(s))`);
   console.error(`  parallel:      ${parallelSlots} slot(s)`);
@@ -160,11 +163,10 @@ async function main(): Promise<void> {
   }
   console.error("");
 
-  // Health check
-  const healthy = await checkQdrantHealth(qdrantUrl);
+  // Health check (non-fatal — Qdrant is only needed for CLEAN_WORLDS and legacy paths)
+  const healthy = await checkQdrantHealth(sourceQdrantUrl);
   if (!healthy) {
-    console.error(`[loader] Qdrant unreachable at ${qdrantUrl}`);
-    process.exit(1);
+    console.error(`[loader] WARNING: source Qdrant unreachable at ${sourceQdrantUrl}`);
   }
 
   const allReports: SurvivorReport[] = [];
@@ -178,10 +180,14 @@ async function main(): Promise<void> {
       console.error(`\n--- World "${world.name}" ---`);
     }
 
-    // Optional: clean world collection
+    // Optional: clean world collection (requires mycelium Qdrant)
     if (cleanWorlds) {
-      const deleted = await deleteCollection(qdrantUrl, world.collection);
-      if (deleted) console.error(`[loader:${world.name}] cleaned collection ${world.collection}`);
+      try {
+        const deleted = await deleteCollection(qdrantUrl, world.collection);
+        if (deleted) console.error(`[loader:${world.name}] cleaned collection ${world.collection}`);
+      } catch {
+        console.error(`[loader:${world.name}] CLEAN_WORLDS skipped — Qdrant unreachable at ${qdrantUrl}`);
+      }
     }
 
     // Load source points for this world

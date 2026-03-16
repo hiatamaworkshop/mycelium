@@ -80,6 +80,108 @@ tick 数を伸ばせばクラスタが増えると仮定してテストしたが
 - clusters 数の減少（25→4-8）が許容範囲かはユースケース依存。質は向上しているが量は減った
 - resonance 実値の run 間引継ぎは未実装（inject 時 zeroResonance() のまま）
 
+### レガシーコード注記
+
+**server.ts (Phase 0 MCP サーバー)** および **tick.ts** はレガシー。
+現行の実稼働パスは `loader → isolated-runner → tickCore()` であり、
+`tick.ts` の `runTick()` は経由しない。
+
+- `tick.ts:89-93` の spawn → Qdrant upsert はサーバーモード専用。
+  isolated-runner は spawn children をローカル Map にのみ追加し Qdrant に書かない。
+  spawn を DB に永続化する意味はない（フィルタリング判定に使わない）。
+- `dispatcher.ts` も `runTick()` 経由の旧フロー。isolated-runner に置き換え済み。
+- server.ts の `mycelium_tick` / `startTick()` は Phase 0 の手動 tick 操作用。
+  将来的に server.ts を isolated-runner ベースに書き換えるか、Phase 0 コードとして凍結するか要判断。
+
+### 外部サービス連携（Qdrant 経由入力）
+
+現行の入力パイプラインは `source-scroll.ts → scrollSourcePoints()` で
+Qdrant の任意 collection から `SourcePoint` 形式（`id`, `vector`, `payload.text`, `payload.sourceId`, `payload.tags`）を scroll 取得する汎用設計。
+
+外部サービスが mycelium フィルタリングを利用する場合、**既存コードの変更なし**で対応可能:
+
+- **同一 Qdrant インスタンス**: `SOURCE_COLLECTIONS=external_collection` を指定するだけ
+- **別 Qdrant インスタンス**: 外部側が mycelium 側の Qdrant source collection に push、
+  または `QDRANT_URL` を外部に向ける
+
+唯一の制約は payload スキーマの一致（最低限 `text` + `vector`）。
+スキーマが異なる場合のみアダプタ層が必要。
+
+`prepare_source.py` による静的ファイル → embedding → Qdrant のバッチ処理は
+embedding 生成が目的であり、既に embedded なデータには不要。
+
+### mycelium 側 Qdrant の不要化
+
+isolated-runner（現行の実稼働パス）は Qdrant を一切 import しておらず、
+フィルタリング処理は完全にインメモリで完結している。
+
+mycelium 側 Qdrant (`localhost:6334`) の現在の用途:
+1. `checkQdrantHealth` — 起動時ヘルスチェック（なくても動く）
+2. `deleteCollection` — `CLEAN_WORLDS=true` 時のみ（テスト用途）
+3. source-scroll のソース読み込み先 — **外部 Qdrant を直接指定すれば不要**
+
+つまり source-scroll が外部 Qdrant URL を受け取れるようにすれば、
+mycelium 専用の Qdrant インスタンスは完全に排除可能。
+
+**構成例（Qdrant レス）**:
+```
+外部 Qdrant (engram等) → source-scroll(外部URL直接指定) → isolated-runner(in-memory) → digest 出力
+```
+
+bridge スクリプトで `source_engram` を mycelium Qdrant に中継したのは
+既存パイプラインへの適合であり、本質的には不要な中間ステップだった。
+
+実装案: `SOURCE_QDRANT_URL` 環境変数を追加し、ソース取得先を分離する。
+`QDRANT_URL`（mycelium 側）は起動チェック・world 管理用に残すか、完全削除。
+
+**Qdrant の残存価値: embedding キャッシュ**
+
+汎用データの場合 `prepare_source.py` で embedding を生成するが、
+生成後のベクトルを Qdrant に保存する必要はなく、JSON/パイプで直接渡せる。
+ただし Qdrant 保存には「embedding キャッシュ」としての価値がある:
+- フィルタパラメータ変更時の再実行で embedding をスキップ（コスト削減）
+- embedding モデルを変えない限りベクトルは不変 → キャッシュ効果が高い
+- デバッグ時のソースデータ確認
+
+結論: Qdrant は **必須ではないがキャッシュとして有用**。
+最小構成では JSON ファイル入力 → in-memory filter → 出力で完結可能。
+
+### 外部メトリクス（weight/score）の初期 w 反映（実装済み）
+
+外部ソースの `payload.weight` が存在する場合、初期 `w` にマッピングし jitter をスキップ。
+
+**マッピング**: `[-2, 4] → normalize [0, 1] → scale [0.3, 1.5] × initialW`
+```
+norm   = clamp(0, 1, (weight + 2) / 6)
+mapped = 0.3 + norm × 1.2
+initialW = birth.initialW × mapped
+```
+
+**レンジ `[0.3, 1.5]` の根拠**（mycelium の w 動態から逆算）:
+- `initialW=1.0`, `deathMinW=0.05`, decay `w *= (1-d)` per tick, d≈0.03
+- 60 tick 自然減衰: w=1.0 → 0.16（ギリギリ生存）
+- **下限 0.3**: 60 tick 後 w≈0.05 → 社会的行動なしだとちょうど死ぬ。低評価ノードは他者の助けが必要
+- **上限 1.5**: 60 tick 後 w≈0.24 → 余裕あり。ただし decay は乗算なので差は縮まり圧倒的有利にはならない
+- 「有利/不利はあるが社会的行動で逆転可能」な設計意図
+
+**jitter スキップの理由**: 外部スコアが既にノード間を差別化している。
+jitter は「初期条件が均一なとき」に多様性を生む目的であり、外部メトリクスがある場合はノイズになる。
+
+**テスト結果（engram 直接読み込み、91 points）**:
+
+| マッピング | survived | consensus% | 備考 |
+|-----------|----------|------------|------|
+| なし (jitter あり) | 61/92 (66.3%) | — | bridge 経由、baseline |
+| [0.1, 2.0] (jitter なし) | 62/91 (68.1%) | 93-100% | レンジ広すぎ |
+| **[0.3, 1.5] (jitter なし)** | **62/91 (68.1%)** | **94-100%** | consensus 改善 |
+
+レンジを狭めたことで生存数は同等だが consensus rate が改善 — run 間の再現性が向上。
+
+**payload 正規化**（source-scroll.ts に実装済み）:
+- `text` がなければ `summary + content` から生成（engram スキーマ対応）
+- `sourceId` がなければ `projectId` を使用
+- 外部コレクションを直接読む際のアダプタとして機能
+
 ---
 
 ## 2026-03-13: Digest 3-tier + Keyword Context Extraction

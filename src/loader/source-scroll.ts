@@ -57,11 +57,36 @@ export async function scrollSourcePoints(
         next_page_offset?: string | number | null;
       };
     };
-    allPoints.push(...data.result.points);
+    allPoints.push(...data.result.points.map(normalizePayload));
     offset = data.result.next_page_offset ?? null;
   } while (offset !== null);
 
   return allPoints;
+}
+
+// ---- Payload normalization (external schema → SourcePoint) ----
+
+function normalizePayload(raw: SourcePoint): SourcePoint {
+  const p = raw.payload;
+
+  // text: fallback to summary + content (engram schema)
+  if (!p.text) {
+    const summary = typeof p.summary === "string" ? p.summary : "";
+    const content = typeof p.content === "string" ? p.content : "";
+    p.text = [summary, content].filter(Boolean).join(" — ") || String(raw.id);
+  }
+
+  // sourceId: fallback to projectId (engram schema)
+  if (!p.sourceId && typeof p.projectId === "string") {
+    p.sourceId = p.projectId;
+  }
+
+  // tags: ensure array
+  if (!Array.isArray(p.tags)) {
+    p.tags = [];
+  }
+
+  return raw;
 }
 
 // ---- Group source points by sourceId ----

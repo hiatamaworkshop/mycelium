@@ -218,13 +218,23 @@ export class FeedInstance {
       const inherited = getSpeciesMemory(species);
       const inheritedRes = getSpeciesResonanceDelta(species);
 
-      // Per-node jitter: ±jitter uniform noise on w/h for consensus perturbation
-      const nutrition = this.jitter > 0
-        ? {
-            w: M.birth.initialW * (1 + (Math.random() * 2 - 1) * this.jitter),
-            h: M.birth.initialH * (1 + (Math.random() * 2 - 1) * this.jitter),
-          }
-        : undefined;
+      // External weight mapping: if source provides a score, use it as initial w
+      // and skip jitter (external evaluation already differentiates nodes)
+      // Range [0.3, 1.5]: low-score nodes need social help to survive,
+      // high-score nodes have buffer but aren't invincible (decay is multiplicative)
+      const externalW = typeof sp.payload.weight === "number" ? sp.payload.weight : null;
+      let nutrition: { w: number; h: number } | undefined;
+      if (externalW !== null) {
+        // normalize to [0, 1] then scale to [0.3, 1.5]
+        const norm = Math.max(0, Math.min(1, (externalW + 2) / 6));  // [-2, 4] → [0, 1]
+        const mapped = 0.3 + norm * 1.2;                              // [0, 1] → [0.3, 1.5]
+        nutrition = { w: M.birth.initialW * mapped, h: M.birth.initialH };
+      } else if (this.jitter > 0) {
+        nutrition = {
+          w: M.birth.initialW * (1 + (Math.random() * 2 - 1) * this.jitter),
+          h: M.birth.initialH * (1 + (Math.random() * 2 - 1) * this.jitter),
+        };
+      }
 
       const { node } = createNode(
         sp.payload.text,

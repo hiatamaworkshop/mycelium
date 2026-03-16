@@ -173,31 +173,39 @@ function resolveMergeInteraction(
   tResScale: number = 1.0,
 ): void {
   switch (reaction) {
-    case "accept":
-      // merge proceeds: transfer scaled by intensity × similarity (close = efficient, distant = lossy)
+    case "accept": {
+      // Merge direction: higher w survives as absorber, lower w is consumed.
+      // This ensures the stronger node becomes cluster center regardless of
+      // who initiated — fixes proximity merge (strong initiator preserved)
+      // and race conditions (both chose merge, better node survives).
+      const absorber = initiator.w >= target.w ? initiator : target;
+      const consumed = absorber === initiator ? target : initiator;
+
       // Contents carry merge depth prefix: » = absorbed once, »» = twice, etc.
-      // Each merge appends species tag + |cosine at the end for quality filtering.
-      // Format: »[h]content|0.91  »»[h]content|0.91|0.82 (depth = leading », species = [x], cosines = trailing |values)
+      // Format: »[h]content|0.91  »»[h]content|0.91|0.82
       // Species tag: [s]=summarizer [t]=sentinel [h]=herald [a]=anchor [p]=spore
       const sim2 = similarity.toFixed(2);
-      const spTag = `[${SPECIES_SHORT[initiator.species] ?? "?"}]`;
-      target.contents = [
-        ...target.contents,
-        ...initiator.contents.map(c => "»" + spTag + c + "|" + sim2),
+      const spTag = `[${SPECIES_SHORT[consumed.species] ?? "?"}]`;
+      absorber.contents = [
+        ...absorber.contents,
+        ...consumed.contents.map(c => "»" + spTag + c + "|" + sim2),
       ];
-      target.w += initiator.w * rc.mergeWeightTransfer * intensity * similarity;
-      target.ttl += Math.floor(initiator.ttl * rc.mergeTtlTransfer * intensity * similarity);
-      target.resonance[initiator.species] += signal.strength * rc.mergeResonanceBoost * intensity * tResScale;
-      initiator.resonance[target.species] += signal.strength * rc.mergeResonanceBoost * intensity * iResScale;
-      // Transfer initiator's accumulated positive resonance to target (like w/ttl transfer)
+      absorber.w += consumed.w * rc.mergeWeightTransfer * intensity * similarity;
+      absorber.ttl += Math.floor(consumed.ttl * rc.mergeTtlTransfer * intensity * similarity);
+      absorber.resonance[consumed.species] += signal.strength * rc.mergeResonanceBoost * intensity * tResScale;
+      consumed.resonance[absorber.species] += signal.strength * rc.mergeResonanceBoost * intensity * iResScale;
+      // Transfer consumed node's accumulated positive resonance to absorber
       const resTransfer = rc.mergeResonanceTransfer ?? 0.5;
       for (const sp of ALL_SPECIES) {
-        const transfer = Math.max(0, initiator.resonance[sp]) * resTransfer * intensity * similarity * tResScale;
-        target.resonance[sp] += transfer;
+        const transfer = Math.max(0, consumed.resonance[sp]) * resTransfer * intensity * similarity * tResScale;
+        absorber.resonance[sp] += transfer;
       }
-      result.initiatorAlive = false; // initiator consumed
+      // Mark which side dies
+      result.initiatorAlive = absorber === initiator;
+      result.targetAlive = absorber === target;
       result.merged = true;
       break;
+    }
     case "reject":
       initiator.h = Math.max(0, initiator.h - rc.rejectHeatPenalty);
       initiator.resonance[target.species] -= rc.rejectResonancePenalty;
