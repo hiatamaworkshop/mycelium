@@ -41,7 +41,7 @@
 //   DIGEST_MAX_PURE       — Max pure entries per source
 //   DIGEST_MAX_CLUSTERS   — Max cluster entries per source
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync, readdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { DEFAULT_CONFIG } from "../types.js";
 import type { MyceliumConfig } from "../types.js";
@@ -392,17 +392,46 @@ function saveReports(reports: SurvivorReport[]): void {
 
   const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
 
-  // Determine world names for filename
-  const worldNames = [...new Set(reports.map(r => r.worldName ?? "shared"))];
-  const worldLabel = worldNames.length <= 3
-    ? worldNames.join("+")
-    : `${worldNames.length}worlds`;
+  // Derive source label from collections/sourceIds
+  const sourceIds = [...new Set(reports.map(r => r.sourceId))];
+  const collections = [...new Set(reports.map(r => r.collection))];
+  let sourceLabel: string;
+  if (collections.length === 1) {
+    sourceLabel = collections[0].replace(/^source_/, "");
+  } else {
+    sourceLabel = collections.map(c => c.replace(/^source_/, "")).join("+");
+  }
+  if (sourceLabel.length > 40) sourceLabel = `${collections.length}sources`;
 
-  const filename = `${worldLabel}_${ts}.json`;
-  const filepath = join(reportDir, filename);
+  const basename = `${sourceLabel}_${ts}`;
 
-  writeFileSync(filepath, JSON.stringify(reports, null, 2), "utf-8");
-  console.error(`[loader] Report saved: ${filepath}`);
+  // 1. Raw SurvivorReport (always saved)
+  const rawPath = join(reportDir, `${basename}.json`);
+  writeFileSync(rawPath, JSON.stringify(reports, null, 2), "utf-8");
+
+  // 2. Formatted output (if VIEW_FORMAT specified)
+  if (viewFormat) {
+    const formatted = formatReports(reports, { format: viewFormat, query: buildDigestQuery() });
+    const ext = viewFormat === "compact" ? "txt" : "json";
+    const fmtPath = join(reportDir, `${basename}.${viewFormat}.${ext}`);
+    writeFileSync(fmtPath, formatted, "utf-8");
+    console.error(`[loader] Report saved: ${fmtPath}`);
+  } else {
+    console.error(`[loader] Report saved: ${rawPath}`);
+  }
+
+  // 3. latest files — clean old latest.* then write current
+  for (const f of readdirSync(reportDir)) {
+    if (f.startsWith("latest.")) {
+      try { unlinkSync(join(reportDir, f)); } catch {}
+    }
+  }
+  writeFileSync(join(reportDir, "latest.json"), JSON.stringify(reports, null, 2), "utf-8");
+  if (viewFormat) {
+    const formatted = formatReports(reports, { format: viewFormat, query: buildDigestQuery() });
+    const ext = viewFormat === "compact" ? "txt" : "json";
+    writeFileSync(join(reportDir, `latest.${viewFormat}.${ext}`), formatted, "utf-8");
+  }
 }
 
 // ---- Cross-file affinity (2nd pass) ----
