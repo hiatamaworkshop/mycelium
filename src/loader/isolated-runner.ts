@@ -17,7 +17,32 @@ import type { MyceliumConfig, MyceliumNode, Species, WeightMatrix } from "../typ
 import type { MetabolismSchema } from "../types.js";
 import metabolismRaw from "../config/metabolism.json" with { type: "json" };
 import type { SlotAssignment } from "./slot-allocator.js";
-import type { DispatcherConfig } from "./dispatcher.js";
+
+// ---- DispatcherConfig (moved from legacy dispatcher.ts) ----
+
+export interface DispatcherConfig {
+  /** Ticks per instance before harvest */
+  targetTicks: number;
+  /** Tick% at which to harvest survivors (0.0–1.0). Controlled by FILTER_HARDNESS */
+  harvestPct: number;
+  /** Max ticks between cascade instance starts (fallback) */
+  cascadeDelayTicks: number;
+  /** Minimum ticks after inject before considering next (floor) */
+  cascadeMinDelay: number;
+  /** Absorption threshold */
+  absorptionRatio: number;
+  /** Milliseconds between ticks */
+  tickIntervalMs: number;
+}
+
+export const DEFAULT_DISPATCHER_CONFIG: DispatcherConfig = {
+  targetTicks: 60,
+  harvestPct: 0.6,
+  cascadeDelayTicks: 30,
+  cascadeMinDelay: 5,
+  absorptionRatio: 0.4,
+  tickIntervalMs: 0,
+};
 import type { SurvivorReport, ChunkClassification, ClassificationBreakdown, ChunkDetail, ClusterDetail, DeadBrief } from "./feed-instance.js";
 import type { NodeWithVector } from "../core/tick-core.js";
 import type { DeathRecord } from "../core/pushback.js";
