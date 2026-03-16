@@ -54,6 +54,7 @@ import type { SurvivorReport } from "./feed-instance.js";
 import { parseIsolationMode, buildWorldDefinitions } from "./world-config.js";
 import { resolveHardness } from "./hardness.js";
 import { IsolatedRunner, pLimit } from "./isolated-runner.js";
+import type { TrackedMergeEvent } from "./isolated-runner.js";
 import { formatReports } from "../output/formatters.js";
 import type { ViewFormat, DigestQuery } from "../output/formatters.js";
 
@@ -80,6 +81,8 @@ const filterSourceIds = (process.env.FILTER_SOURCE_IDS ?? "")
   .split(",")
   .map(s => s.trim())
   .filter(s => s.length > 0);
+const crossFile = (process.env.CROSS_FILE ?? "").toLowerCase() === "true";
+const crossFileCapacity = parseInt(process.env.CROSS_FILE_CAPACITY ?? "300", 10);
 
 // Digest query (progressive disclosure)
 function buildDigestQuery(): DigestQuery | undefined {
@@ -283,6 +286,11 @@ async function main(): Promise<void> {
 
   // Output results
   printReports(allReports);
+
+  // ---- Cross-file affinity (2nd pass) ----
+  if (crossFile) {
+    await runCrossFileAffinity(allReports, slotQueue);
+  }
 }
 
 // ---- Report output ----
@@ -395,6 +403,127 @@ function saveReports(reports: SurvivorReport[]): void {
 
   writeFileSync(filepath, JSON.stringify(reports, null, 2), "utf-8");
   console.error(`[loader] Report saved: ${filepath}`);
+}
+
+// ---- Cross-file affinity (2nd pass) ----
+
+async function runCrossFileAffinity(
+  reports: SurvivorReport[],
+  slotQueue: Array<{ slot: SlotAssignment; worldName: string }>,
+): Promise<void> {
+  // Collect surviving source points from 1st pass (pure + merged only)
+  const crossPoints: import("./source-scroll.js").SourcePoint[] = [];
+  for (const { slot } of slotQueue) {
+    for (const report of reports) {
+      if (!report.chunkDetails) continue;
+      for (const chunk of report.chunkDetails) {
+        if (chunk.classification !== "pure" && chunk.classification !== "merged") continue;
+        // Find the original source point by seqNo
+        const sp = slot.points.find(p =>
+          (p.payload.sourceId ?? String(p.id)) === report.sourceId.replace(/^[^:]+:/, "") &&
+          p.payload.chunkSeqNo === chunk.chunkSeqNo,
+        ) ?? slot.points[chunk.chunkSeqNo];
+        if (sp) {
+          // Force herald species for cross-file social interaction
+          crossPoints.push({ ...sp, payload: { ...sp.payload, speciesOverride: "herald" } });
+        }
+      }
+    }
+  }
+
+  if (crossPoints.length === 0) {
+    console.error("[cross-file] No surviving chunks to cross-reference");
+    return;
+  }
+  if (crossPoints.length > crossFileCapacity) {
+    console.error(`[cross-file] ${crossPoints.length} survivors exceed capacity ${crossFileCapacity}, truncating`);
+    crossPoints.length = crossFileCapacity;
+  }
+
+  // Build a synthetic slot with all survivors
+  const chunkRegistry: import("./slot-allocator.js").ChunkRegistry = new Map();
+  const bySource = new Map<string, number>();
+  for (const sp of crossPoints) {
+    const sid = sp.payload.sourceId ?? String(sp.id);
+    bySource.set(sid, (bySource.get(sid) ?? 0) + 1);
+  }
+  for (const [sid, count] of bySource) {
+    chunkRegistry.set(sid, { totalChunks: count, collection: "cross-file", rawSourceId: sid });
+  }
+
+  const crossSlot: SlotAssignment = {
+    slotId: "cross-file",
+    batchToken: `cross-${Date.now().toString(36)}`,
+    points: crossPoints,
+    chunkRegistry,
+  };
+
+  console.error(`\n=== Cross-File Affinity (2nd pass) ===`);
+  console.error(`  survivors: ${crossPoints.length} from ${bySource.size} sources`);
+  console.error(`  ticks: ${dispatchConfig.targetTicks}, runs: ${consensusRuns}`);
+
+  // Run single consensus pass with all survivors mixed
+  const runner = new IsolatedRunner(myceliumConfig, dispatchConfig);
+  runner.loadSpeciesMemory();
+  const { mergeEvents, nodeSourceMap } = runner.runOnce(crossSlot, consensusJitter);
+
+  // Build affinity matrix from cross-source merge events
+  const affinityMap = new Map<string, Map<string, { merges: number; totalCos: number }>>();
+  const sourceIds = [...bySource.keys()];
+  for (const sid of sourceIds) {
+    affinityMap.set(sid, new Map());
+  }
+
+  for (const me of mergeEvents) {
+    const srcA = me.absorbedSource;
+    const srcB = me.absorberSource;
+    if (srcA === srcB || srcA === "unknown" || srcB === "unknown") continue;
+    // Bidirectional
+    for (const [a, b] of [[srcA, srcB], [srcB, srcA]]) {
+      const row = affinityMap.get(a);
+      if (!row) continue;
+      const entry = row.get(b) ?? { merges: 0, totalCos: 0 };
+      entry.merges++;
+      entry.totalCos += me.cosine;
+      row.set(b, entry);
+    }
+  }
+
+  // Also track signal-based resonance from surviving nodes
+  const resonanceBySource = new Map<string, Map<string, number>>();
+  for (const [nodeId, nv] of runner.getStore()) {
+    const sid = nodeSourceMap.get(nodeId);
+    if (!sid) continue;
+    const node = nv.node;
+    // Sum positive resonance toward other species' nodes
+    // (resonance is species-level, not source-level, but we can approximate)
+  }
+
+  // Output affinity matrix
+  console.error(`\n  Cross-file merge events: ${mergeEvents.filter(e => e.absorbedSource !== e.absorberSource).length}`);
+  console.error(`\n  Affinity Matrix (merge count / avg cosine):`);
+  console.error(`  ${"".padEnd(30)} ${sourceIds.map(s => s.slice(-12).padStart(12)).join(" ")}`);
+  for (const sid of sourceIds) {
+    const row = affinityMap.get(sid)!;
+    const cells = sourceIds.map(other => {
+      if (other === sid) return "     -     ";
+      const entry = row.get(other);
+      if (!entry) return "     .     ";
+      const avgCos = (entry.totalCos / entry.merges).toFixed(2);
+      return `${String(entry.merges).padStart(3)}/${avgCos}`.padStart(11);
+    });
+    console.error(`  ${sid.slice(-30).padEnd(30)} ${cells.join(" ")}`);
+  }
+
+  // JSON output
+  const matrix: Record<string, Record<string, { merges: number; avgCosine: number }>> = {};
+  for (const [sid, row] of affinityMap) {
+    matrix[sid] = {};
+    for (const [other, entry] of row) {
+      matrix[sid][other] = { merges: entry.merges, avgCosine: entry.totalCos / entry.merges };
+    }
+  }
+  console.log(JSON.stringify({ crossFileAffinity: { sources: sourceIds, survivorCount: crossPoints.length, matrix } }, null, 2));
 }
 
 // ---- Run ----

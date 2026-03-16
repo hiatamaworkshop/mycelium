@@ -41,17 +41,33 @@ interface HarvestResult {
   chunkVotes: Map<number, ChunkClassification>;
 }
 
+/** Merge event with source tracking for cross-file affinity. */
+export interface TrackedMergeEvent {
+  absorbedId: string;
+  absorberId: string;
+  absorbedSource: string;
+  absorberSource: string;
+  cosine: number;
+}
+
 interface RunResult extends HarvestResult {
   /** Accumulated species delta at end of run (for cross-run chaining). */
   endDelta: Record<string, WeightMatrix>;
   /** Accumulated resonance sensitivity delta at end of run. */
   endResonanceDelta: Record<string, Record<string, number>>;
+  /** All merge events with source tracking. */
+  mergeEvents: TrackedMergeEvent[];
+  /** Node → sourceId mapping (for resonance analysis). */
+  nodeSourceMap: Map<string, string>;
 }
 
 // ---- IsolatedRunner ----
 
 export class IsolatedRunner {
   private store = new Map<string, NodeWithVector>();
+
+  /** Expose store for cross-file analysis. */
+  getStore(): ReadonlyMap<string, NodeWithVector> { return this.store; }
   private initialDelta: Record<string, WeightMatrix> | null = null;
   private initialResonanceDelta: Record<string, Record<string, number>> | null = null;
   /** Snapshot from loadSpeciesMemory — used to reset delta chain periodically. */
@@ -132,6 +148,7 @@ export class IsolatedRunner {
       this.inject(slot, jitter, digestor);
 
     // 2. Tick loop
+    const allMergeEvents: TrackedMergeEvent[] = [];
     const deathLog = new Map<string, DeathRecord>();
     const harvestTick = Math.floor(
       this.dispatchConfig.targetTicks * this.dispatchConfig.harvestPct,
@@ -157,6 +174,15 @@ export class IsolatedRunner {
         if (injectedNodeIds.has(id)) {
           deathLog.set(id, record);
         }
+      }
+
+      // Track merge events with source info
+      for (const me of result.mergeEvents) {
+        allMergeEvents.push({
+          ...me,
+          absorbedSource: nodeSourceMap.get(me.absorbedId) ?? "unknown",
+          absorberSource: nodeSourceMap.get(me.absorberId) ?? "unknown",
+        });
       }
 
       // Update survivors (tickCore mutates nodes in place, but we re-set for spawns)
@@ -197,6 +223,8 @@ export class IsolatedRunner {
       ...harvestResult,
       endDelta: digestor.getDelta(),
       endResonanceDelta: digestor.getResonanceDeltaAll(),
+      mergeEvents: allMergeEvents,
+      nodeSourceMap,
     };
   }
 
@@ -222,9 +250,12 @@ export class IsolatedRunner {
       const tags = sp.payload.tags ?? [];
       const trigger = "manual";
 
-      // Species resolution
+      // Species resolution (speciesOverride from payload takes priority — used by cross-file 2nd pass)
       let species: Species;
-      if (tags.length > 0) {
+      const speciesOverride = sp.payload.speciesOverride as Species | undefined;
+      if (speciesOverride) {
+        species = speciesOverride;
+      } else if (tags.length > 0) {
         species = resolveSpecies(trigger, tags);
       } else {
         species = BODY_ROTATION[spIdx % BODY_ROTATION.length];
