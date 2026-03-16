@@ -3,6 +3,55 @@
 loner 判定は　初期メトリクスがない汎用ローダーでは不正確だった、自然と長く生き延びるから
 汎用ローダー利用時は60% ticks 時で判定する調整をした
 
+## 2026-03-16: w-based merge direction + Qdrant-less operation + external weight
+
+### merge 方向の w 比較決定（receptor.ts）
+
+**変更**: merge accept 時に initiator/target の `w` を比較し、高い方が absorber（生存）、
+低い方が consumed（死亡）になるように変更。従来は initiator が常に死亡だった。
+
+**3ケースの整合**:
+| ケース | 従来 | 変更後 |
+|--------|------|--------|
+| 意図的 merge（w↓ が発動） | initiator 死亡 | **同じ**（大半は initiator.w < target.w） |
+| proximity merge（強者が override） | initiator 死亡（強者が消える） | **w 高い方が残る** |
+| 早い者勝ち衝突（両者 merge） | tick 順で決定 | **w 高い方が残る** |
+
+**設計意図**: ボトムアップ蓄積（弱者→弱者→徐々に強者へ統合）の構造は維持しつつ、
+クラスタ中心が「たまたま target にされたノード」ではなく
+「意味的に価値の高いノード」になることを保証。
+
+**テスト結果（engram 92 points）**:
+| | 旧 (initiator固定死亡) | 新 (w比較) |
+|---|---|---|
+| pure | 52 | **54** (+2) — 強者が merge で消費されなくなった |
+| merged | 10 | **11** (+1) |
+| clusters 品質 | — | learnedDelta 3件統合、error 系2件統合、git-commit 系統合 |
+
+クラスタ中心の質が改善:
+- `engram` の learnedDelta クラスタ: calibration + learned + desensitization が統合（receptor 学習系）
+- `engram` の executor エラークラスタ: cwd 問題 + missing dist が統合（環境エラー系）
+- `mycelium_universal` の git-commit: chore 系2件、feat 系2件がそれぞれ統合
+
+### Qdrant-less 運用
+
+`SOURCE_QDRANT_URL` を追加し、外部 Qdrant から直接読み込みを実現。
+mycelium 専用 Qdrant インスタンスなしで完全動作を確認。
+
+```bash
+SOURCE_QDRANT_URL=http://localhost:6333 SOURCE_COLLECTIONS=engram \
+  npx tsx src/loader/main.ts
+```
+
+### 変更ファイル
+- `src/core/receptor.ts` — resolveMergeInteraction: absorber/consumed を w 比較で決定
+- `src/loader/feed-instance.ts` — external weight → initial w マッピング [0.3, 1.5]
+- `src/loader/main.ts` — SOURCE_QDRANT_URL 分離、ヘルスチェック non-fatal 化
+- `src/loader/source-scroll.ts` — payload 正規化（summary→text、projectId→sourceId）
+- `scripts/bridge-engram.mjs` — engram→mycelium Qdrant ブリッジ（参考用）
+
+---
+
 ## 2026-03-15: Delta Chain + clusterSnapshot clamp
 
 ### 概要
