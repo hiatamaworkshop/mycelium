@@ -3,6 +3,60 @@
 loner 判定は　初期メトリクスがない汎用ローダーでは不正確だった、自然と長く生き延びるから
 汎用ローダー利用時は60% ticks 時で判定する調整をした
 
+## 2026-03-16: Cross-File Affinity Matrix (2nd pass)
+
+### 概要
+1st pass フィルタ後の生存者を全ソース混合で 2nd pass に投入し、
+ソース間の意味的親和性を merge/loner/resonance で測定する。
+
+### 設計
+1. 1st pass: 通常のフィルタリング（per-source 独立）
+2. 生存者（pure + merged）を抽出、**herald に強制変換**（社交性を最大化）
+3. 2nd pass: 全生存者を1つの大型 slot に投入（`CROSS_FILE_CAPACITY=300`）
+4. harvest 後に3種の指標を sourceId ペアで集計
+
+### 出力指標
+
+| 指標 | 意味 | 有用性 |
+|------|------|--------|
+| **merge count + avg cosine** | cross-source merge 発生数と類似度 | 直接的な意味的重複の検出 |
+| **per-source loner/dead** | 2nd pass での孤立・死亡数 | 他ソースとの交流能力（低い＝孤立ソース） |
+| **avg resonance** | 生存ノードの正の resonance 平均 | 社会的交流の活発さ（間接的な親和性） |
+
+### herald 強制変換の理由
+1st pass の生存者は各種族にバラけている。herald は社交的（signal/merge の personality が高い）ため、
+cross-source の交流機会を最大化する。元種族のまま投入すると anchor は社交しない。
+
+### テスト結果
+
+**engram データ（91 points → 246 survivors → 2nd pass）**:
+- 191 merge events, うち **21 cross-source** (11%)
+- `hiatamaworkshop/engram ↔ engram`: 2 merges (cos 0.51) — 同一プロジェクト命名揺れ
+- `hiatamaworkshop/engram ↔ mycelium-universal`: 1 merge (cos 0.58) — receptor 知見共有
+- `engram ↔ mycelium-universal`: 1 merge (cos 0.55) — 設計知見の接点
+- resonance: `engram` が中心ソース (0.122)、`hiatamaworkshop/engram` は全滅 (他ソースに吸収)
+
+**arxiv データ（3論文: 14, 17, 5）**:
+- cross-source merge **0件** — 各論文が異なるサブフィールドで意味的接点なし
+- これは **正しい結果**: 無関係な文書間に偽の親和性を検出しない
+
+### 知見
+- cross-file affinity は **同一ドメインの文書セット** で有効（engram で確認）
+- 異なるドメインでは正しくゼロを返す（arxiv で確認）
+- loner 数はソースの「孤立度」を示す — 他ソースと交流できないノードが多いほど独立性が高い
+- resonance は merge よりソフトな親和性指標 — merge が起きなくても signal で蓄積される
+
+### 使用方法
+```bash
+CROSS_FILE=true CROSS_FILE_CAPACITY=300 npx tsx src/loader/main.ts
+```
+
+### 変更ファイル
+- `src/loader/isolated-runner.ts` — TrackedMergeEvent、getStore()、speciesOverride 対応
+- `src/loader/main.ts` — runCrossFileAffinity()、CROSS_FILE/CROSS_FILE_CAPACITY 環境変数
+
+---
+
 ## 2026-03-16: w-based merge direction + Qdrant-less operation + external weight
 
 ### merge 方向の w 比較決定（receptor.ts）

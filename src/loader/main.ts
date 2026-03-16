@@ -465,20 +465,34 @@ async function runCrossFileAffinity(
   // Run single consensus pass with all survivors mixed
   const runner = new IsolatedRunner(myceliumConfig, dispatchConfig);
   runner.loadSpeciesMemory();
-  const { mergeEvents, nodeSourceMap } = runner.runOnce(crossSlot, consensusJitter);
+  const { reports: crossReports, mergeEvents, nodeSourceMap } = runner.runOnce(crossSlot, consensusJitter);
 
-  // Build affinity matrix from cross-source merge events
-  const affinityMap = new Map<string, Map<string, { merges: number; totalCos: number }>>();
   const sourceIds = [...bySource.keys()];
+
+  // ---- 1. Per-source classification in 2nd pass ----
+  const sourceStats: Record<string, { input: number; survived: number; pure: number; merged: number; loner: number; dead: number }> = {};
   for (const sid of sourceIds) {
-    affinityMap.set(sid, new Map());
+    sourceStats[sid] = { input: bySource.get(sid) ?? 0, survived: 0, pure: 0, merged: 0, loner: 0, dead: 0 };
   }
+  for (const r of crossReports) {
+    const sid = r.sourceId;
+    if (!sourceStats[sid]) continue;
+    sourceStats[sid].survived = r.survivingChunks;
+    const bd = r.classificationBreakdown;
+    sourceStats[sid].pure = bd.pure;
+    sourceStats[sid].merged = bd.merged;
+    sourceStats[sid].loner = bd.loner + bd.redundant;
+    sourceStats[sid].dead = bd.dead;
+  }
+
+  // ---- 2. Cross-source merge affinity ----
+  const affinityMap = new Map<string, Map<string, { merges: number; totalCos: number }>>();
+  for (const sid of sourceIds) affinityMap.set(sid, new Map());
 
   for (const me of mergeEvents) {
     const srcA = me.absorbedSource;
     const srcB = me.absorberSource;
     if (srcA === srcB || srcA === "unknown" || srcB === "unknown") continue;
-    // Bidirectional
     for (const [a, b] of [[srcA, srcB], [srcB, srcA]]) {
       const row = affinityMap.get(a);
       if (!row) continue;
@@ -489,20 +503,42 @@ async function runCrossFileAffinity(
     }
   }
 
-  // Also track signal-based resonance from surviving nodes
-  const resonanceBySource = new Map<string, Map<string, number>>();
+  // ---- 3. Cross-source resonance from surviving nodes ----
+  // Resonance is species-level, so we map: for each surviving node from source A,
+  // sum its positive resonance. Then average across all nodes from source A.
+  // Compare per-source avg resonance to detect which sources' nodes are "warmed up".
+  const resonanceBySrc: Record<string, { totalPosRes: number; count: number; speciesRes: Record<string, number> }> = {};
+  for (const sid of sourceIds) resonanceBySrc[sid] = { totalPosRes: 0, count: 0, speciesRes: {} };
+
   for (const [nodeId, nv] of runner.getStore()) {
     const sid = nodeSourceMap.get(nodeId);
-    if (!sid) continue;
-    const node = nv.node;
-    // Sum positive resonance toward other species' nodes
-    // (resonance is species-level, not source-level, but we can approximate)
+    if (!sid || !resonanceBySrc[sid]) continue;
+    const entry = resonanceBySrc[sid];
+    entry.count++;
+    for (const [sp, val] of Object.entries(nv.node.resonance)) {
+      const posVal = Math.max(0, val);
+      entry.totalPosRes += posVal;
+      entry.speciesRes[sp] = (entry.speciesRes[sp] ?? 0) + posVal;
+    }
   }
 
-  // Output affinity matrix
-  console.error(`\n  Cross-file merge events: ${mergeEvents.filter(e => e.absorbedSource !== e.absorberSource).length}`);
+  // ---- Output ----
+  const crossMergeCount = mergeEvents.filter(e => e.absorbedSource !== e.absorberSource).length;
+  const totalMergeCount = mergeEvents.length;
+
+  console.error(`\n  2nd pass results:`);
+  console.error(`  ${"source".padEnd(32)} input surv  pure mrgd lonr dead  avgRes`);
+  for (const sid of sourceIds) {
+    const s = sourceStats[sid];
+    const res = resonanceBySrc[sid];
+    const avgRes = res.count > 0 ? (res.totalPosRes / res.count).toFixed(3) : "0.000";
+    console.error(`  ${sid.slice(-30).padEnd(32)} ${String(s.input).padStart(4)} ${String(s.survived).padStart(4)}  ${String(s.pure).padStart(4)} ${String(s.merged).padStart(4)} ${String(s.loner).padStart(4)} ${String(s.dead).padStart(4)}  ${avgRes}`);
+  }
+
+  console.error(`\n  Merge events: ${totalMergeCount} total, ${crossMergeCount} cross-source`);
+
   console.error(`\n  Affinity Matrix (merge count / avg cosine):`);
-  console.error(`  ${"".padEnd(30)} ${sourceIds.map(s => s.slice(-12).padStart(12)).join(" ")}`);
+  console.error(`  ${"".padEnd(32)} ${sourceIds.map(s => s.slice(-12).padStart(12)).join(" ")}`);
   for (const sid of sourceIds) {
     const row = affinityMap.get(sid)!;
     const cells = sourceIds.map(other => {
@@ -512,7 +548,19 @@ async function runCrossFileAffinity(
       const avgCos = (entry.totalCos / entry.merges).toFixed(2);
       return `${String(entry.merges).padStart(3)}/${avgCos}`.padStart(11);
     });
-    console.error(`  ${sid.slice(-30).padEnd(30)} ${cells.join(" ")}`);
+    console.error(`  ${sid.slice(-30).padEnd(32)} ${cells.join(" ")}`);
+  }
+
+  // Resonance detail per source
+  console.error(`\n  Resonance by source (surviving nodes, avg per species):`);
+  for (const sid of sourceIds) {
+    const res = resonanceBySrc[sid];
+    if (res.count === 0) continue;
+    const speciesLine = Object.entries(res.speciesRes)
+      .filter(([, v]) => v > 0)
+      .map(([sp, v]) => `${sp}:${(v / res.count).toFixed(3)}`)
+      .join(" ");
+    console.error(`  ${sid.slice(-30).padEnd(32)} (${res.count} nodes) ${speciesLine}`);
   }
 
   // JSON output
@@ -523,7 +571,24 @@ async function runCrossFileAffinity(
       matrix[sid][other] = { merges: entry.merges, avgCosine: entry.totalCos / entry.merges };
     }
   }
-  console.log(JSON.stringify({ crossFileAffinity: { sources: sourceIds, survivorCount: crossPoints.length, matrix } }, null, 2));
+  const resonanceSummary: Record<string, { avgPosResonance: number; survivorCount: number; speciesAvg: Record<string, number> }> = {};
+  for (const sid of sourceIds) {
+    const res = resonanceBySrc[sid];
+    const speciesAvg: Record<string, number> = {};
+    for (const [sp, v] of Object.entries(res.speciesRes)) {
+      if (v > 0 && res.count > 0) speciesAvg[sp] = v / res.count;
+    }
+    resonanceSummary[sid] = { avgPosResonance: res.count > 0 ? res.totalPosRes / res.count : 0, survivorCount: res.count, speciesAvg };
+  }
+  console.log(JSON.stringify({
+    crossFileAffinity: {
+      sources: sourceIds,
+      survivorCount: crossPoints.length,
+      sourceStats,
+      matrix,
+      resonance: resonanceSummary,
+    },
+  }, null, 2));
 }
 
 // ---- Run ----
