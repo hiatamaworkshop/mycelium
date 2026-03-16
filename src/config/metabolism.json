@@ -204,7 +204,7 @@
     "rejectHeatPenalty": 0.05,
     "rejectResonancePenalty": 0.1,
     "retaliateDecayIncrease": 0.01,
-    "retaliateResonancePenalty": 0.2,
+    "retaliateResonancePenalty": 0.15,
     "retaliateWeightPenalty": 0,
     "mergeWeightTransfer": 0.5,
     "mergeTtlTransfer": 0.3,
