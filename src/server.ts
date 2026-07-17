@@ -45,8 +45,9 @@ server.tool(
     crossFile: z.boolean().default(false).describe("Enable cross-file affinity 2nd pass"),
     fuelOff: z.boolean().default(false).describe("Ignore fuel channels (payload.weight / myceliumMetrics) — flat audit run (F3)"),
     auditAB: z.boolean().default(false).describe("Run every slot twice (fueled + flat) and return a fuel drift audit JSON instead of reports (F3)"),
+    excludeTags: z.string().default("").describe("Comma-separated tags to exclude from source scroll (e.g. previously-cached nodes, prevents recursive re-ingestion) (Phase 3)"),
   },
-  async ({ sourceQdrantUrl, collections, viewFormat, consensusRuns, filterHardness, filterSourceIds, crossFile, fuelOff, auditAB }) => {
+  async ({ sourceQdrantUrl, collections, viewFormat, consensusRuns, filterHardness, filterSourceIds, crossFile, fuelOff, auditAB, excludeTags }) => {
     const env: Record<string, string> = {
       ...process.env as Record<string, string>,
       SOURCE_QDRANT_URL: sourceQdrantUrl,
@@ -59,6 +60,7 @@ server.tool(
     if (crossFile) env.CROSS_FILE = "true";
     if (fuelOff) env.FUEL_OFF = "true";
     if (auditAB) env.AUDIT_AB = "true";
+    if (excludeTags) env.EXCLUDE_TAGS = excludeTags;
 
     // Don't save reports when called via MCP — caller (receptor sink) handles persistence
     delete env.REPORT_DIR;

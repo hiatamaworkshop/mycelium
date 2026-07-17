@@ -31,6 +31,8 @@
 //   CONSENSUS_THRESHOLD   — Min vote ratio to consider a chunk's classification stable (default: 0.4)
 //   CONSENSUS_JITTER      — Per-run initial w/h perturbation (0-1, default: 0.1 = ±10%)
 //   FILTER_SOURCE_IDS     — Comma-separated source IDs to process (e.g. "8,14" or "source_arxiv:8")
+//   EXCLUDE_TAGS          — Comma-separated tags to exclude from source scroll (e.g. previously-cached
+//                           survivor nodes on a self-referential source — prevents recursive re-ingestion)
 //   FUEL_OFF              — "true" to ignore both fuel channels (payload.weight / myceliumMetrics) — flat audit run (F3)
 //   AUDIT_AB              — "true" to run every slot twice (fueled + flat) and emit a fuel drift audit JSON instead of reports (F3)
 //                           AUDIT_AB + FUEL_OFF = flat vs flat — measures the jitter noise floor to compare drift against
@@ -84,6 +86,10 @@ const consensusThreshold = parseFloat(process.env.CONSENSUS_THRESHOLD ?? "0.4");
 const consensusJitter = parseFloat(process.env.CONSENSUS_JITTER ?? "0.1");
 const viewFormat = (process.env.VIEW_FORMAT ?? "") as ViewFormat | "";
 const filterSourceIds = (process.env.FILTER_SOURCE_IDS ?? "")
+  .split(",")
+  .map(s => s.trim())
+  .filter(s => s.length > 0);
+const excludeTags = (process.env.EXCLUDE_TAGS ?? "")
   .split(",")
   .map(s => s.trim())
   .filter(s => s.length > 0);
@@ -205,12 +211,24 @@ async function main(): Promise<void> {
     }
 
     // Load source points for this world
-    const worldSourcePoints = await loadSourceCollections(world.sourceCollections);
+    let worldSourcePoints = await loadSourceCollections(world.sourceCollections);
     if (worldSourcePoints.length === 0) {
       console.error(`[loader:${world.name}] no source points, skipping`);
       continue;
     }
     console.error(`[loader:${world.name}] ${worldSourcePoints.length} source points loaded`);
+
+    // Exclude points carrying any EXCLUDE_TAGS tag (e.g. previously-cached
+    // survivors on a self-referential source — recursion guard)
+    if (excludeTags.length > 0) {
+      const before = worldSourcePoints.length;
+      worldSourcePoints = worldSourcePoints.filter(p => {
+        const tags = Array.isArray(p.payload.tags) ? p.payload.tags as string[] : [];
+        return !tags.some(t => excludeTags.includes(t));
+      });
+      const excluded = before - worldSourcePoints.length;
+      if (excluded > 0) console.error(`[loader:${world.name}] excluded ${excluded} point(s) by EXCLUDE_TAGS`);
+    }
 
     // Allocate into slots (1 sourceId = 1 slot)
     let slots = allocateSlots(worldSourcePoints, slotCapacity);
