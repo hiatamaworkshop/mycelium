@@ -27,6 +27,9 @@
 //   TICK_INTERVAL_MS      — Milliseconds between ticks (default: 0)
 //   SLOT_CAPACITY         — Max nodes per slot (default: 100)
 //   FILTER_HARDNESS       — "soft" | "mid" | "hard" (default: mid)
+//   FILTER_ROUNDS         — Rounds per slot, 1-3 (default: 1 = current behavior). Round 2+ re-injects
+//                           only the previous round's survivors into a fresh dish, carrying each
+//                           chunk's learnedDelta/learnedResonanceDelta forward (Phase 4a, experimental)
 //   CONSENSUS_RUNS        — Number of runs for majority-vote consensus (default: 10)
 //   CONSENSUS_THRESHOLD   — Min vote ratio to consider a chunk's classification stable (default: 0.4)
 //   CONSENSUS_JITTER      — Per-run initial w/h perturbation (0-1, default: 0.1 = ±10%)
@@ -54,14 +57,14 @@ import { DEFAULT_CONFIG } from "../types.js";
 import type { MyceliumConfig } from "../types.js";
 import { checkQdrantHealth, deleteCollection } from "../qdrant.js";
 import { loadSourceCollections, allocateSlots } from "./slot-allocator.js";
-import type { SourceCollectionConfig, SlotAssignment } from "./slot-allocator.js";
+import type { SourceCollectionConfig, SlotAssignment, ChunkRegistry } from "./slot-allocator.js";
 import { DEFAULT_DISPATCHER_CONFIG } from "./isolated-runner.js";
 import type { DispatcherConfig } from "./isolated-runner.js";
 import type { SurvivorReport } from "./feed-instance.js";
 import { parseIsolationMode, buildWorldDefinitions } from "./world-config.js";
 import { resolveHardness } from "./hardness.js";
 import { IsolatedRunner, pLimit } from "./isolated-runner.js";
-import type { TrackedMergeEvent } from "./isolated-runner.js";
+import type { TrackedMergeEvent, DeltaPool } from "./isolated-runner.js";
 import { formatReports } from "../output/formatters.js";
 import type { ViewFormat, DigestQuery } from "../output/formatters.js";
 import { buildFuelAudit } from "./audit.js";
@@ -81,6 +84,7 @@ const sourceCollectionNames = (process.env.SOURCE_COLLECTIONS ?? "source")
 const slotCapacity = parseInt(process.env.SLOT_CAPACITY ?? "100", 10);
 const cleanWorlds = (process.env.CLEAN_WORLDS ?? "").toLowerCase() === "true";
 const parallelSlots = Math.max(1, parseInt(process.env.PARALLEL_SLOTS ?? "3", 10));
+const filterRounds = Math.max(1, Math.min(3, parseInt(process.env.FILTER_ROUNDS ?? "1", 10)));
 const consensusRuns = Math.max(1, parseInt(process.env.CONSENSUS_RUNS ?? "10", 10));
 const consensusThreshold = parseFloat(process.env.CONSENSUS_THRESHOLD ?? "0.4");
 const consensusJitter = parseFloat(process.env.CONSENSUS_JITTER ?? "0.1");
@@ -136,6 +140,39 @@ const dispatchConfig: DispatcherConfig = {
   absorptionRatio: parseFloat(process.env.ABSORPTION_RATIO ?? "0.4"),
 };
 
+// ---- Phase 4a: build next round's slot from previous round's survivors ----
+//
+// 上澄み再投入 — only chunks that survived (pure + merged, per chunkDetails)
+// go into the new dish. DeltaPool carryover happens separately (see runSlot).
+
+function buildNextRoundSlot(slot: SlotAssignment, reports: SurvivorReport[], roundIdx: number): SlotAssignment {
+  const survivingBySource = new Map<string, Set<number>>();
+  for (const r of reports) {
+    const seqs = new Set<number>();
+    for (const c of r.chunkDetails ?? []) seqs.add(c.chunkSeqNo);
+    survivingBySource.set(r.sourceId, seqs);
+  }
+
+  const points = slot.points.filter((sp, idx) => {
+    const sid = sp.payload.sourceId ?? String(sp.id);
+    const seqNo = sp.payload.chunkSeqNo ?? idx;
+    return survivingBySource.get(sid)?.has(seqNo) ?? false;
+  });
+
+  const registry: ChunkRegistry = new Map();
+  for (const [sid, entry] of slot.chunkRegistry) {
+    const count = points.filter(p => (p.payload.sourceId ?? String(p.id)) === sid).length;
+    registry.set(sid, { ...entry, totalChunks: count });
+  }
+
+  return {
+    slotId: slot.slotId,
+    batchToken: `${slot.batchToken}-r${roundIdx}`,
+    points,
+    chunkRegistry: registry,
+  };
+}
+
 // ---- Sandwich reorder ----
 
 function sandwichReorder(slots: SlotAssignment[]): void {
@@ -174,6 +211,7 @@ async function main(): Promise<void> {
   console.error(`  hardness:      ${hardnessLevel} (harvest at ${(hardnessPreset.harvestPct * 100).toFixed(0)}% of ticks)`);
   console.error(`  ticks:         ${dispatchConfig.targetTicks}`);
   if (consensusRuns > 1) console.error(`  consensus:     ${consensusRuns} runs (threshold=${(consensusThreshold * 100).toFixed(0)}%, jitter=${(consensusJitter * 100).toFixed(0)}%)`);
+  if (filterRounds > 1) console.error(`  rounds:        ${filterRounds} (Phase 4a — learnedDelta carryover, experimental)`);
   if (auditAB && fuelOff) console.error(`  fuel audit:    A/B baseline — flat vs flat (jitter noise floor)`);
   else if (auditAB) console.error(`  fuel audit:    A/B — every slot runs twice (fueled + flat)`);
   else if (fuelOff) console.error(`  fuel:          OFF (flat run — weight/myceliumMetrics ignored)`);
@@ -270,12 +308,38 @@ async function main(): Promise<void> {
   );
 
   const runSlot = (slot: SlotAssignment, off: boolean): SurvivorReport[] => {
-    const runner = new IsolatedRunner(myceliumConfig, dispatchConfig, { fuelOff: off });
-    runner.loadSpeciesMemory();
-    if (consensusRuns > 1) {
-      return runner.runConsensus(slot, consensusRuns, consensusThreshold, consensusJitter);
+    let currentSlot = slot;
+    let pool: DeltaPool | undefined;
+    let reports: SurvivorReport[] = [];
+
+    for (let round = 0; round < filterRounds; round++) {
+      const runner = new IsolatedRunner(myceliumConfig, dispatchConfig, { fuelOff: off });
+      runner.loadSpeciesMemory();
+
+      if (consensusRuns > 1) {
+        const result = runner.runConsensus(currentSlot, consensusRuns, consensusThreshold, consensusJitter, pool);
+        reports = result.reports;
+        pool = result.survivorDeltaPool;
+      } else {
+        const result = runner.runOnce(currentSlot, consensusJitter, pool);
+        reports = result.reports;
+        pool = result.survivorDeltaPool;
+      }
+
+      if (filterRounds > 1) {
+        const surviving = reports.reduce((s, r) => s + r.survivingChunks, 0);
+        const total = reports.reduce((s, r) => s + r.totalChunks, 0);
+        console.error(`[runner:${currentSlot.slotId}] round ${round + 1}/${filterRounds}: ${surviving}/${total} survived`);
+      }
+
+      if (round < filterRounds - 1) {
+        const nextSlot = buildNextRoundSlot(currentSlot, reports, round + 1);
+        if (nextSlot.points.length === 0) break;
+        currentSlot = nextSlot;
+      }
     }
-    return runner.runOnce(slot, consensusJitter).reports;
+
+    return reports;
   };
 
   const reportPromises = slotQueue.map(({ slot, worldName }) =>

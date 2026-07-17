@@ -1,5 +1,42 @@
 # Mycelium — Changelog
 
+## 2026-07-18: Phase 4a（上澄み再投入 — 実装・A/B検証、効果未検出で保留）
+
+### 新設: `DeltaPool`（`src/loader/isolated-runner.ts`）
+- `DeltaPool = Map<"{sourceId}:{chunkSeqNo}", {delta, resonanceDelta}>` —
+  Dispatcher レベルのインメモリキャッシュ（Qdrant 非永続化）
+- `inject()` が該当チャンクのプールエントリを種族レベル memory より優先
+- `runOnce`/`harvest` が生存者の最終 `learnedDelta` をチャンク単位で回収して
+  返す（死亡チャンクは store から消えているため自動除外）
+- `runConsensus` は最終ランの結果のみをプール化（平均は過学習リスクのため不採用）
+- `createNode` は既に `inheritedDelta` 引数を持っていたため、コア変更ゼロ
+
+### 新設: `FILTER_ROUNDS`（`src/loader/main.ts`）
+- 1-3（デフォルト1 = 従来動作）。round 2+ は前ラウンドの生存チャンクのみで
+  新しい `SlotAssignment` を再構築（`buildNextRoundSlot`）、DeltaPool を注入
+- 全滅時は早期打ち切り
+
+### 検証 — A/Bコントロール実験で効果未検出
+- round 1 の生存者集合を固定し、round 2 を DeltaPool あり/なしで各20回試行
+  （source_patent, 9ファイル）
+- 結果: 平均生存率 WITH 15.4% vs WITHOUT 15.0%（差0.4pt）、全ファイルで
+  ±1.1pt 以内 — ほぼ全ファイルで試行間の標準偏差より小さい差
+- 単発試行で観測した「round2で67-100%生存」という見かけの効果は、DeltaPool
+  ではなく round1 生存者集合の構成そのもの（固定すれば低分散に収束）による
+  ものだった可能性が高い
+- 推測される原因: `learnedDelta` は `personality × (1 + learnedDelta)` の
+  乗算補正（`deltaClamp=0.5` で ±50%程度）に過ぎず、1周分の学習量では
+  種族デフォルトの personality を覆すほど育っていない
+
+### 結論・保留
+4a は実装・検証済みだが、単純な1周引継ぎでは効果が測定できないことを
+確認して保留。再挑戦するなら (a) 3周以上重ねてδを蓄積させても無効か、
+(b) δのスケールを増幅して理論上の効果が出る範囲か、の追加検証が前提。
+4b/4c には依存しないため、いつでも再開可能。詳細は `docs/ROADMAP.md`
+Phase 4 セクション参照
+
+---
+
 ## 2026-07-17b: F1（NutritionResolver — 利用側燃料バイアス）
 
 ### 新設: `src/loader/nutrition-resolver.ts`

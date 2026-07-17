@@ -91,7 +91,24 @@ interface RunResult extends HarvestResult {
   mergeEvents: TrackedMergeEvent[];
   /** Node → sourceId mapping (for resonance analysis). */
   nodeSourceMap: Map<string, string>;
+  /** Per-chunk learnedDelta of survivors, keyed by "{sourceId}:{chunkSeqNo}" — Phase 4a carryover into the next round. */
+  survivorDeltaPool: DeltaPool;
 }
+
+// ---- Phase 4a: DeltaPool (上澄み再投入 — learnedDelta carryover across rounds) ----
+//
+// Dispatcher-level, in-memory only (never persisted to Qdrant). Keyed per
+// surviving chunk so the next round's re-injection can seed that specific
+// chunk's node with the behavior it earned last round, instead of the
+// species-level average. Dead chunks are absent from the pool — no carry
+// value for a chunk that didn't survive.
+
+export interface DeltaPoolEntry {
+  delta: WeightMatrix;
+  resonanceDelta: Record<Species, number>;
+}
+
+export type DeltaPool = Map<string, DeltaPoolEntry>;
 
 // ---- IsolatedRunner ----
 
@@ -132,12 +149,16 @@ export class IsolatedRunner {
     runs: number,
     threshold: number,
     jitter: number,
-  ): SurvivorReport[] {
+    /** Phase 4a: per-chunk delta carried in from the previous round. */
+    deltaPool?: DeltaPool,
+  ): { reports: SurvivorReport[]; survivorDeltaPool: DeltaPool } {
     const allVotes = new Map<number, ChunkClassification[]>();
     let templateReports: SurvivorReport[] = [];
+    // 最終ランの結果のδを使用（平均は過学習リスク）
+    let lastSurvivorDeltaPool: DeltaPool = new Map();
 
     for (let run = 0; run < runs; run++) {
-      const result = this.runOnce(slot, jitter);
+      const result = this.runOnce(slot, jitter, deltaPool);
 
       for (const [idx, cls] of result.chunkVotes) {
         const votes = allVotes.get(idx) ?? [];
@@ -146,6 +167,7 @@ export class IsolatedRunner {
       }
 
       templateReports = result.reports;
+      lastSurvivorDeltaPool = result.survivorDeltaPool;
 
       // Chain learned delta into next run, reset every DELTA_CHAIN_LENGTH runs
       const DELTA_CHAIN_LENGTH = 3;
@@ -163,12 +185,13 @@ export class IsolatedRunner {
       }
     }
 
-    return this.buildConsensusReports(templateReports, allVotes, runs, threshold, slot);
+    const reports = this.buildConsensusReports(templateReports, allVotes, runs, threshold, slot);
+    return { reports, survivorDeltaPool: lastSurvivorDeltaPool };
   }
 
   // ---- Single run ----
 
-  runOnce(slot: SlotAssignment, jitter: number): RunResult {
+  runOnce(slot: SlotAssignment, jitter: number, deltaPool?: DeltaPool): RunResult {
     this.store.clear();
 
     // Fresh digestor per run (with pre-loaded delta if available)
@@ -179,7 +202,7 @@ export class IsolatedRunner {
 
     // 1. Inject
     const { injectedNodeIds, nodeSourceMap, sourcePointIdxMap } =
-      this.inject(slot, jitter, digestor);
+      this.inject(slot, jitter, digestor, deltaPool);
 
     // 2. Tick loop
     const allMergeEvents: TrackedMergeEvent[] = [];
@@ -255,12 +278,31 @@ export class IsolatedRunner {
       deathLog, clusterSnapshot, harvestTick,
     );
 
+    // Phase 4a: collect survivors' final learnedDelta, keyed per chunk, for
+    // the next round's re-injection. Dead chunks are simply absent from the
+    // store by this point — no explicit filtering needed.
+    const survivorDeltaPool: DeltaPool = new Map();
+    for (const id of injectedNodeIds) {
+      const nv = this.store.get(id);
+      if (!nv) continue;
+      const spIdx = sourcePointIdxMap.get(id);
+      if (spIdx == null) continue;
+      const sp = slot.points[spIdx];
+      const qualifiedSid = nodeSourceMap.get(id) ?? sp.payload.sourceId ?? String(sp.id);
+      const seqNo = sp.payload.chunkSeqNo ?? spIdx;
+      survivorDeltaPool.set(`${qualifiedSid}:${seqNo}`, {
+        delta: nv.node.learnedDelta,
+        resonanceDelta: nv.node.learnedResonanceDelta,
+      });
+    }
+
     return {
       ...harvestResult,
       endDelta: digestor.getDelta(),
       endResonanceDelta: digestor.getResonanceDeltaAll(),
       mergeEvents: allMergeEvents,
       nodeSourceMap,
+      survivorDeltaPool,
     };
   }
 
@@ -270,6 +312,8 @@ export class IsolatedRunner {
     slot: SlotAssignment,
     jitter: number,
     digestor: DigestorInstance,
+    /** Phase 4a: per-chunk delta carried in from the previous round, overrides species-level memory when present. */
+    deltaPool?: DeltaPool,
   ): {
     injectedNodeIds: Set<string>;
     nodeSourceMap: Map<string, string>;
@@ -295,8 +339,12 @@ export class IsolatedRunner {
         species = BODY_ROTATION[spIdx % BODY_ROTATION.length];
       }
 
-      const inherited = digestor.getMemory(species);
-      const inheritedRes = digestor.getResonanceDelta(species);
+      const qualifiedSid = sp.payload.sourceId ?? String(sp.id);
+      const seqNo = sp.payload.chunkSeqNo ?? spIdx;
+      const poolEntry = deltaPool?.get(`${qualifiedSid}:${seqNo}`);
+
+      const inherited = poolEntry?.delta ?? digestor.getMemory(species);
+      const inheritedRes = poolEntry?.resonanceDelta ?? digestor.getResonanceDelta(species);
 
       // External weight → initial w (fuel intake). When present, jitter is
       // skipped for this node — the external signal replaces synthetic noise.
@@ -345,8 +393,6 @@ export class IsolatedRunner {
         tags,
         tags.length === 0 ? species : undefined,
       );
-
-      const qualifiedSid = sp.payload.sourceId ?? String(sp.id);
 
       this.store.set(node.id, { node, vector: sp.vector });
       injectedNodeIds.add(node.id);
