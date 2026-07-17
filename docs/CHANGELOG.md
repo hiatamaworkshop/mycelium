@@ -1,5 +1,43 @@
 # Mycelium — Changelog
 
+## 2026-07-17b: F1（NutritionResolver — 利用側燃料バイアス）
+
+### 新設: `src/loader/nutrition-resolver.ts`
+- `applyUsageNutrition(base, metrics)` — `payload.myceliumMetrics
+  {survived, lastClass, hits, reads, updatedAt}` を F0 の base（weight-scaled /
+  jitter / metabolism デフォルト）に加算バイアスとして適用
+  - `survived` → w バイアス（`tanh(survived/weightSaturation) × bias`）
+  - `hits + reads×0.5` → h バイアス（+）/ d バイアス（−）、`hitCountCap` でクランプ
+  - `lastClass === "pure"` → 追加ボーナス（`fixedBonus`）
+  - metrics 未設定時は base をそのまま返す（no-op、既存パス無変更）
+- 設計は旧 engram-native mycelium の `src/core/feeder.ts`（git 06b3961、
+  `weight`/`hitCount`/`status=fixed` → w/h/d バイアス）を汎用データソース向けに
+  一般化したもの。`metabolism.json` の `nutrition.bias/weightSaturation/
+  hitCountCap/fixedBonus` は同じフィールドを再利用し、`_tuning` docstring を
+  engram 固有表現から myceliumMetrics 向けに更新
+- `isolated-runner.ts` の `inject()` に配線 — weight/jitter で base を決めた後、
+  metrics があれば `applyUsageNutrition` で上書き
+
+### 書き戻しペイロードは追加実装不要だった
+- F0 で追加済みの `pointId` + 既存の `classification`（=lastClass 相当）+
+  `consensusRate`（ChunkDetail/DeadBrief）がそのまま receptor sink 側の
+  書き戻し用メトリクス差分として機能する。新規レポートフィールドは不要
+
+### 検証
+- 単体テスト（一時スクリプト、tsc + tsx で実行後削除）: survived/hits/reads/
+  lastClass の組み合わせ5パターンで手計算と一致を確認、metrics 省略時は
+  base と完全一致（no-op）
+- 実 engram Qdrant（myceliumMetrics 未設定データ）で回帰なしを確認
+- `npx tsc --noEmit` クリーン
+
+### 既知の残課題（未着手）
+- receptor sink 側の書き戻し適用（レポート → source Qdrant `myceliumMetrics`
+  更新）は mycelium リポジトリ外、Phase F2 と並走予定
+- consensusRate による書き戻しゲート（< 0.6 は燃料化しない）は sink 側の
+  責務として設計済みだが、sink 実装が存在しないため未検証
+
+---
+
 ## 2026-07-17: F0（燃料注入口）+ 初期設定の整合修正
 
 ### F0: external weight intake + pointId 配管

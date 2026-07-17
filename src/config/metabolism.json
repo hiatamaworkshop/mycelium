@@ -243,11 +243,12 @@
       "wScaleMax": 1.5
     },
     "_tuning": {
-      "bias": "Max ±bias on baseline w/h/d from engram metrics. 0.3 = ±30%",
-      "weightSaturation": "Denominator for tanh(weight/N) in w bias. 3 = saturates at ±3 engram weight",
-      "hitCountCap": "Denominator for min(hitCount/N, 1) in h/d bias. 5 = caps at 5 recall hits",
-      "fixedBonus": "Bonus for status=fixed engram nodes: +N% w, −N% d. 0.15 = ±15%",
-      "external": "Universal loader fuel intake: payload.weight in [weightMin,weightMax] maps linearly to initialW × [wScaleMin,wScaleMax]. Clamped. 0.3 = dies without social action, 1.5 = comfortable but not dominant. Nodes with external weight skip consensus jitter"
+      "bias": "Max ±bias on baseline w/h/d from usage-side myceliumMetrics (F1). 0.3 = ±30%",
+      "weightSaturation": "Denominator for tanh(survived/N) in w bias. 3 = saturates at 3 past survivals",
+      "hitCountCap": "Denominator for min((hits+reads*0.5)/N, 1) in h/d bias. 5 = caps at 5 combined usage events",
+      "fixedBonus": "Bonus when lastClass===\"pure\": +N% w, −N% d. 0.15 = ±15%",
+      "external": "Universal loader fuel intake: payload.weight in [weightMin,weightMax] maps linearly to initialW × [wScaleMin,wScaleMax]. Clamped. 0.3 = dies without social action, 1.5 = comfortable but not dominant. Nodes with external weight skip consensus jitter",
+      "_usageSignal": "F1 (nutrition-resolver.ts): payload.myceliumMetrics {survived,lastClass,hits,reads,updatedAt} is the usage-side fuel channel, applied as an additive bias on top of the external/jitter base above. Generalized from the pre-universal-loader engram feeder (weight→survived, hitCount→hits+reads*0.5, status=fixed→lastClass===\"pure\"). Write-back of survived/lastClass/consensusRate is the caller's (receptor sink's) job — mycelium only reads myceliumMetrics, never persists it"
     }
   },
   "hardness": {

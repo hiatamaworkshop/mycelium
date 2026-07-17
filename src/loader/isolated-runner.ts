@@ -49,13 +49,15 @@ import type { DeathRecord } from "../core/pushback.js";
 import { tickCore } from "../core/tick-core.js";
 import { createDigestor } from "../core/digestor.js";
 import type { DigestorInstance } from "../core/digestor.js";
-import { createNode, nodeToPayload, resolveSpecies } from "../core/node.js";
+import { createNode, nodeToPayload, resolveSpecies, getSpeciesConfig } from "../core/node.js";
 import {
   extractRedundantIds,
   extractLonerIds,
   extractPureSurvivors,
   extractMergerClusters,
 } from "../core/pushback.js";
+import { applyUsageNutrition } from "./nutrition-resolver.js";
+import type { MyceliumMetrics } from "./nutrition-resolver.js";
 
 const M = metabolismRaw as unknown as MetabolismSchema;
 
@@ -297,7 +299,7 @@ export class IsolatedRunner {
       // External weight → initial w (fuel intake). When present, jitter is
       // skipped for this node — the external signal replaces synthetic noise.
       const extWeight = sp.payload.weight;
-      let nutrition: { w: number; h: number } | undefined;
+      let nutrition: { w: number; h: number; d?: number } | undefined;
       if (typeof extWeight === "number" && Number.isFinite(extWeight)) {
         const ext = M.nutrition.external ?? { weightMin: -2, weightMax: 4, wScaleMin: 0.3, wScaleMax: 1.5 };
         const span = ext.weightMax - ext.weightMin;
@@ -311,6 +313,21 @@ export class IsolatedRunner {
           w: M.birth.initialW * (1 + (Math.random() * 2 - 1) * jitter),
           h: M.birth.initialH * (1 + (Math.random() * 2 - 1) * jitter),
         };
+      }
+
+      // Usage-side fuel (F1): payload.myceliumMetrics, written back by the
+      // caller after a prior run, biases w/h/d on top of the base resolved
+      // above (weight-scaled / jittered / metabolism default).
+      const metrics = sp.payload.myceliumMetrics as MyceliumMetrics | undefined;
+      if (metrics) {
+        nutrition = applyUsageNutrition(
+          {
+            w: nutrition?.w ?? M.birth.initialW,
+            h: nutrition?.h ?? M.birth.initialH,
+            d: getSpeciesConfig(species).initialDecay,
+          },
+          metrics,
+        );
       }
 
       const { node } = createNode(
