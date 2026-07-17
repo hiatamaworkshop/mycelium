@@ -1,6 +1,118 @@
 # Mycelium — Changelog
 
+## 2026-07-18d: Phase 4c 定量評価 → 安定性フィルタ追加（`META_WORLD_RUNS`）
+
+### 評価: 単発 run は64%がノイズ
+4a の教訓（単発試行は信用できない）を踏まえ、frozen 代表ノード集合に対し
+meta-world の tick シミュレーションを15回独立実行して再現率を測定
+（`source_patent`, 46代表ノード, 使い捨てスクリプトで検証・削除済み）:
+- 165件検出中106件（64%）は15試行中1回のみ出現
+- >=50%再現の「安定」関係は59件、100%再現は7件のみ
+- vs 生コサインKNN: 安定関係の平均コサイン0.293 > 全ペア平均0.171
+  （ノイズではなく意味的近さに偏っている）が、上位KNNとの重複は16.9%のみ
+  （単純な最近傍探索とは異なる組み合わせを検出 — ROADMAP の質的差異の主張を支持）
+
+### 新設: 安定性フィルタ（`src/loader/main.ts` runMetaWorld 内）
+- `META_WORLD_RUNS`（デフォルト5）— frozen 代表集合に対し meta-world の
+  tick シミュレーションを N 回独立実行し、cross-source の merge/resonance
+  イベントをペア×relation単位で集計（1試行内の重複ティックは1票に正規化）
+- `META_WORLD_THRESHOLD`（デフォルト0.5）— 出現率がこの閾値以上の関係のみ
+  links/metaClusters として採用。cosine は採用試行の平均値
+- 旧実装の単発 dedup ロジック（同一ペアを跨ティックで1件に潰すだけ）を
+  多重試行の安定性集計に置き換え
+- 動作確認: 5試行で134 raw → 56 stable（閾値3/5）、31クラスタに links 付与
+
+### 判定基準の扱いについて
+Phase 4 セクションの「判定基準」（1周目と異なる分類結果が出るか）は 4c には
+非適用と判断: meta-world は 1st pass の分類結果（pushback 判定）にフィード
+バックしない設計（links は閲覧補助のみ）。有用性評価は「安定した links が
+実際に意味的関連を持つか」の定性チェックに切り替え、次の検証課題として保留
+
+---
+
+## 2026-07-18c: Phase 4c（Meta-World — cross-file クラスタ統合、実装）
+
+### 新設: `ResonanceEvent`（`src/core/tick-core.ts`）
+- merge に至らない `accept` リアクションを緩い親和性シグナルとして記録
+  （`{initiatorId, targetId, cosine}`）。`TickCoreResult.resonanceEvents` に追加
+- `IsolatedRunner`（`isolated-runner.ts`）で `TrackedResonanceEvent`
+  （source 付き）として蓄積、`RunResult.resonanceEvents` に集約。合わせて
+  `RunResult.nodeChunkSeqMap`（nodeId → 元 chunkSeqNo）も新設
+
+### 新設: `MetaCluster` / `CrossFileLink`（`src/loader/feed-instance.ts`）
+- `MetaCluster { id, relation: "merged"|"resonant", participants: [2件], cosine }`
+- `CrossFileLink { sourceId, chunkSeqNo, relation, cosine }` — `ChunkDetail` /
+  `ClusterDetail` に `links?` として追加。`ClusterDetail` に `metaClusterId?` も追加
+
+### 新設: `runMetaWorld()`（`src/loader/main.ts`, `META_WORLD=true` env gate）
+- 1st pass の全 `SurvivorReport[]` から代表ノードのみ抽出: anchor はそのまま
+  anchor（不動の参照点）、クラスタ origin は herald に変換（社交的ブロードキャスタ）。
+  anchor もクラスタも無いソースは pure survivor 上位3件を herald でフォールバック投入
+  （仕様からの実用的逸脱 — カバレッジ確保のため）
+- 代表ノードのみを1回の meta-world run に投入し、cross-source の merge/resonance
+  イベントを検出
+- union-find で連結成分をグルーピングし `metaClusterId` を割当、各参加ノードに
+  相手側の `links`（重複除去 — 同一ペア×relation は最大 cosine のみ保持）を構築
+- `links`/`metaClusterId` を 1st pass の `reports[].mergerClusters` に直接
+  スプライス（`printReports` より前に実行）→ `VIEW_FORMAT=digest` の
+  `clusters[].links` として閲覧可能（`formatters.ts` の digest builder を配線）
+- `META_WORLD_CAPACITY`（デフォルト200）で代表ノード数を制限
+
+### 既知の仕様乖離
+- ROADMAP の「クラスタ origin + 最終 merge ノードの2ノード投入」は未実装。
+  `extractMergerClusters()` が absorbed member の元 chunkSeqNo/vector を
+  保持しておらず、origin 1ノードのみを代表として使用（意味的幅の拡張は保留）
+- `MetaRelation` は `merged`/`resonant` の2種のみ（`loner` は関係として
+  成立しないため対象外。formatters.ts の型定義は互換のため3種のまま）
+
+### 動作確認
+source_patent（10ファイル、代表50ノード）で smoke test:
+raw イベント148件 → dedup後69件のユニーク関係（merged 3, resonant 66）、
+29クラスタに links がスプライスされ digest 出力で確認。定量的な有用性評価
+（4c の判定基準 — 1周目と異なる分類結果が出るか）は未実施、次の検証課題
+
+---
+
+## 2026-07-18b: Phase 4a v2（per-node 学習追加 → 感度上限まで検証、経路不成立で棄却）
+
+### v1 A/B の欠陥判明 — 構造的ノーオペ
+- コードレビューで、個体の `learnedDelta` が run 中に一切更新されないことを確認
+  （書き込みは `createNode` の初期セットと spawn の親ブレンドのみ。学習は
+  digestor の種族レベルだけ）
+- つまり v1 の DeltaPool の中身は「注入時の種族 memory のコピーそのまま」で、
+  OFF 条件のフォールバックと同一値 — v1 の「効果未検出」は効果ゼロが構造的に
+  保証された比較だった（下の 2026-07-18 エントリの解釈を訂正）
+
+### 新設: per-node オンライン学習（コア変更）
+- `learnFromAction()`（`src/core/node.ts`）— 行動時に自ノードの feelings EMA
+  からの偏差で `learnedDelta[action]` を更新。digestor の種族シグナルの個体版。
+  fitness ゲート・deltaClamp 適用。`node.feelingEma`（runtime-only）を追加
+- `tick-core.ts` の行動ループから呼び出し。`M.learning.nodeRate = 0`（デフォルト）
+  で完全無効 — 既存動作は不変
+- `NODE_LEARN_RATE` env（`main.ts`）→ `IsolatedRunner` opts 経由で有効化
+- DeltaPool の参照エイリアシング修正（harvest/inject 双方でディープコピー —
+  pool 再利用時のトライアル間汚染を防止）
+
+### 検証 — 3条件 A/B + 感度上限プローブ（source_patent, 12試行×9ファイル）
+- POOL（学習済みδ引継ぎ）14.7% / NONE（種族memoryのみ）15.0% /
+  RAND（±0.5 飽和ランダムδ）14.9% — 全ファイル ±1.4pt 以内で差なし
+- 1周の学習量は meanAbs≈0.02-0.05。RAND はその10倍以上のδでも生存率不動
+- 一方、純関数プローブ（20k サンプル）では ±0.5δ が行動分布を最大 ~8pt
+  シフト（例: summarizer bequeath 24.8%→32.7%）— **行動は変わるが生存は
+  変わらない**
+
+### 結論 — 4a 棄却
+生存判定は行動ポリシーではなく embedding 幾何（merge 類似度ゲート、ベクトル
+近傍 resonance）と w/h/ttl 動態に支配されており、learnedDelta 経由の引継ぎは
+学習則・周回数・スケールによらず生存率に影響できない。実装はデフォルト無効で
+残置。未測定点: 生存集合の同一性・クラスタ構成への影響。歴史の持ち越しは
+栄養チャネル（燃料ループ F1-F3）が正解、という設計裏付けにもなった
+
+---
+
 ## 2026-07-18: Phase 4a（上澄み再投入 — 実装・A/B検証、効果未検出で保留）
+> **訂正 (2026-07-18b)**: この検証は構造的ノーオペだった（上のエントリ参照）。
+> 「効果未検出」の解釈・再挑戦条件 (a)(b) は無効
 
 ### 新設: `DeltaPool`（`src/loader/isolated-runner.ts`）
 - `DeltaPool = Map<"{sourceId}:{chunkSeqNo}", {delta, resonanceDelta}>` —

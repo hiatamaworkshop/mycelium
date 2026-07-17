@@ -13,7 +13,7 @@
 import type { MyceliumNode, Environment, Action, Feelings, Species } from "../types.js";
 import type { MetabolismSchema } from "../types.js";
 import { ACTIONS, REACTIONS, ALL_SPECIES } from "../types.js";
-import { computeFeelings, assessAction, assessActionWithProbs, updateFrustration, getSpeciesConfig, clamp01, computeReflection } from "./node.js";
+import { computeFeelings, assessAction, assessActionWithProbs, updateFrustration, getSpeciesConfig, clamp01, computeReflection, learnFromAction } from "./node.js";
 import { emitSignal, react, resolveInteraction } from "./receptor.js";
 import { isSpawnEligible, isCompatiblePartner, executeSpawn } from "./spawn.js";
 import type { DeathRecord } from "./pushback.js";
@@ -28,6 +28,13 @@ export interface NodeWithVector {
 export interface MergeEvent {
   absorbedId: string;
   absorberId: string;
+  cosine: number;
+}
+
+/** Non-merge positive interaction (initiator signaled, target accepted). Meta-world cross-file affinity signal. */
+export interface ResonanceEvent {
+  initiatorId: string;
+  targetId: string;
   cosine: number;
 }
 
@@ -47,6 +54,7 @@ export interface TickCoreResult {
   survivors: NodeWithVector[];
   deaths: Map<string, DeathRecord>;
   mergeEvents: MergeEvent[];
+  resonanceEvents: ResonanceEvent[];
   spawns: SpawnResult[];
   actionCounts: Record<string, number>;
   interactionCount: number;
@@ -177,6 +185,7 @@ export function tickCore(
   let interactionCount = 0;
   let mergeCount = 0;
   const mergeEvents: MergeEvent[] = [];
+  const resonanceEvents: ResonanceEvent[] = [];
   const deaths = new Map<string, DeathRecord>();
   const recordActionCb = callbacks?.recordAction;
 
@@ -257,6 +266,9 @@ export function tickCore(
     if (recordActionCb) {
       recordActionCb(nv.node.species, ACTIONS.indexOf(action), feelings);
     }
+
+    // Per-node online learning (Phase 4a) — no-op unless M.learning.nodeRate > 0
+    learnFromAction(nv.node, ACTIONS.indexOf(action), feelings, M.learning);
 
     // Frustration update
     if (frust.enabled && actionProbs) {
@@ -339,6 +351,11 @@ export function tickCore(
     const result = resolveInteraction(nv.node, match.target.node, signal, reaction, intensity, match.similarity);
     interactionCount++;
     if (result.merged) mergeCount++;
+
+    // Positive interaction short of merge — meta-world affinity signal
+    if (!result.merged && reaction === "accept") {
+      resonanceEvents.push({ initiatorId: nv.node.id, targetId: match.target.node.id, cosine: match.similarity });
+    }
 
     // Self-reflection
     if (refl.enabled && result.initiatorAlive) {
@@ -425,6 +442,7 @@ export function tickCore(
     survivors,
     deaths,
     mergeEvents,
+    resonanceEvents,
     spawns,
     actionCounts,
     interactionCount,

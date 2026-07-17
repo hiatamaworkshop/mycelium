@@ -24,6 +24,8 @@ export interface ChunkDetail {
   classification: ChunkClassification;
   /** Per-chunk consensus agreement rate (topVotes / totalRuns). Only set in consensus mode. */
   consensusRate?: number;
+  /** Related clusters in other sources, discovered by the meta-world pass (Phase 4c). */
+  links?: CrossFileLink[];
 }
 
 /** Dead chunk brief (redundant/loner) — lightweight identifier + snippet */
@@ -52,6 +54,37 @@ export interface ClusterDetail {
   memberTexts?: string[];
   /** Species composition of absorbed members (excludes origin) */
   composition?: Partial<Record<Species, number>>;
+  /** Related clusters in other sources, discovered by the meta-world pass (Phase 4c). */
+  links?: CrossFileLink[];
+  /** Meta-world connected-component ID — clusters sharing this ID are transitively linked. */
+  metaClusterId?: string;
+}
+
+// ---- Meta-world (Phase 4c: cross-file cluster integration) ----
+
+export type MetaRelation = "merged" | "resonant";
+
+export interface MetaClusterParticipant {
+  sourceId: string;
+  chunkSeqNo: number;
+  species: Species;
+}
+
+/** A detected cross-file relationship between two survivor clusters/chunks. */
+export interface MetaCluster {
+  id: string;
+  relation: MetaRelation;
+  participants: [MetaClusterParticipant, MetaClusterParticipant];
+  /** Cosine similarity at the moment of interaction. */
+  cosine: number;
+}
+
+/** Lightweight pointer to a related cluster in another source — surfaced in digest views. */
+export interface CrossFileLink {
+  sourceId: string;
+  chunkSeqNo: number;
+  relation: MetaRelation;
+  cosine: number;
 }
 
 // ---- Survivor report (per sourceId) ----

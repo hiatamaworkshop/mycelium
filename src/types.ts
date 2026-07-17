@@ -155,6 +155,10 @@ export interface MyceliumNode {
   // Computed after resolveInteraction, blended into next tick's feelings
   selfReflection?: Feelings;
 
+  // feelingEma — running mean of feelings across this node's own actions.
+  // Baseline for per-node online learning (Phase 4a); runtime-only, not persisted.
+  feelingEma?: number[];
+
   // timestamps
   createdAt: number;
   lastActiveAt: number;
@@ -265,6 +269,9 @@ export interface MetabolismSchema {
     blendAlpha: number;
     deltaDecay: number;
     resonanceLrScale: number;
+    // Per-node online learning (Phase 4a). 0 = disabled (species-level only).
+    nodeRate?: number;
+    nodeEmaBeta?: number;
   };
 
   spawn: {

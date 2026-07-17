@@ -129,11 +129,15 @@
     "blendAlpha": 0.7,
     "deltaDecay": 0,
     "resonanceLrScale": 0.5,
+    "nodeRate": 0,
+    "nodeEmaBeta": 0.2,
     "_tuning": {
       "rate": "Base learning rate for learnedDelta updates. Higher → faster adaptation. 0.05 = moderate",
       "deltaClamp": "Max absolute value per cell in learnedDelta. 0.5 = effective personality range 0.5×–1.5× base. Safety net only",
       "blendAlpha": "Species delta blend ratio. 0.7 = 70% self + 30% all-species mean. Lower → more homogeneous across species",
-      "deltaDecay": "Per-digest exponential decay rate for learnedDelta. 0 = disabled. 300b training is the sweet spot; longer runs cause anchor monoculture regardless of decay rate"
+      "deltaDecay": "Per-digest exponential decay rate for learnedDelta. 0 = disabled. 300b training is the sweet spot; longer runs cause anchor monoculture regardless of decay rate",
+      "nodeRate": "Per-node online learning rate (Phase 4a). 0 = disabled — nodes keep their injected delta unchanged, learning stays species-level. Enable via NODE_LEARN_RATE env in the loader",
+      "nodeEmaBeta": "EMA smoothing for the node's own feeling baseline. 0.2 = new observation weighs 20%"
     }
   },
   "spawn": {

@@ -637,6 +637,8 @@ function buildDigest(reports: SurvivorReport[], query?: DigestQuery): DigestRepo
           text: extract(c.sampleText),
           members,
           composition: roleComp,
+          links: c.links?.map(l => ({ sourceId: l.sourceId, clusterSeq: l.chunkSeqNo, relation: l.relation })),
+          metaClusterId: c.metaClusterId,
         };
       });
       // Min cluster size filter

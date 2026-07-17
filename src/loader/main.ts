@@ -30,6 +30,9 @@
 //   FILTER_ROUNDS         — Rounds per slot, 1-3 (default: 1 = current behavior). Round 2+ re-injects
 //                           only the previous round's survivors into a fresh dish, carrying each
 //                           chunk's learnedDelta/learnedResonanceDelta forward (Phase 4a, experimental)
+//   NODE_LEARN_RATE       — Per-node online learning rate (Phase 4a, e.g. 0.05). 0/unset = disabled.
+//                           Required for FILTER_ROUNDS carryover to be meaningful — without it,
+//                           nodes never diverge from the species memory they were injected with
 //   CONSENSUS_RUNS        — Number of runs for majority-vote consensus (default: 10)
 //   CONSENSUS_THRESHOLD   — Min vote ratio to consider a chunk's classification stable (default: 0.4)
 //   CONSENSUS_JITTER      — Per-run initial w/h perturbation (0-1, default: 0.1 = ±10%)
@@ -39,6 +42,19 @@
 //   FUEL_OFF              — "true" to ignore both fuel channels (payload.weight / myceliumMetrics) — flat audit run (F3)
 //   AUDIT_AB              — "true" to run every slot twice (fueled + flat) and emit a fuel drift audit JSON instead of reports (F3)
 //                           AUDIT_AB + FUEL_OFF = flat vs flat — measures the jitter noise floor to compare drift against
+//   CROSS_FILE            — "true" to run a raw cross-file affinity 2nd pass (all survivors → herald,
+//                           merge/resonance matrix by source). Coarse — see META_WORLD for the cluster-level version
+//   CROSS_FILE_CAPACITY   — Max survivors injected into the cross-file pass (default: 300)
+//   META_WORLD            — "true" to run the Phase 4c meta-world 2nd pass: injects each source's anchor
+//                           chunks (kept as anchor) + cluster origin nodes (→ herald) — NOT raw chunks —
+//                           to discover cross-file cluster relationships. Splices `links`/`metaClusterId`
+//                           into mergerClusters before reports are printed (visible in VIEW_FORMAT=digest)
+//   META_WORLD_CAPACITY   — Max representative nodes injected into the meta-world pass (default: 200)
+//   META_WORLD_RUNS       — Trials on the frozen representative set for stability filtering (default: 5).
+//                           Single-run output is noisy — eval on source_patent found 64% of raw relations
+//                           appear in exactly 1/15 trials. Only relations recurring in >= META_WORLD_THRESHOLD
+//                           of trials become links
+//   META_WORLD_THRESHOLD  — Min fraction of META_WORLD_RUNS trials a relation must recur in (default: 0.5)
 //   VIEW_FORMAT           — Output format: "digest" | "manifest" | "compact" | "detailed" | "structured" (default: raw JSON)
 //   REPORT_DIR            — Directory for report files. UNSET = no files written (stdout only, subsystem mode)
 //   REPORT_KEEP           — FIFO retention when REPORT_DIR is set (default: 5 runs)
@@ -60,7 +76,9 @@ import { loadSourceCollections, allocateSlots } from "./slot-allocator.js";
 import type { SourceCollectionConfig, SlotAssignment, ChunkRegistry } from "./slot-allocator.js";
 import { DEFAULT_DISPATCHER_CONFIG } from "./isolated-runner.js";
 import type { DispatcherConfig } from "./isolated-runner.js";
-import type { SurvivorReport } from "./feed-instance.js";
+import type { SurvivorReport, MetaCluster, MetaRelation, CrossFileLink } from "./feed-instance.js";
+import type { Species } from "../types.js";
+import type { SourcePoint } from "./source-scroll.js";
 import { parseIsolationMode, buildWorldDefinitions } from "./world-config.js";
 import { resolveHardness } from "./hardness.js";
 import { IsolatedRunner, pLimit } from "./isolated-runner.js";
@@ -85,6 +103,7 @@ const slotCapacity = parseInt(process.env.SLOT_CAPACITY ?? "100", 10);
 const cleanWorlds = (process.env.CLEAN_WORLDS ?? "").toLowerCase() === "true";
 const parallelSlots = Math.max(1, parseInt(process.env.PARALLEL_SLOTS ?? "3", 10));
 const filterRounds = Math.max(1, Math.min(3, parseInt(process.env.FILTER_ROUNDS ?? "1", 10)));
+const nodeLearnRate = Math.max(0, parseFloat(process.env.NODE_LEARN_RATE ?? "0"));
 const consensusRuns = Math.max(1, parseInt(process.env.CONSENSUS_RUNS ?? "10", 10));
 const consensusThreshold = parseFloat(process.env.CONSENSUS_THRESHOLD ?? "0.4");
 const consensusJitter = parseFloat(process.env.CONSENSUS_JITTER ?? "0.1");
@@ -99,6 +118,10 @@ const excludeTags = (process.env.EXCLUDE_TAGS ?? "")
   .filter(s => s.length > 0);
 const crossFile = (process.env.CROSS_FILE ?? "").toLowerCase() === "true";
 const crossFileCapacity = parseInt(process.env.CROSS_FILE_CAPACITY ?? "300", 10);
+const metaWorld = (process.env.META_WORLD ?? "").toLowerCase() === "true";
+const metaWorldCapacity = parseInt(process.env.META_WORLD_CAPACITY ?? "200", 10);
+const metaWorldRuns = Math.max(1, parseInt(process.env.META_WORLD_RUNS ?? "5", 10));
+const metaWorldThreshold = parseFloat(process.env.META_WORLD_THRESHOLD ?? "0.5");
 const fuelOff = (process.env.FUEL_OFF ?? "").toLowerCase() === "true";
 const auditAB = (process.env.AUDIT_AB ?? "").toLowerCase() === "true";
 
@@ -212,6 +235,9 @@ async function main(): Promise<void> {
   console.error(`  ticks:         ${dispatchConfig.targetTicks}`);
   if (consensusRuns > 1) console.error(`  consensus:     ${consensusRuns} runs (threshold=${(consensusThreshold * 100).toFixed(0)}%, jitter=${(consensusJitter * 100).toFixed(0)}%)`);
   if (filterRounds > 1) console.error(`  rounds:        ${filterRounds} (Phase 4a — learnedDelta carryover, experimental)`);
+  if (nodeLearnRate > 0) console.error(`  node learning: rate=${nodeLearnRate} (Phase 4a — per-node online learning)`);
+  if (crossFile) console.error(`  cross-file:    enabled (2nd pass, capacity=${crossFileCapacity})`);
+  if (metaWorld) console.error(`  meta-world:    enabled (Phase 4c 2nd pass, capacity=${metaWorldCapacity}, runs=${metaWorldRuns}, threshold=${(metaWorldThreshold * 100).toFixed(0)}%)`);
   if (auditAB && fuelOff) console.error(`  fuel audit:    A/B baseline — flat vs flat (jitter noise floor)`);
   else if (auditAB) console.error(`  fuel audit:    A/B — every slot runs twice (fueled + flat)`);
   else if (fuelOff) console.error(`  fuel:          OFF (flat run — weight/myceliumMetrics ignored)`);
@@ -313,7 +339,7 @@ async function main(): Promise<void> {
     let reports: SurvivorReport[] = [];
 
     for (let round = 0; round < filterRounds; round++) {
-      const runner = new IsolatedRunner(myceliumConfig, dispatchConfig, { fuelOff: off });
+      const runner = new IsolatedRunner(myceliumConfig, dispatchConfig, { fuelOff: off, nodeLearnRate: nodeLearnRate > 0 ? nodeLearnRate : undefined });
       runner.loadSpeciesMemory();
 
       if (consensusRuns > 1) {
@@ -380,6 +406,12 @@ async function main(): Promise<void> {
 
   const totalElapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   console.error(`\n[loader] all ${slotQueue.length} slots complete in ${totalElapsed}s`);
+
+  // ---- Meta-World (Phase 4c 2nd pass) — must run before printReports so the
+  // splice into allReports[].mergerClusters[].links is visible in the output ----
+  if (metaWorld && !auditAB) {
+    await runMetaWorld(allReports, slotQueue);
+  }
 
   // Output results
   if (auditAB) {
@@ -595,6 +627,243 @@ function saveReports(reports: SurvivorReport[]): void {
     const ext = viewFormat === "compact" ? "txt" : "json";
     writeFileSync(join(reportDir, `latest.${viewFormat}.${ext}`), formatted, "utf-8");
   }
+}
+
+// ---- Meta-World (Phase 4c: cross-file cluster integration, 2nd pass) ----
+//
+// Unlike runCrossFileAffinity below (raw chunk dump — every survivor becomes
+// herald), this represents each source by structural landmarks only:
+//   - anchor chunks, kept as anchor (immovable reference points)
+//   - cluster origin nodes, converted to herald (social broadcaster)
+// Sources with neither fall back to their top pure survivors so small/simple
+// files still participate (deviation from the original spec, for coverage).
+// Comparison unit = knowledge cluster, not raw chunk — this is the qualitative
+// difference from vector-DB KNN that Phase 4c is meant to demonstrate.
+//
+// Cross-source merge/resonance events discovered here are grouped into
+// connected components (union-find) and spliced back into the 1st-pass
+// reports as ClusterDetail.links / .metaClusterId, so VIEW_FORMAT=digest
+// can surface "related cluster in file B" without a separate query.
+
+async function runMetaWorld(
+  reports: SurvivorReport[],
+  slotQueue: Array<{ slot: SlotAssignment; worldName: string }>,
+): Promise<void> {
+  const FALLBACK_TOP_N = 3;
+
+  // sourceId is already qualified ({collection}:{rawId}) by loadSourceCollections,
+  // so this key is unambiguous across worlds/collections.
+  const pointLookup = new Map<string, SourcePoint>();
+  for (const { slot } of slotQueue) {
+    for (let i = 0; i < slot.points.length; i++) {
+      const sp = slot.points[i];
+      const sid = sp.payload.sourceId ?? String(sp.id);
+      const seqNo = sp.payload.chunkSeqNo ?? i;
+      pointLookup.set(`${sid}:${seqNo}`, sp);
+    }
+  }
+
+  interface Participant { sourceId: string; chunkSeqNo: number; species: Species }
+  const metaPoints: SourcePoint[] = [];
+  const participants = new Map<string, Participant>();
+
+  const addPoint = (sourceId: string, chunkSeqNo: number, species: Species, overrideSpecies: Species | undefined) => {
+    const key = `${sourceId}:${chunkSeqNo}`;
+    if (participants.has(key)) return;
+    const sp = pointLookup.get(key);
+    if (!sp) return;
+    metaPoints.push({ ...sp, payload: { ...sp.payload, speciesOverride: overrideSpecies } });
+    participants.set(key, { sourceId, chunkSeqNo, species });
+  };
+
+  for (const report of reports) {
+    let added = 0;
+
+    for (const c of report.chunkDetails ?? []) {
+      if (c.species === "anchor") {
+        addPoint(report.sourceId, c.chunkSeqNo, "anchor", undefined);
+        added++;
+      }
+    }
+
+    for (const c of report.mergerClusters ?? []) {
+      addPoint(report.sourceId, c.originChunkSeqNo, c.species, "herald");
+      added++;
+    }
+
+    if (added === 0) {
+      for (const c of (report.pureSurvivors ?? []).slice(0, FALLBACK_TOP_N)) {
+        addPoint(report.sourceId, c.chunkSeqNo, c.species, "herald");
+      }
+    }
+  }
+
+  if (metaPoints.length === 0) {
+    console.error("[meta-world] No representative nodes to inject (no anchors/clusters/survivors)");
+    return;
+  }
+  if (metaPoints.length > metaWorldCapacity) {
+    console.error(`[meta-world] ${metaPoints.length} representatives exceed capacity ${metaWorldCapacity}, truncating`);
+    metaPoints.length = metaWorldCapacity;
+  }
+
+  const chunkRegistry: ChunkRegistry = new Map();
+  const bySource = new Map<string, number>();
+  for (const sp of metaPoints) {
+    const sid = sp.payload.sourceId ?? String(sp.id);
+    bySource.set(sid, (bySource.get(sid) ?? 0) + 1);
+  }
+  for (const [sid, count] of bySource) {
+    chunkRegistry.set(sid, { totalChunks: count, collection: "meta-world", rawSourceId: sid });
+  }
+
+  const metaSlot: SlotAssignment = {
+    slotId: "meta-world",
+    batchToken: `meta-${Date.now().toString(36)}`,
+    points: metaPoints,
+    chunkRegistry,
+  };
+
+  console.error(`\n=== Meta-World (Phase 4c: cross-file cluster integration) ===`);
+  console.error(`  representatives: ${metaPoints.length} from ${bySource.size} sources`);
+
+  console.error(`  running ${metaWorldRuns} trial(s) for stability filtering...`);
+
+  // Aggregate cross-source relations across N independent runs on the SAME
+  // frozen representative set, instead of trusting a single run. Evaluation
+  // on source_patent (15 trials) found 64% of raw relations appear in exactly
+  // 1 trial — single-run output is dominated by jitter/softmax noise, the
+  // same lesson Phase 4a learned the hard way. Only relations recurring in
+  // >= META_WORLD_THRESHOLD of trials are kept.
+  const edgeStats = new Map<string, { relation: MetaRelation; count: number; sumCos: number; a: string; b: string }>();
+
+  for (let trial = 0; trial < metaWorldRuns; trial++) {
+    const runner = new IsolatedRunner(myceliumConfig, dispatchConfig);
+    runner.loadSpeciesMemory();
+    const { mergeEvents, resonanceEvents, nodeChunkSeqMap } = runner.runOnce(metaSlot, consensusJitter);
+
+    // One vote per trial per (pair, relation) — repeated ticks within a
+    // single trial don't inflate the stability count.
+    const seenThisTrial = new Set<string>();
+    const record = (aId: string, bId: string, aSrc: string, bSrc: string, relation: MetaRelation, cos: number) => {
+      if (aSrc === bSrc) return;
+      const aSeq = nodeChunkSeqMap.get(aId);
+      const bSeq = nodeChunkSeqMap.get(bId);
+      if (aSeq == null || bSeq == null) return;
+      const [x, y] = [`${aSrc}:${aSeq}`, `${bSrc}:${bSeq}`].sort();
+      const key = `${x}|${y}|${relation}`;
+      if (seenThisTrial.has(key)) return;
+      seenThisTrial.add(key);
+      const entry = edgeStats.get(key) ?? { relation, count: 0, sumCos: 0, a: x, b: y };
+      entry.count++;
+      entry.sumCos += cos;
+      edgeStats.set(key, entry);
+    };
+
+    for (const me of mergeEvents) record(me.absorbedId, me.absorberId, me.absorbedSource, me.absorberSource, "merged", me.cosine);
+    for (const re of resonanceEvents) record(re.initiatorId, re.targetId, re.initiatorSource, re.targetSource, "resonant", re.cosine);
+  }
+
+  if (edgeStats.size === 0) {
+    console.error(`  no cross-file relations detected`);
+    console.log(JSON.stringify({ metaWorld: { representativeCount: metaPoints.length, sources: [...bySource.keys()], metaClusters: [] } }, null, 2));
+    return;
+  }
+
+  const minCount = Math.max(1, Math.ceil(metaWorldRuns * metaWorldThreshold));
+  const rawRelationCount = edgeStats.size;
+  const uniqueEdges = [...edgeStats.values()]
+    .filter(e => e.count >= minCount)
+    .map(e => ({ a: e.a, b: e.b, relation: e.relation, cosine: e.sumCos / e.count }));
+
+  console.error(`  ${rawRelationCount} raw relation(s) observed, ${uniqueEdges.length} stable (>=${minCount}/${metaWorldRuns} trials)`);
+
+  if (uniqueEdges.length === 0) {
+    console.log(JSON.stringify({ metaWorld: { representativeCount: metaPoints.length, sources: [...bySource.keys()], metaClusters: [] } }, null, 2));
+    return;
+  }
+
+  // Union-find over participant keys touched by edges → connected component ID
+  const parent = new Map<string, string>();
+  const find = (x: string): string => {
+    if (!parent.has(x)) parent.set(x, x);
+    let root = x;
+    while (parent.get(root) !== root) root = parent.get(root)!;
+    let cur = x;
+    while (parent.get(cur) !== root) { const next = parent.get(cur)!; parent.set(cur, root); cur = next; }
+    return root;
+  };
+  const union = (a: string, b: string) => { const ra = find(a), rb = find(b); if (ra !== rb) parent.set(ra, rb); };
+  for (const e of uniqueEdges) union(e.a, e.b);
+
+  const componentIds = new Map<string, string>();
+  let compCounter = 0;
+  const componentIdOf = (key: string): string => {
+    const root = find(key);
+    let id = componentIds.get(root);
+    if (!id) { id = `meta-${(compCounter++).toString(36)}`; componentIds.set(root, id); }
+    return id;
+  };
+
+  // Dedup key: same (from, to, relation) can fire repeatedly across ticks —
+  // keep the strongest cosine observed rather than listing every occurrence.
+  const linksByKey = new Map<string, Map<string, CrossFileLink>>();
+  const addLink = (fromKey: string, toKey: string, relation: MetaRelation, cosine: number) => {
+    const to = participants.get(toKey);
+    if (!to) return;
+    const dedupKey = `${toKey}:${relation}`;
+    const map = linksByKey.get(fromKey) ?? new Map<string, CrossFileLink>();
+    const existing = map.get(dedupKey);
+    if (!existing || cosine > existing.cosine) {
+      map.set(dedupKey, { sourceId: to.sourceId, chunkSeqNo: to.chunkSeqNo, relation, cosine });
+    }
+    linksByKey.set(fromKey, map);
+  };
+
+  const metaClusters: MetaCluster[] = [];
+  for (const e of uniqueEdges) {
+    const pa = participants.get(e.a), pb = participants.get(e.b);
+    if (!pa || !pb) continue;
+    addLink(e.a, e.b, e.relation, e.cosine);
+    addLink(e.b, e.a, e.relation, e.cosine);
+    metaClusters.push({
+      id: componentIdOf(e.a),
+      relation: e.relation,
+      participants: [
+        { sourceId: pa.sourceId, chunkSeqNo: pa.chunkSeqNo, species: pa.species },
+        { sourceId: pb.sourceId, chunkSeqNo: pb.chunkSeqNo, species: pb.species },
+      ],
+      cosine: e.cosine,
+    });
+  }
+
+  // Splice links + metaClusterId into the 1st-pass reports (clusters only —
+  // pure/anchor entries have no links slot in the digest view yet)
+  let splicedCount = 0;
+  for (const report of reports) {
+    for (const c of report.mergerClusters ?? []) {
+      const key = `${report.sourceId}:${c.originChunkSeqNo}`;
+      const linkMap = linksByKey.get(key);
+      if (linkMap && linkMap.size > 0) {
+        c.links = [...linkMap.values()];
+        c.metaClusterId = componentIdOf(key);
+        splicedCount++;
+      }
+    }
+  }
+
+  const mergedCount = metaClusters.filter(m => m.relation === "merged").length;
+  const resonantCount = metaClusters.filter(m => m.relation === "resonant").length;
+  console.error(`  cross-file relations: ${uniqueEdges.length} stable (${mergedCount} merged, ${resonantCount} resonant; ${rawRelationCount} raw)`);
+  console.error(`  linked clusters: ${splicedCount}`);
+
+  console.log(JSON.stringify({
+    metaWorld: {
+      representativeCount: metaPoints.length,
+      sources: [...bySource.keys()],
+      metaClusters,
+    },
+  }, null, 2));
 }
 
 // ---- Cross-file affinity (2nd pass) ----

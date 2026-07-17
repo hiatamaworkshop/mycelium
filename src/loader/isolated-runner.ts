@@ -82,6 +82,15 @@ export interface TrackedMergeEvent {
   cosine: number;
 }
 
+/** Non-merge positive interaction with source tracking — meta-world affinity signal. */
+export interface TrackedResonanceEvent {
+  initiatorId: string;
+  targetId: string;
+  initiatorSource: string;
+  targetSource: string;
+  cosine: number;
+}
+
 interface RunResult extends HarvestResult {
   /** Accumulated species delta at end of run (for cross-run chaining). */
   endDelta: Record<string, WeightMatrix>;
@@ -89,8 +98,12 @@ interface RunResult extends HarvestResult {
   endResonanceDelta: Record<string, Record<string, number>>;
   /** All merge events with source tracking. */
   mergeEvents: TrackedMergeEvent[];
+  /** All non-merge positive interactions with source tracking (meta-world affinity). */
+  resonanceEvents: TrackedResonanceEvent[];
   /** Node → sourceId mapping (for resonance analysis). */
   nodeSourceMap: Map<string, string>;
+  /** Node → original chunkSeqNo mapping (for meta-world participant identification). */
+  nodeChunkSeqMap: Map<string, number>;
   /** Per-chunk learnedDelta of survivors, keyed by "{sourceId}:{chunkSeqNo}" — Phase 4a carryover into the next round. */
   survivorDeltaPool: DeltaPool;
 }
@@ -123,12 +136,22 @@ export class IsolatedRunner {
   private baselineDelta: Record<string, WeightMatrix> | null = null;
   private baselineResonanceDelta: Record<string, Record<string, number>> | null = null;
 
+  /** Metabolism used for tick runs — M with per-run overrides applied. */
+  private runM: MetabolismSchema;
+
   constructor(
     private config: MyceliumConfig,
     private dispatchConfig: DispatcherConfig,
-    /** fuelOff: skip both fuel channels (payload.weight, myceliumMetrics) — flat audit run (F3). */
-    private opts: { fuelOff?: boolean } = {},
-  ) {}
+    /**
+     * fuelOff: skip both fuel channels (payload.weight, myceliumMetrics) — flat audit run (F3).
+     * nodeLearnRate: enable per-node online learning (Phase 4a). Overrides M.learning.nodeRate.
+     */
+    private opts: { fuelOff?: boolean; nodeLearnRate?: number } = {},
+  ) {
+    this.runM = opts.nodeLearnRate != null
+      ? { ...M, learning: { ...M.learning, nodeRate: opts.nodeLearnRate } }
+      : M;
+  }
 
   /** Pre-load species memory snapshot (applied to each run's digestor). */
   loadSpeciesMemory(): void {
@@ -206,6 +229,7 @@ export class IsolatedRunner {
 
     // 2. Tick loop
     const allMergeEvents: TrackedMergeEvent[] = [];
+    const allResonanceEvents: TrackedResonanceEvent[] = [];
     const deathLog = new Map<string, DeathRecord>();
     const harvestTick = Math.floor(
       this.dispatchConfig.targetTicks * this.dispatchConfig.harvestPct,
@@ -223,7 +247,7 @@ export class IsolatedRunner {
       const allNodes = Array.from(this.store.values());
       if (allNodes.length === 0) break;
 
-      const result = tickCore(allNodes, M, tick, {
+      const result = tickCore(allNodes, this.runM, tick, {
         recordAction: (sp, idx, f) => digestor.recordAction(sp, idx, f),
       });
 
@@ -241,6 +265,15 @@ export class IsolatedRunner {
           ...me,
           absorbedSource: nodeSourceMap.get(me.absorbedId) ?? "unknown",
           absorberSource: nodeSourceMap.get(me.absorberId) ?? "unknown",
+        });
+      }
+
+      // Track resonance (non-merge accept) events with source info
+      for (const re of result.resonanceEvents) {
+        allResonanceEvents.push({
+          ...re,
+          initiatorSource: nodeSourceMap.get(re.initiatorId) ?? "unknown",
+          targetSource: nodeSourceMap.get(re.targetId) ?? "unknown",
         });
       }
 
@@ -290,10 +323,19 @@ export class IsolatedRunner {
       const sp = slot.points[spIdx];
       const qualifiedSid = nodeSourceMap.get(id) ?? sp.payload.sourceId ?? String(sp.id);
       const seqNo = sp.payload.chunkSeqNo ?? spIdx;
+      // Deep-copy: node deltas are mutated in place by per-node learning, and
+      // the pool may be re-injected multiple times (A/B trials) — no aliasing.
       survivorDeltaPool.set(`${qualifiedSid}:${seqNo}`, {
-        delta: nv.node.learnedDelta,
-        resonanceDelta: nv.node.learnedResonanceDelta,
+        delta: nv.node.learnedDelta.map(r => [...r]),
+        resonanceDelta: { ...nv.node.learnedResonanceDelta },
       });
+    }
+
+    // Node → original chunkSeqNo, for meta-world participant identification
+    const nodeChunkSeqMap = new Map<string, number>();
+    for (const [id, spIdx] of sourcePointIdxMap) {
+      const sp = slot.points[spIdx];
+      nodeChunkSeqMap.set(id, sp.payload.chunkSeqNo ?? spIdx);
     }
 
     return {
@@ -301,7 +343,9 @@ export class IsolatedRunner {
       endDelta: digestor.getDelta(),
       endResonanceDelta: digestor.getResonanceDeltaAll(),
       mergeEvents: allMergeEvents,
+      resonanceEvents: allResonanceEvents,
       nodeSourceMap,
+      nodeChunkSeqMap,
       survivorDeltaPool,
     };
   }
@@ -343,8 +387,9 @@ export class IsolatedRunner {
       const seqNo = sp.payload.chunkSeqNo ?? spIdx;
       const poolEntry = deltaPool?.get(`${qualifiedSid}:${seqNo}`);
 
-      const inherited = poolEntry?.delta ?? digestor.getMemory(species);
-      const inheritedRes = poolEntry?.resonanceDelta ?? digestor.getResonanceDelta(species);
+      // Copy pool entries on the way in too — the node will mutate its delta
+      const inherited = poolEntry ? poolEntry.delta.map(r => [...r]) : digestor.getMemory(species);
+      const inheritedRes = poolEntry ? { ...poolEntry.resonanceDelta } : digestor.getResonanceDelta(species);
 
       // External weight → initial w (fuel intake). When present, jitter is
       // skipped for this node — the external signal replaces synthetic noise.

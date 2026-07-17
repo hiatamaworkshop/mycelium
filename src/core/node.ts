@@ -249,6 +249,42 @@ export function assessReaction(
   return softmaxSelect(REACTIONS as unknown as string[], scores) as ReactionType;
 }
 
+// ---- Per-node online learning (Phase 4a) ----
+// Individual counterpart of the digestor's species-level signal: cell [i][j]
+// grows when action i co-occurs with feeling j above this node's own running
+// baseline. Gated by the node's fitness (same gate as digestor's species lr).
+// Mutates node.learnedDelta / node.feelingEma in place.
+
+export function learnFromAction(
+  node: MyceliumNode,
+  actionIdx: number,
+  feelings: Feelings,
+  learning: MetabolismSchema["learning"],
+): void {
+  const rate = learning.nodeRate ?? 0;
+  if (rate <= 0) return;
+
+  const fv = FEELING_KEYS.map(k => feelings[k]);
+  if (!node.feelingEma) {
+    // First action: establish baseline, no deviation signal yet
+    node.feelingEma = [...fv];
+    return;
+  }
+
+  const config = getSpeciesConfig(node.species);
+  const fitness = (node.h + Math.min(1, node.w) + node.ttl / config.initialTtl) / 3;
+  const lr = rate * fitness;
+  const beta = learning.nodeEmaBeta ?? 0.2;
+  const clamp = learning.deltaClamp;
+
+  for (let j = 0; j < FEELINGS_DIM; j++) {
+    const sig = fv[j] - node.feelingEma[j];
+    const v = node.learnedDelta[actionIdx][j] + lr * sig;
+    node.learnedDelta[actionIdx][j] = Math.max(-clamp, Math.min(clamp, v));
+    node.feelingEma[j] = (1 - beta) * node.feelingEma[j] + beta * fv[j];
+  }
+}
+
 // ---- Softmax + probabilistic selection ----
 
 function softmaxProbs(scores: number[]): number[] {
