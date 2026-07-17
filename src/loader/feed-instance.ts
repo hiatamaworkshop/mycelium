@@ -17,6 +17,8 @@ export type ClassificationBreakdown = Record<ChunkClassification, number>;
 /** Individual chunk with position + classification */
 export interface ChunkDetail {
   chunkSeqNo: number;
+  /** Source Qdrant point id — write-back key for external metrics (fuel loop) */
+  pointId?: string;
   text: string;
   species: Species;
   classification: ChunkClassification;
@@ -27,6 +29,8 @@ export interface ChunkDetail {
 /** Dead chunk brief (redundant/loner) — lightweight identifier + snippet */
 export interface DeadBrief {
   chunkSeqNo: number;
+  /** Source Qdrant point id — write-back key for external metrics (fuel loop) */
+  pointId?: string;
   classification: "redundant" | "loner" | "dead";
   snippet: string;           // first ~80 chars
   cause?: string;            // death cause from deathLog

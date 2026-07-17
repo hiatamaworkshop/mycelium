@@ -183,6 +183,7 @@
     ],
     "receptivity": 0.2,
     "resonanceReceiveScale": 0.3,
+    "signalAcceptWBoost": 0,
     "mergeTargetBias": 0,
     "initialDecay": 0.02,
     "initialTtl": 500,
@@ -194,7 +195,7 @@
       "receptivity": "Minimal — almost deaf to incoming signals, reacts from own state only",
       "resonanceReceiveScale": "0.3 — dampened to prevent passive resonance accumulation. Anchor accepts all interactions but shouldn't dominate resonance rankings",
       "selectionBias": "anchor rarely initiates social actions. sentinel (1.0) is the only strong target — rule enforcement. all others low. replaces mergeImmune: other species set anchor bias low instead",
-      "mergeTargetBias": "0 — anchor is immovable, never absorbs other nodes' contents. Keeps pure status for pushback filtering. signal+accept still works (resonance/wBoost)",
+      "mergeTargetBias": "0 — anchor is immovable, never absorbs other nodes' contents. Keeps pure status for pushback filtering. signal+accept still yields resonance (×0.3 dampened); signalAcceptWBoost=0 deliberately — anchor is already near-immortal in-run (TTL 500, decay 0.02) and must not gain w from being a passive signal sink",
       "behavior": "immovable system core (.env, paths, conventions). survive-only initiator — signal/merge/bequeath suppressed by negative weights. near-guaranteed acceptor when targeted — reject/retaliate/flee suppressed. passive knowledge source: quiet but always receptive. merge-immune as target (mergeTargetBias=0)"
     }
   },

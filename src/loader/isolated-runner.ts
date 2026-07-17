@@ -178,9 +178,11 @@ export class IsolatedRunner {
     const harvestTick = Math.floor(
       this.dispatchConfig.targetTicks * this.dispatchConfig.harvestPct,
     );
-    // Clamp cluster snapshot to before harvest — otherwise it never fires
+    // Pushback pcts are relative to the ACTUAL run length (harvestTick), not
+    // targetTicks — the sim ends at harvest, so "70% of the sim" must mean
+    // 70% of what actually runs. Clamp keeps the snapshot strictly pre-harvest.
     const clusterSnapshotTick = Math.min(
-      Math.floor(this.dispatchConfig.targetTicks * (M.pushback?.clusterPct ?? 0.6)),
+      Math.floor(harvestTick * (M.pushback?.clusterPct ?? 0.6)),
       harvestTick - 1,
     );
     let clusterSnapshot: MyceliumNode[] | null = null;
@@ -241,7 +243,7 @@ export class IsolatedRunner {
     // 3. Harvest
     const harvestResult = this.harvest(
       slot, injectedNodeIds, nodeSourceMap, sourcePointIdxMap,
-      deathLog, clusterSnapshot,
+      deathLog, clusterSnapshot, harvestTick,
     );
 
     return {
@@ -268,7 +270,10 @@ export class IsolatedRunner {
     const nodeSourceMap = new Map<string, string>();
     const sourcePointIdxMap = new Map<string, number>();
 
-    const BODY_ROTATION: Species[] = ["summarizer", "herald", "spore"];
+    // Tuned 2026-03-14: 40% summarizer / 40% herald / 20% spore.
+    // herald+summarizer drive the signal→resonance→merge chain (cluster cores);
+    // spore is absorption material — a little goes a long way (see TUNING_LOG_20260314).
+    const BODY_ROTATION: Species[] = ["summarizer", "herald", "summarizer", "herald", "spore"];
 
     for (let spIdx = 0; spIdx < slot.points.length; spIdx++) {
       const sp = slot.points[spIdx];
@@ -289,13 +294,24 @@ export class IsolatedRunner {
       const inherited = digestor.getMemory(species);
       const inheritedRes = digestor.getResonanceDelta(species);
 
-      // Per-node jitter
-      const nutrition = jitter > 0
-        ? {
-            w: M.birth.initialW * (1 + (Math.random() * 2 - 1) * jitter),
-            h: M.birth.initialH * (1 + (Math.random() * 2 - 1) * jitter),
-          }
-        : undefined;
+      // External weight → initial w (fuel intake). When present, jitter is
+      // skipped for this node — the external signal replaces synthetic noise.
+      const extWeight = sp.payload.weight;
+      let nutrition: { w: number; h: number } | undefined;
+      if (typeof extWeight === "number" && Number.isFinite(extWeight)) {
+        const ext = M.nutrition.external ?? { weightMin: -2, weightMax: 4, wScaleMin: 0.3, wScaleMax: 1.5 };
+        const span = ext.weightMax - ext.weightMin;
+        const norm = span > 0
+          ? Math.min(1, Math.max(0, (extWeight - ext.weightMin) / span))
+          : 0.5;
+        const scale = ext.wScaleMin + norm * (ext.wScaleMax - ext.wScaleMin);
+        nutrition = { w: M.birth.initialW * scale, h: M.birth.initialH };
+      } else if (jitter > 0) {
+        nutrition = {
+          w: M.birth.initialW * (1 + (Math.random() * 2 - 1) * jitter),
+          h: M.birth.initialH * (1 + (Math.random() * 2 - 1) * jitter),
+        };
+      }
 
       const { node } = createNode(
         sp.payload.text,
@@ -328,6 +344,7 @@ export class IsolatedRunner {
     sourcePointIdxMap: Map<string, number>,
     deathLog: Map<string, DeathRecord>,
     clusterSnapshot: MyceliumNode[] | null,
+    harvestTick: number,
   ): HarvestResult {
     // Surviving injected nodes
     const myLiving: MyceliumNode[] = [];
@@ -344,8 +361,10 @@ export class IsolatedRunner {
     const pureNodeIds = new Set(extractPureSurvivors(myLiving).map(c => c.nodeId));
     const mergerClusters = extractMergerClusters(clusterSnapshot ?? myLiving);
     const mergerNodeIds = new Set(mergerClusters.map(c => c.originId));
-    const redundantNodeIds = new Set(extractRedundantIds(deathLog, this.dispatchConfig.targetTicks));
-    const lonerNodeIds = new Set(extractLonerIds(deathLog, this.dispatchConfig.targetTicks));
+    // Windows are relative to the actual run length (harvestTick), so their
+    // semantics stay stable across FILTER_HARDNESS levels
+    const redundantNodeIds = new Set(extractRedundantIds(deathLog, harvestTick));
+    const lonerNodeIds = new Set(extractLonerIds(deathLog, harvestTick));
 
     // Per-chunk votes
     const chunkVotes = new Map<number, ChunkClassification>();
@@ -433,6 +452,7 @@ export class IsolatedRunner {
 
           const detail: ChunkDetail = {
             chunkSeqNo: seqNo,
+            pointId: slot.points[spIdx]?.id,
             text: node?.contents[0] ?? text,
             species,
             classification: cls,
@@ -464,6 +484,7 @@ export class IsolatedRunner {
           const death = deathLog.get(nid);
           deadBriefs.push({
             chunkSeqNo: seqNo,
+            pointId: slot.points[spIdx]?.id,
             classification: cls as "redundant" | "loner" | "dead",
             snippet: text.slice(0, 80),
             cause: death?.cause,
@@ -635,6 +656,7 @@ export class IsolatedRunner {
           const cRate = idxConsensusRate.get(spIdx);
           deadBriefs.push({
             chunkSeqNo: seqNo,
+            pointId: slot.points[spIdx]?.id,
             classification: cls as "redundant" | "loner" | "dead",
             snippet: text.slice(0, 80),
             ...(cRate != null ? { consensusRate: cRate } : {}),

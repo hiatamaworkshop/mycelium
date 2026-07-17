@@ -327,6 +327,13 @@ export interface MetabolismSchema {
     weightSaturation: number;
     hitCountCap: number;
     fixedBonus: number;
+    /** External payload.weight → initial w mapping (universal loader fuel intake) */
+    external?: {
+      weightMin: number;
+      weightMax: number;
+      wScaleMin: number;
+      wScaleMax: number;
+    };
   };
 
   hardness?: {

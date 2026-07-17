@@ -86,18 +86,19 @@ export function extractPureSurvivors(nodes: MyceliumNode[]): PushbackCandidate[]
  * Find IDs of nodes that died from high-cosine merge in the early phase.
  * These are semantically redundant — near-duplicate data absorbed quickly.
  *
- * Uses tick% (relative to total ticks) instead of absolute tick threshold.
+ * Uses tick% (relative to the actual run length, i.e. harvestTick when the
+ * loader drives the sim) instead of absolute tick threshold.
  * Empirical finding: cos ≥ 0.75 + tick% ≤ 40% catches true duplicates
  * without false positives from late-game merges.
  */
 export function extractRedundantIds(
   deathLog: Map<string, DeathRecord>,
-  totalTicks: number,
+  runTicks: number,
   earlyPct: number = PB.earlyPct,
   minCosine: number = PB.minCosine,
 ): string[] {
   const redundant = new Set<string>();
-  const tickCutoff = Math.floor(totalTicks * earlyPct);
+  const tickCutoff = Math.floor(runTicks * earlyPct);
 
   for (const [nodeId, death] of deathLog.entries()) {
     if (death.cause !== "merge" || death.tick > tickCutoff) continue;
@@ -111,19 +112,19 @@ export function extractRedundantIds(
 /**
  * Find IDs of loner nodes: death before lonerPct + near-zero positive resonance.
  * These are semantically isolated nodes — no meaningful social interactions.
- * Uses lonerPct (default 0.6) instead of earlyPct (0.4) because resonance
- * metrics need time to accumulate — nodes dying at tick 25-36 with posRes≈0
- * are genuine loners that lacked initial metric support.
+ * Uses lonerPct (default 1.0 = up to harvest) instead of earlyPct (0.4) because
+ * flat initial metrics let loners survive long before dying isolated — nodes
+ * dying late with posRes≈0 are genuine loners that never connected.
  */
 export function extractLonerIds(
   deathLog: Map<string, DeathRecord>,
-  totalTicks: number,
+  runTicks: number,
   lonerPct: number = PB.lonerPct ?? PB.earlyPct,
   posResThreshold: number = PB.posResThreshold,
   redundantCosine: number = PB.redundantCosine,
 ): string[] {
   const loners = new Set<string>();
-  const tickCutoff = Math.floor(totalTicks * lonerPct);
+  const tickCutoff = Math.floor(runTicks * lonerPct);
 
   for (const [nodeId, death] of deathLog.entries()) {
     if (death.cause === "spawn") continue;

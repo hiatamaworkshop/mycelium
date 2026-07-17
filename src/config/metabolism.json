@@ -174,7 +174,7 @@
   },
   "pushback": {
     "earlyPct": 0.4,
-    "lonerPct": 0.6,
+    "lonerPct": 1.0,
     "minCosine": 0.75,
     "posResThreshold": 0.05,
     "redundantCosine": 0.75,
@@ -184,14 +184,15 @@
     "clusterMinCos": 0.35,
     "clusterMaxCos": 0.75,
     "_tuning": {
-      "earlyPct": "Max tick% for 'early' death (redundant only). 0.4 = first 40% of sim",
-      "lonerPct": "Max tick% for loner detection. 0.6 = up to harvest, same as clusterPct. Loners need longer window because initial resonance metrics take time to accumulate",
+      "_frame": "All pcts here are relative to the ACTUAL run length (harvestTick = targetTicks × harvestPct), not targetTicks. Semantics stay stable across FILTER_HARDNESS levels",
+      "earlyPct": "Max tick% for 'early' death (redundant only). 0.4 = first 40% of the run",
+      "lonerPct": "Max tick% for loner detection. 1.0 = up to harvest (whole run). Loners need the full window because flat initial metrics let them survive long before dying isolated",
       "minCosine": "Merge cosine threshold for redundancy flag. 0.75 = moderate similarity",
       "posResThreshold": "Max positive resonance to be a loner. 0.05 = near-zero social interaction",
       "redundantCosine": "Merge cosine above which death is redundant, not loner. Should match minCosine",
       "wThreshold": "Deprecated — merger cluster no longer gates on w",
       "maxDepth1": "Deprecated — merger cluster no longer caps depth-1 count",
-      "clusterPct": "Tick% at which to snapshot for cluster detection. 0.6 = after early-death phase",
+      "clusterPct": "Tick% of the run at which to snapshot for cluster detection. 0.7 = past the merge-chain peak, before late-game dissolution (tuned 2026-03-14). Clamped to harvestTick-1",
       "clusterMinCos": "Min merge cosine for valid cluster member. Below = noise (unrelated merge)",
       "clusterMaxCos": "Max merge cosine for valid cluster member. Above = proximity merge (redundant duplicate)"
     }
@@ -235,11 +236,18 @@
     "weightSaturation": 3,
     "hitCountCap": 5,
     "fixedBonus": 0.15,
+    "external": {
+      "weightMin": -2,
+      "weightMax": 4,
+      "wScaleMin": 0.3,
+      "wScaleMax": 1.5
+    },
     "_tuning": {
       "bias": "Max ±bias on baseline w/h/d from engram metrics. 0.3 = ±30%",
       "weightSaturation": "Denominator for tanh(weight/N) in w bias. 3 = saturates at ±3 engram weight",
       "hitCountCap": "Denominator for min(hitCount/N, 1) in h/d bias. 5 = caps at 5 recall hits",
-      "fixedBonus": "Bonus for status=fixed engram nodes: +N% w, −N% d. 0.15 = ±15%"
+      "fixedBonus": "Bonus for status=fixed engram nodes: +N% w, −N% d. 0.15 = ±15%",
+      "external": "Universal loader fuel intake: payload.weight in [weightMin,weightMax] maps linearly to initialW × [wScaleMin,wScaleMax]. Clamped. 0.3 = dies without social action, 1.5 = comfortable but not dominant. Nodes with external weight skip consensus jitter"
     }
   },
   "hardness": {
@@ -251,7 +259,7 @@
     "_tuning": {
       "harvestPct": "Tick% at which to judge survival. Same ecosystem, different observation point",
       "soft": "30% — early snapshot, many still alive → coarse filter, more output",
-      "mid": "60% — current clusterPct equivalent → balanced filter",
+      "mid": "60% — balanced filter (default)",
       "hard": "90% — late snapshot, only the strongest remain → strict filter, minimal output"
     }
   }

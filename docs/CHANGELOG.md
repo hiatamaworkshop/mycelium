@@ -1,5 +1,45 @@
 # Mycelium — Changelog
 
+## 2026-07-17: F0（燃料注入口）+ 初期設定の整合修正
+
+### F0: external weight intake + pointId 配管
+- `payload.weight` → 初期 w マッピングを実装（USAGE 記載済みだが未実装だった）
+  - `nutrition.external` 設定: [-2,4] → linear → initialW × [0.3,1.5]、クランプ付き
+  - weight を持つノードは consensus jitter を自動スキップ（外部信号が合成ノイズを代替）
+- `ChunkDetail` / `DeadBrief` に `pointId` を追加 — 呼び出し側がメトリクスを
+  source Qdrant に書き戻すためのキー（メトリクスフィードバックループの前提配管）
+
+### 修正1: BODY_ROTATION チューニング消失（回帰）
+- FeedInstance → IsolatedRunner 移行時に 2026-03-14 のチューニング
+  （summarizer/herald/summarizer/herald/spore = 40/40/20）が旧値 33/33/33 に戻っていた
+- isolated-runner.ts で復元
+
+### 修正2: pushback 分類窓の基準系を harvestTick に統一
+- 旧: earlyPct/lonerPct/clusterPct が targetTicks 基準、シミュレーションは
+  harvestTick で終了 → hardness によって分類の意味が暗黙に変化していた
+  - soft(0.3): 走行18t < early窓24t → 全 merge 死が「早期」扱い、窓の意味が消滅
+  - mid(0.6): clusterPct=0.7(tick42) がクランプで tick35 に潰され実効 0.58
+- 新: 全 pct を実走行長（harvestTick）基準に。hardness を変えても分類意味が不変
+- lonerPct は 0.6 → 1.0（「harvest まで」という調整意図を新基準系で保存）
+- **注意**: mid でのクラスタ検出タイミングが tick35 → tick25 に変わる。
+  arxiv データでの再検証を推奨（TUNING_LOG の 0.7 は旧基準系での測定）
+
+### 修正3: REPORT_DIR を opt-in に（stdout フィルタ純粋性）
+- 旧: REPORT_DIR 未指定でも `data/reports` にデフォルト保存
+  → MCP server の `delete env.REPORT_DIR`（保存させない意図）が無効化されていた
+- 新: REPORT_DIR 明示時のみ保存。未指定 = stdout のみ（サブシステムモード）
+
+### 修正4: anchor の signalAcceptWBoost を明示
+- anchor のみフィールド未定義（実効 0）なのに _doc は「wBoost が効く」と主張していた
+- `signalAcceptWBoost: 0` を明示 + _doc を実態に合わせ修正
+  （anchor は TTL500/decay0.02 で run 内ほぼ不死。受動的な signal 吸収で
+  w まで得ると支配が強化されるため 0 が正しい）
+
+### 既知の残課題（このパスでは未修正）
+- consensus で「最終 run では死んだが多数決では生存」のチャンクが
+  chunkDetails/deadBriefs のどちらにも現れないことがある（breakdown 集計は正しい）
+
+
 loner 判定は　初期メトリクスがない汎用ローダーでは不正確だった、自然と長く生き延びるから
 汎用ローダー利用時は60% ticks 時で判定する調整をした
 

@@ -32,6 +32,8 @@
 //   CONSENSUS_JITTER      — Per-run initial w/h perturbation (0-1, default: 0.1 = ±10%)
 //   FILTER_SOURCE_IDS     — Comma-separated source IDs to process (e.g. "8,14" or "source_arxiv:8")
 //   VIEW_FORMAT           — Output format: "digest" | "manifest" | "compact" | "detailed" | "structured" (default: raw JSON)
+//   REPORT_DIR            — Directory for report files. UNSET = no files written (stdout only, subsystem mode)
+//   REPORT_KEEP           — FIFO retention when REPORT_DIR is set (default: 5 runs)
 //
 //   Digest query (progressive disclosure — only applied when VIEW_FORMAT=digest):
 //   DIGEST_TIERS          — Comma-separated tiers: "meta", "pure", "clusters" (default: all)
@@ -384,10 +386,15 @@ function printReports(reports: SurvivorReport[]): void {
   saveReports(reports);
 }
 
-// ---- Report file persistence ----
+// ---- Report file persistence (opt-in) ----
+//
+// mycelium is a stdout filter — it does NOT save files unless the caller
+// explicitly sets REPORT_DIR. Persistence is the caller's responsibility
+// (receptor sink, local runs with REPORT_DIR=./data/reports).
 
 function saveReports(reports: SurvivorReport[]): void {
-  const reportDir = process.env.REPORT_DIR ?? join("data", "reports");
+  const reportDir = process.env.REPORT_DIR;
+  if (!reportDir) return;
   mkdirSync(reportDir, { recursive: true });
 
   const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
