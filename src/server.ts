@@ -43,8 +43,10 @@ server.tool(
     filterHardness: z.enum(["soft", "mid", "hard"]).default("mid").describe("Filter strictness"),
     filterSourceIds: z.string().default("").describe("Comma-separated source IDs to filter (empty = all)"),
     crossFile: z.boolean().default(false).describe("Enable cross-file affinity 2nd pass"),
+    fuelOff: z.boolean().default(false).describe("Ignore fuel channels (payload.weight / myceliumMetrics) — flat audit run (F3)"),
+    auditAB: z.boolean().default(false).describe("Run every slot twice (fueled + flat) and return a fuel drift audit JSON instead of reports (F3)"),
   },
-  async ({ sourceQdrantUrl, collections, viewFormat, consensusRuns, filterHardness, filterSourceIds, crossFile }) => {
+  async ({ sourceQdrantUrl, collections, viewFormat, consensusRuns, filterHardness, filterSourceIds, crossFile, fuelOff, auditAB }) => {
     const env: Record<string, string> = {
       ...process.env as Record<string, string>,
       SOURCE_QDRANT_URL: sourceQdrantUrl,
@@ -55,6 +57,8 @@ server.tool(
     if (viewFormat) env.VIEW_FORMAT = viewFormat;
     if (filterSourceIds) env.FILTER_SOURCE_IDS = filterSourceIds;
     if (crossFile) env.CROSS_FILE = "true";
+    if (fuelOff) env.FUEL_OFF = "true";
+    if (auditAB) env.AUDIT_AB = "true";
 
     // Don't save reports when called via MCP — caller (receptor sink) handles persistence
     delete env.REPORT_DIR;
@@ -65,7 +69,7 @@ server.tool(
         {
           env,
           cwd: PROJECT_ROOT,
-          timeout: 120_000,
+          timeout: auditAB ? 240_000 : 120_000, // A/B runs every slot twice
           maxBuffer: 10 * 1024 * 1024,
           shell: true,
         },

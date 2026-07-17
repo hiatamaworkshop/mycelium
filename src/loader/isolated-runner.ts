@@ -61,6 +61,11 @@ import type { MyceliumMetrics } from "./nutrition-resolver.js";
 
 const M = metabolismRaw as unknown as MetabolismSchema;
 
+// Tuned 2026-03-14: 40% summarizer / 40% herald / 20% spore.
+// herald+summarizer drive the signal→resonance→merge chain (cluster cores);
+// spore is absorption material — a little goes a long way (see TUNING_LOG_20260314).
+const BODY_ROTATION: Species[] = ["summarizer", "herald", "summarizer", "herald", "spore"];
+
 // ---- Types ----
 
 interface HarvestResult {
@@ -104,6 +109,8 @@ export class IsolatedRunner {
   constructor(
     private config: MyceliumConfig,
     private dispatchConfig: DispatcherConfig,
+    /** fuelOff: skip both fuel channels (payload.weight, myceliumMetrics) — flat audit run (F3). */
+    private opts: { fuelOff?: boolean } = {},
   ) {}
 
   /** Pre-load species memory snapshot (applied to each run's digestor). */
@@ -272,11 +279,6 @@ export class IsolatedRunner {
     const nodeSourceMap = new Map<string, string>();
     const sourcePointIdxMap = new Map<string, number>();
 
-    // Tuned 2026-03-14: 40% summarizer / 40% herald / 20% spore.
-    // herald+summarizer drive the signal→resonance→merge chain (cluster cores);
-    // spore is absorption material — a little goes a long way (see TUNING_LOG_20260314).
-    const BODY_ROTATION: Species[] = ["summarizer", "herald", "summarizer", "herald", "spore"];
-
     for (let spIdx = 0; spIdx < slot.points.length; spIdx++) {
       const sp = slot.points[spIdx];
       const tags = sp.payload.tags ?? [];
@@ -298,7 +300,8 @@ export class IsolatedRunner {
 
       // External weight → initial w (fuel intake). When present, jitter is
       // skipped for this node — the external signal replaces synthetic noise.
-      const extWeight = sp.payload.weight;
+      // fuelOff (F3 audit) ignores both fuel channels: flat jittered baseline.
+      const extWeight = this.opts.fuelOff ? undefined : sp.payload.weight;
       let nutrition: { w: number; h: number; d?: number } | undefined;
       if (typeof extWeight === "number" && Number.isFinite(extWeight)) {
         const ext = M.nutrition.external ?? { weightMin: -2, weightMax: 4, wScaleMin: 0.3, wScaleMax: 1.5 };
@@ -318,7 +321,9 @@ export class IsolatedRunner {
       // Usage-side fuel (F1): payload.myceliumMetrics, written back by the
       // caller after a prior run, biases w/h/d on top of the base resolved
       // above (weight-scaled / jittered / metabolism default).
-      const metrics = sp.payload.myceliumMetrics as MyceliumMetrics | undefined;
+      const metrics = this.opts.fuelOff
+        ? undefined
+        : sp.payload.myceliumMetrics as MyceliumMetrics | undefined;
       if (metrics) {
         nutrition = applyUsageNutrition(
           {
@@ -635,6 +640,33 @@ export class IsolatedRunner {
         const cRate = idxConsensusRate.get(spIdx);
         return { ...c, classification: cls, ...(cRate != null ? { consensusRate: cRate } : {}) };
       });
+
+      // Template dead chunks that consensus promoted to survivor exist in
+      // neither the template chunkDetails nor the consensus deadBriefs —
+      // rebuild them from slot points so no chunk vanishes from the report
+      // (the fuel-loop write-back keys off these arrays).
+      const detailSeqs = new Set(chunkDetails.map(c => c.chunkSeqNo));
+      for (const [spIdx, cls] of idxConsensus) {
+        if (!consensusSurvivorCls.has(cls)) continue;
+        if (idxToSourceId.get(spIdx) !== r.sourceId) continue;
+        const seqNo = slot.points[spIdx]?.payload.chunkSeqNo ?? spIdx;
+        if (detailSeqs.has(seqNo)) continue;
+        const sp = slot.points[spIdx];
+        const cRate = idxConsensusRate.get(spIdx);
+        const tags: string[] = sp?.payload.tags ?? [];
+        const species: Species =
+          (sp?.payload.speciesOverride as Species | undefined)
+          ?? (tags.length > 0 ? resolveSpecies("manual", tags) : BODY_ROTATION[spIdx % BODY_ROTATION.length]);
+        chunkDetails.push({
+          chunkSeqNo: seqNo,
+          pointId: sp?.id,
+          text: sp?.payload.text ?? "",
+          species,
+          classification: cls,
+          ...(cRate != null ? { consensusRate: cRate } : {}),
+        });
+      }
+      chunkDetails.sort((a, b) => a.chunkSeqNo - b.chunkSeqNo);
 
       const pureSurvivors = chunkDetails.filter(c => c.classification === "pure");
 

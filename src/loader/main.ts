@@ -31,6 +31,9 @@
 //   CONSENSUS_THRESHOLD   — Min vote ratio to consider a chunk's classification stable (default: 0.4)
 //   CONSENSUS_JITTER      — Per-run initial w/h perturbation (0-1, default: 0.1 = ±10%)
 //   FILTER_SOURCE_IDS     — Comma-separated source IDs to process (e.g. "8,14" or "source_arxiv:8")
+//   FUEL_OFF              — "true" to ignore both fuel channels (payload.weight / myceliumMetrics) — flat audit run (F3)
+//   AUDIT_AB              — "true" to run every slot twice (fueled + flat) and emit a fuel drift audit JSON instead of reports (F3)
+//                           AUDIT_AB + FUEL_OFF = flat vs flat — measures the jitter noise floor to compare drift against
 //   VIEW_FORMAT           — Output format: "digest" | "manifest" | "compact" | "detailed" | "structured" (default: raw JSON)
 //   REPORT_DIR            — Directory for report files. UNSET = no files written (stdout only, subsystem mode)
 //   REPORT_KEEP           — FIFO retention when REPORT_DIR is set (default: 5 runs)
@@ -59,6 +62,7 @@ import { IsolatedRunner, pLimit } from "./isolated-runner.js";
 import type { TrackedMergeEvent } from "./isolated-runner.js";
 import { formatReports } from "../output/formatters.js";
 import type { ViewFormat, DigestQuery } from "../output/formatters.js";
+import { buildFuelAudit } from "./audit.js";
 
 // ---- Config from environment ----
 
@@ -85,6 +89,8 @@ const filterSourceIds = (process.env.FILTER_SOURCE_IDS ?? "")
   .filter(s => s.length > 0);
 const crossFile = (process.env.CROSS_FILE ?? "").toLowerCase() === "true";
 const crossFileCapacity = parseInt(process.env.CROSS_FILE_CAPACITY ?? "300", 10);
+const fuelOff = (process.env.FUEL_OFF ?? "").toLowerCase() === "true";
+const auditAB = (process.env.AUDIT_AB ?? "").toLowerCase() === "true";
 
 // Digest query (progressive disclosure)
 function buildDigestQuery(): DigestQuery | undefined {
@@ -162,6 +168,9 @@ async function main(): Promise<void> {
   console.error(`  hardness:      ${hardnessLevel} (harvest at ${(hardnessPreset.harvestPct * 100).toFixed(0)}% of ticks)`);
   console.error(`  ticks:         ${dispatchConfig.targetTicks}`);
   if (consensusRuns > 1) console.error(`  consensus:     ${consensusRuns} runs (threshold=${(consensusThreshold * 100).toFixed(0)}%, jitter=${(consensusJitter * 100).toFixed(0)}%)`);
+  if (auditAB && fuelOff) console.error(`  fuel audit:    A/B baseline — flat vs flat (jitter noise floor)`);
+  else if (auditAB) console.error(`  fuel audit:    A/B — every slot runs twice (fueled + flat)`);
+  else if (fuelOff) console.error(`  fuel:          OFF (flat run — weight/myceliumMetrics ignored)`);
   if (cleanWorlds) console.error(`  clean:         enabled (world collections will be recreated)`);
   for (const w of worlds) {
     console.error(`  world "${w.name}": ${w.collection} ← [${w.sourceCollections.map(s => s.collection).join(", ")}]`);
@@ -242,27 +251,29 @@ async function main(): Promise<void> {
     `\n[loader] starting ${slotQueue.length} slot(s) with concurrency=${parallelSlots}\n`,
   );
 
+  const runSlot = (slot: SlotAssignment, off: boolean): SurvivorReport[] => {
+    const runner = new IsolatedRunner(myceliumConfig, dispatchConfig, { fuelOff: off });
+    runner.loadSpeciesMemory();
+    if (consensusRuns > 1) {
+      return runner.runConsensus(slot, consensusRuns, consensusThreshold, consensusJitter);
+    }
+    return runner.runOnce(slot, consensusJitter).reports;
+  };
+
   const reportPromises = slotQueue.map(({ slot, worldName }) =>
     limit(async () => {
-      const runner = new IsolatedRunner(myceliumConfig, dispatchConfig);
-      runner.loadSpeciesMemory();
-
       const slotStart = Date.now();
       const sid = [...slot.chunkRegistry.keys()][0] ?? slot.slotId;
       console.error(`[runner:${slot.slotId}] start ${sid} (${slot.points.length} chunks, ${consensusRuns} runs)`);
 
-      let reports: SurvivorReport[];
-      if (consensusRuns > 1) {
-        reports = runner.runConsensus(slot, consensusRuns, consensusThreshold, consensusJitter);
-      } else {
-        const { reports: r } = runner.runOnce(slot, consensusJitter);
-        reports = r;
-      }
+      // Audit mode compares primary (fueled, or flat when FUEL_OFF=true —
+      // flat-vs-flat measures the jitter noise floor) against a flat run
+      const reports = runSlot(slot, fuelOff);
+      const flatReports = auditAB ? runSlot(slot, true) : undefined;
 
       // Stamp world name
-      for (const r of reports) {
-        r.worldName = worldName;
-      }
+      for (const r of reports) r.worldName = worldName;
+      if (flatReports) for (const r of flatReports) r.worldName = worldName;
 
       completed++;
       const elapsed = ((Date.now() - slotStart) / 1000).toFixed(1);
@@ -271,28 +282,70 @@ async function main(): Promise<void> {
         : "0/0";
       console.error(
         `[runner:${slot.slotId}] done ${sid} in ${elapsed}s — ` +
-        `survival ${survival} (${completed}/${slotQueue.length} complete)`,
+        `survival ${survival}${auditAB ? ` (flat ${flatReports?.[0]?.survivingChunks ?? 0}/${flatReports?.[0]?.totalChunks ?? 0})` : ""} (${completed}/${slotQueue.length} complete)`,
       );
 
-      return reports;
+      return { reports, flatReports };
     }),
   );
 
   const results = await Promise.all(reportPromises);
-  for (const reports of results) {
+  const allFlatReports: SurvivorReport[] = [];
+  for (const { reports, flatReports } of results) {
     allReports.push(...reports);
+    if (flatReports) allFlatReports.push(...flatReports);
   }
 
   const totalElapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   console.error(`\n[loader] all ${slotQueue.length} slots complete in ${totalElapsed}s`);
 
   // Output results
-  printReports(allReports);
+  if (auditAB) {
+    // Chunks carrying actual fuel — drift on the rest is jitter noise
+    let fueledChunks = 0;
+    for (const { slot } of slotQueue) {
+      for (const sp of slot.points) {
+        if (typeof sp.payload.weight === "number" || sp.payload.myceliumMetrics != null) {
+          fueledChunks++;
+        }
+      }
+    }
+    printFuelAudit(allReports, allFlatReports, fueledChunks);
+  } else {
+    printReports(allReports);
+  }
 
   // ---- Cross-file affinity (2nd pass) ----
-  if (crossFile) {
+  if (crossFile && !auditAB) {
     await runCrossFileAffinity(allReports, slotQueue);
   }
+}
+
+// ---- Fuel audit output (F3) ----
+//
+// Audit mode is a pure measurement: stdout carries only the audit JSON
+// (no SurvivorReport dump → receptor sink won't write metrics back for
+// audit runs), stderr carries the human-readable drift summary.
+
+function printFuelAudit(fueled: SurvivorReport[], flat: SurvivorReport[], fueledChunks?: number): void {
+  const audit = buildFuelAudit(fueled, flat, consensusRuns, fueledChunks);
+  const a = audit.fuelAudit;
+
+  console.error("\n=== Fuel Audit (fueled vs flat) ===\n");
+  console.error(`  chunks compared:  ${a.chunks} (${a.sources} source(s)${a.fueledChunks != null ? `, ${a.fueledChunks} carrying fuel` : ""})`);
+  console.error(`  agreement:        ${(a.agreementRate * 100).toFixed(1)}% exact, ${(a.survivalAgreementRate * 100).toFixed(1)}% survivor/dead`);
+  console.error(`  drift:            ${(a.drift * 100).toFixed(1)}%`);
+  console.error(`  survival:         fueled ${(a.survivalRate.fueled * 100).toFixed(1)}% / flat ${(a.survivalRate.flat * 100).toFixed(1)}%`);
+  console.error(`  avg consensus:    fueled ${(a.avgConsensusRate.fueled * 100).toFixed(1)}% / flat ${(a.avgConsensusRate.flat * 100).toFixed(1)}%`);
+  console.error(`  fuel-dependent:   ${a.fuelDependents.length} chunk(s) survive only with fuel`);
+  console.error(`  fuel-suppressed:  ${a.fuelSuppressed.length} chunk(s) survive only without fuel`);
+  const transitions = Object.entries(a.transitions);
+  if (transitions.length > 0) {
+    console.error(`  transitions:      ${transitions.map(([t, n]) => `${t}:${n}`).join(" ")}`);
+  }
+  console.error("");
+
+  console.log(JSON.stringify(audit, null, 2));
 }
 
 // ---- Report output ----
