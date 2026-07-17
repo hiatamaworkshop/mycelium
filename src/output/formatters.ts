@@ -255,7 +255,13 @@ export interface SourceDigest {
     sourceMetadata?: Record<string, unknown>;
   };
   /** Pure survivors — keyword-context extracted text */
-  pure: Array<{ seq: number; text: string; role: string }>;
+  pure: Array<{
+    seq: number;
+    text: string;
+    role: string;
+    /** Cross-source links discovered in meta-world (Phase 4c). clusterSeq = target chunkSeqNo */
+    links?: Array<{ sourceId: string; clusterSeq: number; relation: "merged" | "resonant" | "loner" }>;
+  }>;
   /** Merged survivors (clusters) — absorption info + keyword-context text */
   clusters: Array<{
     seq: number;
@@ -596,6 +602,7 @@ function buildDigest(reports: SurvivorReport[], query?: DigestQuery): DigestRepo
         seq: c.chunkSeqNo,
         text: extract(c.text),
         role: toRole(c.species),
+        links: c.links?.map(l => ({ sourceId: l.sourceId, clusterSeq: l.chunkSeqNo, relation: l.relation })),
       }));
       // Role filter
       if (roleFilter) {

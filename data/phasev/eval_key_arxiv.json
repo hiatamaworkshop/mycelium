@@ -1,0 +1,42 @@
+{
+  "source_arxiv:3": {
+    "X": "baseline",
+    "Y": "mycelium"
+  },
+  "source_arxiv:1": {
+    "X": "baseline",
+    "Y": "mycelium"
+  },
+  "source_arxiv:15": {
+    "X": "baseline",
+    "Y": "mycelium"
+  },
+  "source_arxiv:6": {
+    "X": "mycelium",
+    "Y": "baseline"
+  },
+  "source_arxiv:9": {
+    "X": "baseline",
+    "Y": "mycelium"
+  },
+  "source_arxiv:13": {
+    "X": "mycelium",
+    "Y": "baseline"
+  },
+  "source_arxiv:16": {
+    "X": "baseline",
+    "Y": "mycelium"
+  },
+  "source_arxiv:0": {
+    "X": "baseline",
+    "Y": "mycelium"
+  },
+  "source_arxiv:11": {
+    "X": "baseline",
+    "Y": "mycelium"
+  },
+  "source_arxiv:7": {
+    "X": "mycelium",
+    "Y": "baseline"
+  }
+}

@@ -738,7 +738,10 @@ async function runMetaWorld(
   const edgeStats = new Map<string, { relation: MetaRelation; count: number; sumCos: number; a: string; b: string }>();
 
   for (let trial = 0; trial < metaWorldRuns; trial++) {
-    const runner = new IsolatedRunner(myceliumConfig, dispatchConfig);
+    // fuelOff: representative payloads still carry weight/myceliumMetrics from
+    // the source; relation discovery should be driven by geometry + dynamics
+    // only, not by F1 usage bias (decided in Phase V0 review).
+    const runner = new IsolatedRunner(myceliumConfig, dispatchConfig, { fuelOff: true });
     runner.loadSpeciesMemory();
     const { mergeEvents, resonanceEvents, nodeChunkSeqMap } = runner.runOnce(metaSlot, consensusJitter);
 
@@ -837,8 +840,10 @@ async function runMetaWorld(
     });
   }
 
-  // Splice links + metaClusterId into the 1st-pass reports (clusters only —
-  // pure/anchor entries have no links slot in the digest view yet)
+  // Splice links + metaClusterId into the 1st-pass reports. Clusters get both
+  // links and metaClusterId; per-chunk details (incl. anchor/pure participants)
+  // get links. chunkDetails and pureSurvivors usually share object references,
+  // but both are iterated explicitly in case a consensus rebuild broke sharing.
   let splicedCount = 0;
   for (const report of reports) {
     for (const c of report.mergerClusters ?? []) {
@@ -848,6 +853,12 @@ async function runMetaWorld(
         c.links = [...linkMap.values()];
         c.metaClusterId = componentIdOf(key);
         splicedCount++;
+      }
+    }
+    for (const list of [report.chunkDetails, report.pureSurvivors]) {
+      for (const c of list ?? []) {
+        const linkMap = linksByKey.get(`${report.sourceId}:${c.chunkSeqNo}`);
+        if (linkMap && linkMap.size > 0) c.links = [...linkMap.values()];
       }
     }
   }

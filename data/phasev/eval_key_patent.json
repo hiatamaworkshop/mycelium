@@ -1,0 +1,38 @@
+{
+  "source_patent:8": {
+    "X": "baseline",
+    "Y": "mycelium"
+  },
+  "source_patent:0": {
+    "X": "baseline",
+    "Y": "mycelium"
+  },
+  "source_patent:1": {
+    "X": "mycelium",
+    "Y": "baseline"
+  },
+  "source_patent:5": {
+    "X": "mycelium",
+    "Y": "baseline"
+  },
+  "source_patent:3": {
+    "X": "mycelium",
+    "Y": "baseline"
+  },
+  "source_patent:2": {
+    "X": "baseline",
+    "Y": "mycelium"
+  },
+  "source_patent:9": {
+    "X": "mycelium",
+    "Y": "baseline"
+  },
+  "source_patent:6": {
+    "X": "mycelium",
+    "Y": "baseline"
+  },
+  "source_patent:4": {
+    "X": "baseline",
+    "Y": "mycelium"
+  }
+}

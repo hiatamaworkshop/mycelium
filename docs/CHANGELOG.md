@@ -1,5 +1,48 @@
 # Mycelium — Changelog
 
+## 2026-07-18e: Phase V 存在意義の検証 → ❌ ベースライン勝利・ピボット
+
+### 目的
+Phase 4a で「生存判定は行動ポリシーではなく embedding 幾何 + w/h/ttl に支配される」
+と判明したのを受け、tick エンジンcore全体がフィルタ出力の**質**に寄与しているか
+を初めて ground truth 相当で検証。チープな決定的ベースライン（cosine dedup +
+greedy クラスタリング + medoid 選出）と下流タスク（Q&A 支援力）で比較。
+
+### 新設ツール（tracked）
+- `scripts/baseline_filter.mts` — 決定的フィルタ（~140行、シミュレーション/乱数なし）。
+  cosine dedup(≥0.92) → leader clustering(≥0.5) → medoid 代表選出、mycelium の
+  生存数 k に予算一致。10ファイル 239ms
+- `scripts/phasev_eval_package.mts` — 生存数の budget 抽出 + 盲検評価パッケージ生成
+  （全文 + Set X/Y をファイルごとにランダム割当、鍵は別ファイル）
+- `scripts/phasev_aggregate.mts` — 盲検判定を開鍵して X/Y→mycelium/baseline に写像、集計
+
+### 事前修正（V0 — 4c レビュー残課題）
+- `ChunkDetail.links` を digest formatter に配線（宣言のみだった死にフィールドを解消）
+- meta-world への燃料チャネル漏れを `fuelOff: true` 注入で遮断（関係発見は幾何+動態のみ）
+- spawn 子ノードが meta-world 関係検出から暗黙除外される件をコードにドキュメント化
+
+### 結果 — 事前登録ルールに基づき「ベースライン勝利」
+```
+mycelium 平均 answerability : 32.9%
+baseline 平均 answerability : 40.8%
+平均差                      : -7.9pt（19ファイル、盲検、ファイル別 baseline 12勝 mycelium 7勝）
+```
+- 事前登録した V3 判定表の「-5pt 以下 → ピボット」に該当。基準は結果を見る前に固定
+- コストも baseline 圧勝（239ms/10ファイル vs mycelium consensus=10 で数分）
+- **敗因**: anchor 種族が構造ランドマーク（書誌・見出し・boilerplate）を near-immortal
+  で生存させる設計が、Q&A 支援では内容の薄いチャンクを残して逆効果。baseline の
+  medoid はクラスタ中心の**内容**チャンクを拾うためこの罠を踏まない
+
+### 対応 — ピボット
+- 4b（Wave Injection）と Phase 5（LLM）は tick core 優位を前提にしていたため凍結
+- 次手: `FILTER_ENGINE=baseline|mycelium` でフィルタ core を差し替え可能化。
+  価値を閲覧レイヤー + 燃料ループ(F1-F3) + engram 統合 + 3軸分類語彙に再ポジショニング。
+  tick エンジンは研究モードとして残置
+- 但し書き: 単一ジャッジ盲検、ファイル間分散は大（+75〜-50pt）。ただし方向性は
+  12/19 で一貫、コスト差も踏まえ結論が覆る可能性は低い。詳細は `docs/ROADMAP.md` Phase V
+
+---
+
 ## 2026-07-18d: Phase 4c 定量評価 → 安定性フィルタ追加（`META_WORLD_RUNS`）
 
 ### 評価: 単発 run は64%がノイズ

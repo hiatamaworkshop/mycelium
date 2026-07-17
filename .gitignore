@@ -34,3 +34,7 @@ data/reports/*.txt
 
 # Raw HuggingFace datasets (large, downloaded via --save-raw)
 data/raw/
+
+# Phase V eval artifacts (regenerable / bulky)
+data/phasev/packages/
+data/phasev/*.log

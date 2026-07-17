@@ -331,7 +331,10 @@ export class IsolatedRunner {
       });
     }
 
-    // Node → original chunkSeqNo, for meta-world participant identification
+    // Node → original chunkSeqNo, for meta-world participant identification.
+    // Injected nodes only — spawn children born during the run have no source
+    // chunk, so meta-world events involving them are silently dropped by the
+    // aSeq/bSeq null checks downstream (known limitation, Phase 4c).
     const nodeChunkSeqMap = new Map<string, number>();
     for (const [id, spIdx] of sourcePointIdxMap) {
       const sp = slot.points[spIdx];
